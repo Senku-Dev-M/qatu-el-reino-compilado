@@ -1,0 +1,92 @@
+[
+	{
+		"id": "z3_raiz", "nombre": "Raíz <html>",
+		"intro": [
+			"Hola. Soy El Manual: la documentación técnica de este bosque. Mi trabajo es explicarte cada tema en orden, sin saltarnos pasos.",
+			"Todo lo que ves en una página web empieza aquí, en la raíz: un navegador pide un archivo HTML y lo interpreta.",
+			"En esta sala responderemos cuatro preguntas: qué ocurre al abrir una web, qué es HTML, qué son las etiquetas y los elementos, y cómo se estructura un documento."
+		],
+		"recordatorio": "Estamos en los fundamentos: sin entender etiquetas y elementos, nada de lo que viene tendrá sentido.",
+		"cierre": [
+			"Muy bien. Ya sabes qué es HTML, distingues etiqueta de elemento y conoces el esqueleto de un documento.",
+			"Siguiente sala: la Galería de Etiquetas. Allí verás los elementos que más se usan, los atributos y cómo anidar correctamente."
+		]
+	},
+	{
+		"id": "z3_galeria", "nombre": "Galería de Etiquetas",
+		"intro": [
+			"Bienvenido a la Galería. Ya sabes qué es un elemento; ahora conocerás los más usados.",
+			"Empezaremos por títulos y párrafos, seguiremos con los atributos (enlaces e imágenes), las listas, la regla de anidamiento y terminaremos con el HTML semántico.",
+			"Al final de la sala hay un sello: te pedirá aplicar lo aprendido, no solo recordarlo."
+		],
+		"recordatorio": "En esta sala construimos páginas con elementos reales. Si el sello te cuesta, repasa la lección de anidamiento.",
+		"cierre": [
+			"Ya puedes escribir una página HTML completa: con títulos, texto, enlaces, imágenes, listas y una estructura semántica.",
+			"Pero todavía se ve sin diseño. En el Claro de Estilos aprenderás CSS para controlar su aspecto."
+		]
+	},
+	{
+		"id": "z3_claro", "nombre": "Claro de Estilos",
+		"intro": [
+			"Este es el Claro de Estilos. Hasta ahora definiste la estructura con HTML; aquí aprenderás a controlar la presentación con CSS.",
+			"El orden será: qué es CSS y cómo se conecta, la anatomía de una regla, los selectores, las propiedades básicas, el modelo de cajas y, para terminar, cómo medir y centrar cajas.",
+			"Las dos últimas lecciones son de nivel intermedio. Tómate tu tiempo con los diagramas."
+		],
+		"recordatorio": "CSS es selector + declaraciones. Casi todo error de CSS es un selector que no coincide o una declaración mal escrita.",
+		"cierre": [
+			"Excelente. Sabes enlazar CSS, escribir reglas, elegir selectores y entender cómo se mide cada caja.",
+			"En el Tronco del DOM daremos el salto a JavaScript: aprenderás cómo el navegador representa la página en memoria y cómo modificarla."
+		]
+	},
+	{
+		"id": "z3_tronco", "nombre": "Tronco del DOM",
+		"intro": [
+			"Llegamos al Tronco. HTML y CSS describen la página, pero son estáticos. Para cambiarla mientras está abierta se usa JavaScript a través del DOM.",
+			"Primero verás qué es el DOM, luego cómo seleccionar elementos y por último cómo modificarlos.",
+			"En esta sala también hay un nodo antiguo que te dará la habilidad Event Listener. La entenderás del todo en la Copa de los Eventos."
+		],
+		"recordatorio": "El DOM es el árbol vivo de la página. Seleccionar y luego modificar: ese es siempre el orden.",
+		"cierre": [
+			"Ya sabes encontrar elementos con querySelector y cambiar su texto, clases y atributos.",
+			"Falta que la página reaccione a lo que hace el usuario. Sube a la Copa de los Eventos."
+		]
+	},
+	{
+		"id": "z3_copa", "nombre": "Copa de los Eventos",
+		"intro": [
+			"Esta es la Copa de los Eventos. Aquí aprenderás cómo una página reacciona a clics, teclas y formularios.",
+			"Veremos qué es un evento, cómo registrar una función con addEventListener, qué información trae el objeto event y cómo quitar un listener.",
+			"Los nodos de esta sala funcionan como eventos reales: los nodos click se activan al golpearlos y los nodos hover al acercarte."
+		],
+		"recordatorio": "Seleccionar el elemento, registrar el listener y escribir la función: tres pasos, siempre en ese orden.",
+		"cierre": [
+			"Ya dominas los eventos: registrarlos, leer event.target, cancelar acciones por defecto y quitar listeners.",
+			"Cuando algo no funcione, necesitarás herramientas para investigar. Las encontrarás en la Cueva DevTools."
+		]
+	},
+	{
+		"id": "z3_cueva", "nombre": "Cueva DevTools",
+		"intro": [
+			"Bienvenido a la Cueva DevTools. Aquí no aprenderás un lenguaje nuevo, sino a investigar problemas como lo hace un profesional.",
+			"Recorreremos las herramientas del navegador: el panel Elements, la sección Styles, la consola y el depurador.",
+			"Detrás del sello de esta cueva espera el jefe del bosque. Asegúrate de sentirte cómodo con todo lo aprendido."
+		],
+		"recordatorio": "Ante un fallo: consola primero, luego Elements y Styles, y si es lógica, un breakpoint.",
+		"cierre": [
+			"Ya tienes un método de depuración completo. Con él puedes encontrar casi cualquier error de frontend.",
+			"Has completado el recorrido principal de la Semana 3. Si encuentras la cámara oculta del motor, hay dos lecciones extra sobre cómo el navegador ejecuta JavaScript."
+		]
+	},
+	{
+		"id": "z3_motor", "nombre": "Cámara del Motor",
+		"intro": [
+			"Encontraste la Cámara del Motor. Estas lecciones son opcionales, pero te darán una visión más completa.",
+			"Veremos cómo el navegador ejecuta JavaScript y qué otras APIs pone a tu disposición además del DOM."
+		],
+		"recordatorio": "Motor: ejecuta el lenguaje. Runtime: añade el DOM, los eventos y las APIs web.",
+		"cierre": [
+			"Ahora sabes qué pasa por debajo cuando tu código se ejecuta y qué capacidades te ofrece el navegador.",
+			"Con esto has explorado todo el conocimiento del Bosque del DOM."
+		]
+	}
+]

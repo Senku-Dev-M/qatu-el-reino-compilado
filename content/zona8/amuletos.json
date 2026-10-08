@@ -1,0 +1,18 @@
+[
+	{
+		"id": "k8s_helm",
+		"zona": 8,
+		"nombre": "Timón de Helm",
+		"coste": 2,
+		"efecto": "Despliega réplicas de pods que absorben proyectiles enemigos.",
+		"leccion": "L174"
+	},
+	{
+		"id": "docker_layer",
+		"zona": 8,
+		"nombre": "Capa Caché Multi-Stage",
+		"coste": 1,
+		"efecto": "Aumenta la velocidad de recarga de habilidades un 30 %.",
+		"leccion": "L162"
+	}
+]

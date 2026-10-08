@@ -1,0 +1,30 @@
+[
+	{
+		"id": "santuario_cache",
+		"speaker": "",
+		"lineas": [
+			"Sobre el pedestal brilla un cristal que refleja la sala tal como estaba hace un instante.",
+			"Al tocarlo, una copia de ti queda guardada en el aire. Sabes que no durará para siempre.",
+			"Pulsa {cache} con los pies en el suelo para guardar tu posición, y otra vez para volver a ella antes de que caduque."
+		]
+	},
+	{
+		"id": "mentora_victoria_z6",
+		"speaker": "La Mentora",
+		"lineas": [
+			"La lista por fin terminó de cargar. Venciste al Scroll Infinito.",
+			"Ahora sabes pedir solo los datos necesarios, paginarlos, servirlos rápido con caché y compresión y organizar el servidor con middlewares.",
+			"Otro farol de Qatu brilla. Quedan cinco regiones."
+		]
+	},
+	{
+		"id": "final_z6",
+		"speaker": "",
+		"lineas": [
+			"El Archivo Paginado recupera el orden.",
+			"Cada estante muestra su página, cada copia sabe cuándo caduca y ninguna lista crece sin fin.",
+			"Qatu todavía no compila. Cinco regiones esperan.",
+			"El portal de la Semana 7 te espera en la plaza: la Ciudadela IAM."
+		]
+	}
+]

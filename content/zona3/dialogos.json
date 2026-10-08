@@ -1,0 +1,89 @@
+[
+	{
+		"id": "intro",
+		"speaker": "",
+		"lineas": [
+			"Hubo una vez un mercado donde todo se encontraba: Qatu.",
+			"Sus calles eran componentes, sus puertas respondían a eventos y sus datos fluían como ríos.",
+			"Pero el código se descuidó. Aparecieron los bugs, y el reino dejó de compilar.",
+			"Ahora, en la plaza apagada, un aprendiz despierta."
+		]
+	},
+	{
+		"id": "mentora_inicio",
+		"speaker": "La Mentora",
+		"lineas": [
+			"Despertaste, aprendiz. Bien. Qatu te necesita.",
+			"Los bugs han corrompido las nueve regiones del reino. Cada una guarda el conocimiento de una semana de estudio.",
+			"Ese Cursor que llevas es tu herramienta. Golpea a los bugs con {attack}; mira arriba o abajo mientras atacas para cambiar la dirección.",
+			"Cada golpe llena tu Energía de Compilación. Mantén {heal} quieto en el suelo para aplicar un Hotfix y recuperar una máscara.",
+			"En los bancos puedes hacer commit: guardar tu progreso y descansar. Si caes, dejarás atrás un Conflicto de Merge con tus Bits. Resuélvelo para recuperarlos.",
+			"Este portal corresponde a la Semana 3 del curso: HTML, CSS, el DOM, los eventos y las herramientas del navegador.",
+			"En cada sala del bosque te espera El Manual, un libro que explica los temas en orden. Las tablillas brillantes son lecciones completas: léelas de principio a fin y responde la comprobación del final.",
+			"Algunas puertas tienen sellos. No preguntan de memoria: te pedirán escribir, completar u ordenar código real.",
+			"Ya responden cinco portales: el tercero, el Bosque del DOM; el cuarto, los Cañones Flexibles, con el layout en CSS; el quinto, los Ríos Asíncronos, con formularios, APIs y asincronía; el sexto, el Archivo Paginado, con operaciones avanzadas de API; y el séptimo, la Ciudadela IAM, con autenticación avanzada.",
+			"Te recomiendo recorrerlos en orden: cada región da por sabido lo que se aprende en la anterior. Acércate a un portal y pulsa {look_up}. Yo esperaré aquí."
+		]
+	},
+	{
+		"id": "mentora_repite",
+		"speaker": "La Mentora",
+		"lineas": [
+			"Si te pierdes, habla con El Manual de cada sala: te dirá qué lección sigue.",
+			"Si un sello te detiene, usa «Repasar lecciones». El Códice ({codice}) guarda todas las lecciones y el glosario de términos."
+		]
+	},
+	{
+		"id": "mentora_victoria",
+		"speaker": "La Mentora",
+		"lineas": [
+			"Lo sentí desde aquí: el árbol volvió a brillar. Liberaste al Nodo Huérfano.",
+			"Un farol de Qatu se encendió de nuevo. Quedan ocho regiones por restaurar.",
+			"Si aún no lo has cruzado, el cuarto portal lleva a los Cañones Flexibles: allí se estudia cómo colocar los elementos en la página."
+		]
+	},
+	{
+		"id": "depuradora_inicio",
+		"speaker": "La Depuradora",
+		"lineas": [
+			"¡Oh! Un visitante que no es un bug. Qué alivio.",
+			"Me escondo en esta cueva para inspeccionar el bosque. Desde aquí veo cada nodo, cada estilo y cada error.",
+			"Si tienes Bits, puedo venderte lo que he dibujado y encontrado. Nadie debería explorar sin mapa."
+		]
+	},
+	{
+		"id": "depuradora_repite",
+		"speaker": "La Depuradora",
+		"lineas": [
+			"¿Otra vez por aquí? Echa un vistazo."
+		]
+	},
+	{
+		"id": "santuario_event_listener",
+		"speaker": "",
+		"lineas": [
+			"En el corazón del tronco late un nodo antiguo, conectado a todas las ramas.",
+			"Al tocarlo, sientes cómo el árbol te escucha... y tú a él."
+		]
+	},
+	{
+		"id": "atajo_cerrado",
+		"speaker": "",
+		"lineas": ["La compuerta está cerrada. Parece que se abre desde el otro lado."]
+	},
+	{
+		"id": "portal_sellado",
+		"speaker": "",
+		"lineas": ["El portal duerme. Todavía no es tiempo de esta región."]
+	},
+	{
+		"id": "final",
+		"speaker": "",
+		"lineas": [
+			"El Bosque del DOM vuelve a respirar.",
+			"Sus nodos brillan, sus eventos responden y cada etiqueta está donde debe.",
+			"Pero Qatu aún no compila. Ocho regiones esperan.",
+			"El portal de la Semana 4 te espera en la plaza: los Cañones Flexibles."
+		]
+	}
+]

@@ -1,0 +1,95 @@
+[
+	{
+		"id": "z5_embarcadero", "nombre": "Embarcadero de los Formularios",
+		"intro": [
+			"Bienvenido a los Ríos Asíncronos. Soy El Manual. Esta semana estudiaremos cómo viajan los datos: del usuario al servidor y del servidor de vuelta a la página.",
+			"Ya sabes construir páginas y colocarlas en pantalla. Ahora les daremos la capacidad de recibir datos del usuario y de hablar con el backend.",
+			"En este embarcadero empezamos por los formularios: qué son, quién procesa sus datos, la diferencia entre GET y POST y los controles con name y label.",
+			"Recoge el mapa del muelle: el delta tiene muchos canales."
+		],
+		"recordatorio": "Un formulario envía pares name=valor a la URL de action. GET los pone en la URL; POST, en el cuerpo de la petición.",
+		"cierre": [
+			"Bien. Ya sabes qué es un formulario, cómo llegan sus datos al servidor y por qué cada control necesita name y una etiqueta.",
+			"Siguiente sala: las Esclusas de los Controles. Veremos los tipos de input, textarea, select, fieldset y cómo se envía el formulario."
+		]
+	},
+	{
+		"id": "z5_esclusas", "nombre": "Esclusas de los Controles",
+		"intro": [
+			"Las Esclusas de los Controles. Aquí conocerás los controles uno por uno.",
+			"Primero los tipos de input y la validación básica del navegador; después textarea y select; y al final fieldset, legend y el envío con el evento submit.",
+			"Antes de la salida hay un sello: te pedirá construir y corregir formularios reales."
+		],
+		"recordatorio": "Radio con el mismo name para elegir una opción; el value de la option es lo que se envía; un button sin type dentro de un form envía el formulario.",
+		"cierre": [
+			"Muy bien. Ya puedes construir un formulario completo y controlar su envío con JavaScript.",
+			"Siguiente sala: la Compuerta de Seguridad. Todo dato que llega de un formulario puede ser un ataque; veremos cómo protegerse."
+		]
+	},
+	{
+		"id": "z5_compuerta", "nombre": "Compuerta de Seguridad",
+		"intro": [
+			"La Compuerta de Seguridad. Hasta ahora supusimos que el usuario escribe datos honestos. En la web real no es así.",
+			"Estudiaremos tres ideas: nunca confiar en los datos del usuario, escapar los caracteres peligrosos para evitar XSS y proteger los formularios contra CSRF.",
+			"Cuidado con lo que brilla en esta sala: no todo lo que parece un Bit lo es."
+		],
+		"recordatorio": "Valida siempre en el servidor, muestra el texto del usuario con textContent y protege los formularios con tokens CSRF.",
+		"cierre": [
+			"Excelente. Ya sabes que la validación del cliente no es seguridad, cómo funciona un XSS y cómo se defiende un sitio de CSRF.",
+			"Siguiente sala: el Manantial de las Promesas. Antes de pedir datos con JavaScript necesitas entender la asincronía."
+		]
+	},
+	{
+		"id": "z5_manantial", "nombre": "Manantial de las Promesas",
+		"intro": [
+			"El Manantial de las Promesas. Esta sala es la base de todo lo que viene: la asincronía en JavaScript.",
+			"Iremos en orden: código síncrono y asíncrono con callbacks, AJAX con XMLHttpRequest y jQuery, promesas, async/await y closures.",
+			"En el pedestal espera una habilidad. Con ella podrás activar fuentes de promesa: primero quedan pendientes y, al cumplirse, aparecen plataformas de agua durante un tiempo.",
+			"El canal que ves más adelante es demasiado ancho para saltarlo. Activa la fuente, espera a que se cumpla la promesa y cruza."
+		],
+		"recordatorio": "Una promesa pasa de pending a fulfilled o rejected, y no cambia más. then recibe el valor, catch el error; await espera sin bloquear la página.",
+		"cierre": [
+			"Muy bien. Ya entiendes callbacks, promesas, async/await y closures: las herramientas para trabajar con operaciones que terminan más tarde.",
+			"Siguiente sala: el Delta de las APIs. Veremos con qué tecnologías se comunican el frontend y el backend."
+		]
+	},
+	{
+		"id": "z5_delta", "nombre": "Delta de las APIs",
+		"intro": [
+			"El Delta de las APIs. Aquí los ríos se separan en canales, igual que existen distintas formas de conectar frontend y backend.",
+			"Empezaremos por la base: peticiones, respuestas, códigos de estado y JSON. Después REST, GraphQL, gRPC, WebSockets y SSE, con cuándo conviene cada uno.",
+			"Para subir a la meseta tendrás que encadenar promesas: activa la fuente y cada .then hará aparecer la siguiente plataforma."
+		],
+		"recordatorio": "REST: recursos y métodos HTTP. GraphQL: pide campos exactos. gRPC: entre servicios. WebSocket: ambos sentidos. SSE: solo el servidor envía.",
+		"cierre": [
+			"Perfecto. Ya conoces las principales formas de integrar un frontend con una API y sabes elegir entre ellas.",
+			"Siguiente sala: la Aduana de Fetch. Pasamos a la práctica con la API fetch, CORS y las credenciales."
+		]
+	},
+	{
+		"id": "z5_aduana", "nombre": "Aduana de Fetch",
+		"intro": [
+			"La Aduana de Fetch. Aquí cada petición se inspecciona antes de cruzar.",
+			"Veremos fetch y el objeto Response, cómo enviar datos con body y headers, CORS con el preflight y las credenciales con las cookies SameSite.",
+			"La fuente del muelle hace una petición a otro origen. Esa promesa se rechazará; observa qué hace su .catch."
+		],
+		"recordatorio": "fetch solo se rechaza por errores de red: revisa response.ok. CORS lo concede el servidor con cabeceras, no el cliente.",
+		"cierre": [
+			"Muy bien. Ya puedes consumir una API con fetch, enviar JSON o formularios y entender los errores de CORS.",
+			"Última sala: el Observatorio de Red. Aprenderás a rastrear cada petición con la pestaña Network."
+		]
+	},
+	{
+		"id": "z5_observatorio", "nombre": "Observatorio de Red",
+		"intro": [
+			"El Observatorio de Red. Desde aquí se ve todo lo que entra y sale del delta, como en la pestaña Network de DevTools.",
+			"Estudiaremos la pestaña Network, el diagrama waterfall con sus tiempos y cómo diagnosticar los problemas más comunes usando filtros.",
+			"Hay una cámara cerrada con una compuerta Promise.all: solo se abre si sus dos promesas están cumplidas a la vez."
+		],
+		"recordatorio": "Network muestra método, estado, payload, respuesta y tiempos. Un TTFB alto apunta al servidor; Preserve log conserva peticiones al recargar.",
+		"cierre": [
+			"Has terminado la Semana 5: formularios, seguridad, asincronía, integración de APIs, fetch y rastreo de solicitudes.",
+			"Más allá espera Callback Hell, una pirámide de callbacks anidados. Para vencerlo tendrás que encadenar promesas y reescribirlo con async/await."
+		]
+	}
+]

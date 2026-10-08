@@ -1,0 +1,300 @@
+[
+	{
+		"id": "L63",
+		"zona": 5,
+		"sala": "z5_delta",
+		"orden": 63,
+		"nivel": "inicial",
+		"titulo": "Cómo se comunican frontend y backend",
+		"resumen": "El frontend pide datos a una API del backend mediante peticiones HTTP. Cada respuesta trae un código de estado y normalmente un cuerpo en JSON, que el frontend usa para actualizar la página.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Dos programas que conversan",
+				"texto": "El **frontend** es lo que se ejecuta en el navegador (HTML, CSS y JavaScript). El **backend** se ejecuta en el servidor: guarda datos, aplica reglas de negocio y controla la seguridad.\n\nSe comunican a través de una [[API|api]] (Application Programming Interface): un conjunto de direcciones y reglas que el backend publica para que otros programas le pidan datos o acciones. En lugar de devolver páginas completas, una API web suele devolver **solo datos**."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Petición y respuesta",
+				"texto": "Cada intercambio es una [[petición HTTP|peticion_http]] con método, URL y cabeceras, seguida de una [[respuesta HTTP|respuesta_http]] con un [[código de estado|codigo_de_estado]] y un cuerpo. Los datos suelen ir en [[JSON|json]].",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "GET",
+								"url": "/api/productos/12",
+								"cabeceras": [
+									"Accept: application/json"
+								],
+								"estado": "200 OK",
+								"respuesta_cabeceras": [
+									"Content-Type: application/json"
+								],
+								"respuesta": "{ \"id\": 12, \"nombre\": \"Poncho\", \"precio\": 120 }"
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Códigos de estado",
+				"texto": "El código de estado resume el resultado:\n\n• **2xx éxito**: `200 OK`, `201 Created` (se creó un recurso), `204 No Content`.\n• **3xx redirección**: `301`, `304 Not Modified`.\n• **4xx error del cliente**: `400 Bad Request` (datos inválidos), `401 Unauthorized` (sin autenticar), `403 Forbidden` (sin permiso), `404 Not Found`.\n• **5xx error del servidor**: `500 Internal Server Error`, `503 Service Unavailable`."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "JSON",
+				"texto": "JSON (JavaScript Object Notation) es un formato de texto para datos: objetos entre `{}`, listas entre `[]`, claves **siempre con comillas dobles**, y valores de tipo texto, número, booleano, `null`, objeto o lista. En JavaScript, `JSON.parse` convierte texto en objeto y `JSON.stringify` hace lo contrario.",
+				"lenguaje": "js",
+				"codigo": "const texto = '{\"nombre\": \"Poncho\", \"stock\": 4}';\nconst producto = JSON.parse(texto);\nconsole.log(producto.stock);\n\nconsole.log(JSON.stringify({ id: 12, activo: true }));",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"consola": [
+								"4",
+								"{\"id\":12,\"activo\":true}"
+							]
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Lee el código",
+				"pregunta": {
+					"enunciado": "Envías un formulario con un correo mal escrito y la API responde 400. ¿Qué significa?",
+					"opciones": [
+						"El servidor falló internamente",
+						"La petición del cliente tiene datos inválidos",
+						"El recurso no existe",
+						"Todo salió bien"
+					],
+					"correcta": 1,
+					"explicacion": "`400 Bad Request` indica que la petición es incorrecta; los errores del servidor son 5xx y `404` indica que no existe el recurso."
+				}
+			}
+		]
+	},
+	{
+		"id": "L64",
+		"zona": 5,
+		"sala": "z5_delta",
+		"orden": 64,
+		"nivel": "inicial",
+		"titulo": "APIs REST",
+		"resumen": "REST organiza la API en recursos identificados por URLs y usa los métodos HTTP para las acciones: GET leer, POST crear, PUT/PATCH actualizar, DELETE eliminar. Cada petición es independiente (sin estado).",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Recursos y métodos",
+				"texto": "[[REST|rest]] (Representational State Transfer) es el estilo más común para APIs web. Sus ideas principales:\n\n• Todo es un [[recurso]]: productos, pedidos, usuarios.\n• Cada recurso tiene una URL, llamada [[endpoint]]: `/api/productos`, `/api/productos/12`.\n• El **método HTTP** indica la acción.\n• **Sin estado**: cada petición lleva todo lo necesario (por ejemplo, el token de autenticación); el servidor no recuerda peticiones anteriores."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El CRUD de productos",
+				"lenguaje": "texto",
+				"codigo": "GET    /api/productos        → lista de productos\nGET    /api/productos/12     → un producto\nPOST   /api/productos        → crea un producto  (201)\nPUT    /api/productos/12     → lo reemplaza completo\nPATCH  /api/productos/12     → modifica algunos campos\nDELETE /api/productos/12     → lo elimina         (204)\n\nGET    /api/productos?categoria=textil&pagina=2",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "POST",
+								"url": "/api/productos",
+								"cabeceras": [
+									"Content-Type: application/json"
+								],
+								"cuerpo": "{ \"nombre\": \"Gorro\", \"precio\": 35 }",
+								"estado": "201 Created",
+								"respuesta_cabeceras": [
+									"Location: /api/productos/13"
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Diseños que no son REST",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "GET /api/borrarProducto?id=12",
+						"bien": "DELETE /api/productos/12",
+						"explicacion": "La acción la expresa el método, no la URL. Además, GET nunca debe modificar datos: navegadores, buscadores y cachés pueden repetir peticiones GET."
+					},
+					{
+						"mal": "POST /api/productos/obtenerTodos",
+						"bien": "GET /api/productos",
+						"explicacion": "Las URLs nombran recursos (sustantivos en plural), no verbos."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige la petición",
+				"pregunta": {
+					"enunciado": "Quieres cambiar solo el precio del producto 7. ¿Qué petición REST corresponde?",
+					"opciones": [
+						"GET /api/productos/7?precio=90",
+						"PATCH /api/productos/7 con { \"precio\": 90 }",
+						"POST /api/cambiarPrecio",
+						"DELETE /api/productos/7"
+					],
+					"correcta": 1,
+					"explicacion": "`PATCH` modifica parcialmente el recurso identificado por la URL; `PUT` lo reemplazaría completo."
+				}
+			}
+		]
+	},
+	{
+		"id": "L65",
+		"zona": 5,
+		"sala": "z5_delta",
+		"orden": 65,
+		"nivel": "intermedio",
+		"titulo": "GraphQL y gRPC",
+		"resumen": "GraphQL expone un único endpoint donde el cliente pide exactamente los campos que necesita. gRPC llama a funciones remotas con mensajes binarios (Protocol Buffers) sobre HTTP/2; es muy eficiente, sobre todo entre servicios.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "GraphQL: pide solo lo que necesitas",
+				"texto": "Con REST, a veces recibes **más** datos de los que usas o necesitas **varias** peticiones para una pantalla. [[GraphQL|graphql]] (creado por Facebook) resuelve eso:\n\n• Un **único endpoint**, normalmente `POST /graphql`.\n• El cliente envía una **consulta** que describe exactamente los campos que quiere, incluidos datos relacionados.\n• Un **esquema** con tipos define qué se puede pedir.\n• Las modificaciones se llaman mutations.\n\nCoste: el servidor es más complejo y la caché HTTP es menos directa que en REST."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Una consulta GraphQL",
+				"lenguaje": "texto",
+				"codigo": "query {\n  producto(id: 12) {\n    nombre\n    precio\n    vendedor { nombre }\n  }\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "POST",
+								"url": "/graphql",
+								"estado": "200 OK",
+								"respuesta": "{ \"data\": { \"producto\": {\n    \"nombre\": \"Poncho\", \"precio\": 120,\n    \"vendedor\": { \"nombre\": \"Rosa\" } } } }"
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "gRPC: llamadas a funciones remotas",
+				"texto": "[[gRPC|grpc]] (creado por Google) define **servicios con funciones** en un archivo `.proto`, y los datos viajan en [[Protocol Buffers|protocol_buffers]], un formato **binario** más compacto y rápido de procesar que JSON. Usa HTTP/2 y permite streaming en ambos sentidos.\n\nEs muy común **entre microservicios del backend**. Los navegadores no lo usan directamente: necesitan una capa llamada gRPC-Web con un proxy.",
+				"lenguaje": "texto",
+				"codigo": "service Catalogo {\n  rpc ObtenerProducto (ProductoId) returns (Producto);\n}\n\nmessage Producto {\n  int32 id = 1;\n  string nombre = 2;\n  double precio = 3;\n}"
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige la tecnología",
+				"pregunta": {
+					"enunciado": "Una app móvil muestra en una pantalla el producto, su vendedor y sus 3 últimas reseñas, y quiere recibir solo esos campos en una petición. ¿Qué encaja mejor?",
+					"opciones": [
+						"GraphQL",
+						"gRPC directamente desde el navegador",
+						"SSE",
+						"Un formulario con method=\"get\""
+					],
+					"correcta": 0,
+					"explicacion": "GraphQL permite pedir en una sola consulta exactamente los campos y relaciones que necesita la pantalla."
+				}
+			}
+		]
+	},
+	{
+		"id": "L66",
+		"zona": 5,
+		"sala": "z5_delta",
+		"orden": 66,
+		"nivel": "intermedio",
+		"titulo": "WebSockets y SSE: datos en tiempo real",
+		"resumen": "En HTTP normal el cliente siempre pregunta. WebSocket abre un canal bidireccional permanente (chats, juegos). SSE mantiene una conexión en la que solo el servidor envía eventos (notificaciones, precios en vivo).",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Cuando el servidor tiene algo que decir",
+				"texto": "En una petición HTTP normal, **el cliente pregunta y el servidor responde**. Si el servidor tiene una novedad (un mensaje nuevo, un pedido que cambió de estado), no puede avisar por su cuenta.\n\nPreguntar cada pocos segundos (polling) funciona, pero desperdicia peticiones. Existen dos alternativas estándar para el tiempo real: WebSockets y SSE."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "WebSocket: canal bidireccional",
+				"texto": "Un [[WebSocket|websocket]] comienza como petición HTTP y se «actualiza» a una conexión **persistente** en la que **ambos** lados envían mensajes cuando quieren (`ws://` o `wss://` cifrado). Ideal para chats, juegos multijugador o edición colaborativa.",
+				"lenguaje": "js",
+				"codigo": "const socket = new WebSocket('wss://qatu.com/chat');\n\nsocket.addEventListener('open', () => {\n  socket.send('Hola, ¿tienen ponchos talla M?');\n});\n\nsocket.addEventListener('message', (event) => {\n  mostrarMensaje(event.data);\n});",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Navegador",
+									"Servidor"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "Upgrade: websocket"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "101 Switching Protocols"
+									},
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "mensaje"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "mensaje"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "mensaje"
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "SSE: el servidor emite eventos",
+				"texto": "[[SSE|sse]] (Server-Sent Events) mantiene abierta una respuesta HTTP por la que **solo el servidor** envía eventos de texto. El navegador se **reconecta solo** si se corta. Es más simple que WebSocket cuando el cliente solo necesita escuchar: notificaciones, estado de un envío, precios en vivo.",
+				"lenguaje": "js",
+				"codigo": "const eventos = new EventSource('/api/pedidos/81/estado');\n\neventos.addEventListener('message', (event) => {\n  const estado = JSON.parse(event.data);\n  pintarEstado(estado);\n});"
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Cuál elegir",
+				"texto": "• **REST**: operaciones normales de lectura y escritura; lo más simple y cacheable.\n• **GraphQL**: pantallas que combinan muchos datos relacionados y clientes con necesidades distintas.\n• **gRPC**: comunicación eficiente entre servicios del backend.\n• **WebSocket**: intercambio constante en **ambos** sentidos con poca latencia.\n• **SSE**: el servidor **notifica** al cliente; unidireccional y sobre HTTP normal.\n\nMuchas aplicaciones combinan varios: REST para el catálogo y WebSocket para el chat."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Tiempo real",
+				"pregunta": {
+					"enunciado": "Una página muestra el estado de un pedido (preparando, enviado, entregado) que cambia en el servidor. El cliente no envía nada. ¿Qué es lo más simple?",
+					"opciones": [
+						"WebSocket",
+						"SSE",
+						"gRPC",
+						"Un formulario POST"
+					],
+					"correcta": 1,
+					"explicacion": "La comunicación es solo del servidor al cliente: SSE es más sencillo que WebSocket y se reconecta automáticamente."
+				}
+			}
+		]
+	}
+]

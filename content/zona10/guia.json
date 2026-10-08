@@ -1,0 +1,14 @@
+[
+	{
+		"id": "hub_sanctum",
+		"nombre": "Sanctum del Capstone Final",
+		"intro": [
+			"Has llegado a la culminación de tu viaje en Qatu.",
+			"Demuestra la solidez de tu arquitectura y código en la Demo en Vivo."
+		],
+		"recordatorio": "Una Definition of Done rigurosa garantiza que cada incremento sea apto para producción.",
+		"cierre": [
+			"¡Has superado el curso completo de Desarrollo de Software!"
+		]
+	}
+]

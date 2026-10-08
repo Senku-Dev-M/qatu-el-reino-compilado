@@ -1,0 +1,18 @@
+[
+	{
+		"id": "mvvm_sync",
+		"zona": 2,
+		"nombre": "Sincronizador MVVM",
+		"coste": 2,
+		"efecto": "Sincroniza el daño de ataque con el ritmo de pulsos reactivos.",
+		"leccion": "L147"
+	},
+	{
+		"id": "clean_shield",
+		"zona": 2,
+		"nombre": "Escudo de Capa Limpia",
+		"coste": 1,
+		"efecto": "Aumenta la defensa contra acoplamientos rígidos.",
+		"leccion": "L153"
+	}
+]

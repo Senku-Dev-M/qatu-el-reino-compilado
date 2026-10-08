@@ -1,0 +1,98 @@
+[
+	{
+		"id": "docker_c",
+		"termino": "Contenedor Docker",
+		"leccion": "L158",
+		"definicion": "Unidad ejecutable ligera que empaqueta código y dependencias en un entorno aislado."
+	},
+	{
+		"id": "dockerfile_d",
+		"termino": "Dockerfile",
+		"leccion": "L161",
+		"definicion": "Manifiesto de texto con las instrucciones secuenciales para construir una imagen."
+	},
+	{
+		"id": "compose_c",
+		"termino": "Docker Compose",
+		"leccion": "L164",
+		"definicion": "Herramienta para definir y ejecutar aplicaciones multicontenedor con docker-compose.yml."
+	},
+	{
+		"id": "k8s_pod",
+		"termino": "Pod de Kubernetes",
+		"leccion": "L167",
+		"definicion": "Unidad atómica de cómputo en Kubernetes que encapsula uno o más contenedores."
+	},
+	{
+		"id": "cicd_pipe",
+		"termino": "Pipeline CI/CD",
+		"leccion": "L170",
+		"definicion": "Flujo de trabajo automatizado para integrar, probar y desplegar software continuamente."
+	},
+	{
+		"id": "contenedor",
+		"termino": "Contenedor",
+		"leccion": "L158",
+		"definicion": "Unidad aislada y ligera de empaquetado de software."
+	},
+	{
+		"id": "docker",
+		"termino": "Docker",
+		"leccion": "L160",
+		"definicion": "Plataforma de virtualización basada en contenedores Linux."
+	},
+	{
+		"id": "dockerfile",
+		"termino": "Dockerfile",
+		"leccion": "L161",
+		"definicion": "Archivo de instrucciones para construir imágenes de contenedor."
+	},
+	{
+		"id": "docker_compose",
+		"termino": "Docker Compose",
+		"leccion": "L164",
+		"definicion": "Herramienta para orquestar servicios multicontenedor localmente."
+	},
+	{
+		"id": "pod",
+		"termino": "Pod",
+		"leccion": "L167",
+		"definicion": "Unidad atómica mínima de despliegue en Kubernetes."
+	},
+	{
+		"id": "kubernetes",
+		"termino": "Kubernetes",
+		"leccion": "L167",
+		"definicion": "Orquestador de contenedores para alta disponibilidad y auto-scaling."
+	},
+	{
+		"id": "cicd",
+		"termino": "CI/CD",
+		"leccion": "L170",
+		"definicion": "Integración y Entrega Continua automatizada."
+	},
+	{
+		"id": "pipeline",
+		"termino": "Pipeline",
+		"leccion": "L171",
+		"definicion": "Cadena de etapas de ejecución automatizada de software."
+	},
+	{
+		"id": "deployment",
+		"termino": "Deployment",
+		"leccion": "L173",
+		"definicion": "Objeto de Kubernetes que gestiona réplicas y ciclo de vida de Pods."
+	},
+	{
+		"id": "ingress",
+		"termino": "Ingress",
+		"leccion": "L175",
+		"definicion": "Enrutador HTTP/HTTPS de entrada a servicios en Kubernetes."
+	},
+	{
+		"id": "swarm",
+		"termino": "Docker Swarm",
+		"leccion": "L176",
+		"definicion": "Motor nativo de clustering y orquestación de Docker."
+	}
+]

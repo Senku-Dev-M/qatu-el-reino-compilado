@@ -1,0 +1,24 @@
+[
+	{
+		"id": "z2",
+		"zona": 2,
+		"semana": 2,
+		"nombre": "Torres de Arquitectura",
+		"tema": "Arquitectura frontend, MPA vs SPA, SSR vs CSR, patrones MV* (MVC, MVP, MVVM) y Clean Architecture",
+		"salas": [
+			"z2_torre_base",
+			"z2_sala_flujo",
+			"z2_galeria_spa",
+			"z2_santuario_binding",
+			"z2_terraza_mv",
+			"z2_aguja_clean",
+			"z2_mirador_frameworks"
+		],
+		"habilidad": "data_binding",
+		"jefe": "espagueti",
+		"fragmentos": [
+			"z2_galeria_spa:fragmento",
+			"z2_aguja_clean:fragmento"
+		]
+	}
+]

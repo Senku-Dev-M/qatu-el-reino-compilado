@@ -1,0 +1,267 @@
+[
+	{
+		"id": "L104",
+		"zona": 7,
+		"sala": "z7_capilla",
+		"orden": 104,
+		"nivel": "intermedio",
+		"titulo": "OpenID Connect",
+		"resumen": "OIDC es una capa de autenticación sobre OAuth 2.0. La aplicación (Relying Party) pide el scope openid al proveedor de identidad y recibe, además del access token, un ID Token que dice quién es el usuario.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Lo que OAuth no contaba",
+				"texto": "OAuth 2.0 responde «esta aplicación puede hacer esto», pero **no** dice quién es el usuario ni cuándo se autenticó. Muchas aplicaciones lo intentaron deducir del access token, con resultados inseguros.\n\n[[OpenID Connect|oidc]] (OIDC) estandariza esa parte: es una capa de **autenticación** construida sobre OAuth 2.0. Sus actores:\n\n• [[Relying Party|relying_party]] (RP): la aplicación que quiere saber quién entra.\n• [[Proveedor de identidad|openid_provider]] (OP o IdP): quien autentica a la persona y emite los tokens."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "El flujo, paso a paso",
+				"texto": "Es el flujo de código de autorización con PKCE, más el scope `openid`:\n\n1. La RP envía al usuario a `/authorize` con `scope=openid profile email`, `state` y `code_challenge`.\n2. El OP autentica al usuario (contraseña, MFA, SSO…) y pide consentimiento.\n3. Vuelve con un `code`; la RP lo canjea en `/token`.\n4. El OP devuelve **access token**, **ID Token** y, opcionalmente, refresh token.\n5. La RP **valida** el ID Token y ya sabe quién es el usuario. Si necesita más datos, llama al endpoint `/userinfo`.\n\nLa configuración del proveedor se publica en `/.well-known/openid-configuration`.",
+				"lenguaje": "texto",
+				"codigo": "GET /authorize?response_type=code&scope=openid%20profile%20email\n  &client_id=tienda-web&redirect_uri=https://qatu.com/callback\n  &state=a91f2c&nonce=7d4e08&code_challenge=E9Melhoa…&code_challenge_method=S256"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El intercambio",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Usuario",
+									"Relying Party",
+									"Proveedor de identidad"
+								],
+								"ancho": 620,
+								"pasos": [
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "/authorize scope=openid"
+									},
+									{
+										"de": 2,
+										"a": 0,
+										"texto": "autenticación"
+									},
+									{
+										"de": 0,
+										"a": 2,
+										"texto": "credenciales + consentimiento"
+									},
+									{
+										"de": 2,
+										"a": 1,
+										"texto": "code"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "/token (code + verifier)"
+									},
+									{
+										"de": 2,
+										"a": 1,
+										"texto": "ID Token + access token"
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Qué añade OIDC",
+				"pregunta": {
+					"enunciado": "¿Qué aporta OIDC frente a OAuth 2.0 a secas?",
+					"opciones": [
+						"Cifra el tráfico entre cliente y servidor",
+						"Estandariza la autenticación: quién es el usuario, con el ID Token",
+						"Sustituye al access token",
+						"Elimina la necesidad de PKCE"
+					],
+					"correcta": 1,
+					"explicacion": "OIDC es la capa de identidad: añade el scope `openid`, el ID Token y el endpoint /userinfo."
+				}
+			}
+		]
+	},
+	{
+		"id": "L105",
+		"zona": 7,
+		"sala": "z7_capilla",
+		"orden": 105,
+		"nivel": "intermedio",
+		"titulo": "El ID Token y el formato JWT",
+		"resumen": "El ID Token es un JWT firmado con tres partes: header, payload y firma. Sus claims (iss, sub, aud, exp, iat, nonce) deben validarse siempre. El payload va codificado en base64url, no cifrado.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Qué es un JWT",
+				"texto": "Un [[JWT|jwt]] (JSON Web Token) son tres partes separadas por puntos:\n\n`header.payload.firma`\n\n• **Header**: algoritmo (`RS256`, `ES256`…) y, a menudo, el identificador de la clave (`kid`).\n• **Payload**: los [[claims|claims]], es decir, los datos.\n• **Firma**: calculada por el emisor sobre las dos primeras partes.\n\nHeader y payload están en **base64url**: se leen sin ninguna clave. **No** metas ahí datos sensibles; lo que la firma garantiza es que **nadie los ha modificado**, no que sean secretos."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Un ID Token por dentro",
+				"lenguaje": "js",
+				"codigo": "{\n  \"iss\": \"https://idp.qatu.com\",   // quién lo emitió\n  \"sub\": \"7f3c1a\",                  // identificador del usuario\n  \"aud\": \"tienda-web\",             // para qué cliente es\n  \"exp\": 1789459200,                // cuándo caduca\n  \"iat\": 1789455600,                // cuándo se emitió\n  \"nonce\": \"7d4e08\",               // liga el token a la petición\n  \"name\": \"Ana Quispe\",\n  \"email\": \"ana@qatu.com\"\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Claim",
+									"Significado",
+									"Qué valida la RP"
+								],
+								"filas": [
+									[
+										"iss",
+										"emisor",
+										"que sea su proveedor"
+									],
+									[
+										"sub",
+										"usuario",
+										"identificador estable"
+									],
+									[
+										"aud",
+										"destinatario",
+										"que sea su client_id"
+									],
+									[
+										"exp",
+										"expiración",
+										"que no haya caducado"
+									],
+									[
+										"nonce",
+										"valor de la petición",
+										"que coincida con el enviado"
+									]
+								],
+								"resaltar": 2
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Validar antes de creer",
+				"texto": "Antes de fiarse de un ID Token, la aplicación debe:\n\n1. Comprobar la **firma** con la clave pública del proveedor (publicada en su JWKS).\n2. Comprobar que `iss` es el proveedor esperado y `aud` es su propio `client_id`.\n3. Comprobar que `exp` no ha pasado (y `iat` es razonable).\n4. Comprobar que `nonce` coincide con el enviado en la petición.\n\nNunca se decide nada leyendo el payload «a ojo» sin validar la firma: cualquiera puede fabricar un JWT con el texto que quiera."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Es secreto?",
+				"pregunta": {
+					"enunciado": "¿Qué protege la firma de un JWT?",
+					"opciones": [
+						"Que nadie pueda leer el contenido",
+						"Que el contenido no haya sido modificado y venga del emisor esperado",
+						"Que el token no caduque",
+						"Que el token solo funcione con HTTPS"
+					],
+					"correcta": 1,
+					"explicacion": "El payload es legible (base64url); la firma garantiza integridad y procedencia, no confidencialidad."
+				}
+			}
+		]
+	},
+	{
+		"id": "L106",
+		"zona": 7,
+		"sala": "z7_capilla",
+		"orden": 106,
+		"nivel": "intermedio",
+		"titulo": "Access token frente a ID token",
+		"resumen": "El ID token es para el cliente: dice quién es el usuario y se valida al recibirlo. El access token es para la API: autoriza llamadas y el cliente no debe interpretarlo. Confundirlos es un fallo de seguridad común.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Cada uno tiene su destinatario",
+				"texto": "• **ID Token**: su [[audiencia|audiencia]] (`aud`) es el **cliente**. Responde «quién entró y cuándo». Se valida una vez, al recibirlo, y **no** se envía a las APIs.\n• **Access token**: su audiencia es la **API**. Responde «qué puede hacer el portador». Para el cliente es opaco: aunque parezca un JWT, no debe interpretarlo, porque su formato puede cambiar.\n\nRegla práctica: el ID token se lee en el cliente y se queda ahí; el access token se envía y no se lee."
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Confusiones típicas",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "fetch('/api/pedidos', {\n  headers: { Authorization: `Bearer ${idToken}` }\n});",
+						"bien": "fetch('/api/pedidos', {\n  headers: { Authorization: `Bearer ${accessToken}` }\n});",
+						"explicacion": "El ID token no autoriza nada en la API: su audiencia es el cliente. Una API correcta lo rechazará al validar `aud`."
+					},
+					{
+						"mal": "const usuario = JSON.parse(atob(accessToken.split('.')[1]));\nif (usuario.rol === 'admin') mostrarPanel();",
+						"bien": "// El servidor valida el token y decide; el cliente solo oculta o muestra\nconst usuario = idTokenValidado;",
+						"explicacion": "Decodificar el access token en el cliente es frágil (puede ser opaco) y nunca es una decisión de seguridad: eso se comprueba en el servidor."
+					}
+				]
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "En una pantalla real",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"",
+									"ID Token",
+									"Access token"
+								],
+								"filas": [
+									[
+										"Para quién",
+										"el cliente",
+										"la API"
+									],
+									[
+										"Responde",
+										"quién es el usuario",
+										"qué puede hacer"
+									],
+									[
+										"Lo valida",
+										"el cliente",
+										"la API"
+									],
+									[
+										"Se envía a la API",
+										"no",
+										"sí"
+									]
+								],
+								"resaltar": 2
+							}
+						},
+						{
+							"nota": "La API valida firma, iss, aud, exp y scope en cada petición."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige el token",
+				"pregunta": {
+					"enunciado": "Quieres mostrar «Hola, Ana» en la cabecera de la SPA. ¿De dónde sale el nombre?",
+					"opciones": [
+						"Del access token, decodificándolo",
+						"Del ID token validado (o del endpoint /userinfo)",
+						"De la cookie de sesión de la API",
+						"Del refresh token"
+					],
+					"correcta": 1,
+					"explicacion": "La identidad del usuario está en el ID token; el access token es para llamar a la API."
+				}
+			}
+		]
+	}
+]

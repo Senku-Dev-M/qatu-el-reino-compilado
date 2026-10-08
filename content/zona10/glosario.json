@@ -1,0 +1,26 @@
+[
+	{
+		"id": "dod_done",
+		"termino": "Definition of Done (DoD)",
+		"leccion": "L203",
+		"definicion": "Conjunto de criterios estrictos que una historia debe cumplir para considerarse terminada."
+	},
+	{
+		"id": "deuda_tec",
+		"termino": "Deuda Técnica",
+		"leccion": "L204",
+		"definicion": "Coste implícito de retrabajo acumulado por soluciones rápidas y subóptimas."
+	},
+	{
+		"id": "evaluacion_360",
+		"termino": "Evaluación 360°",
+		"leccion": "L201",
+		"definicion": "Evaluación del desempeño que combina la visión de la propia persona, de sus pares y de quien lidera el equipo."
+	},
+	{
+		"id": "retrospectiva",
+		"termino": "Retrospectiva",
+		"leccion": "L202",
+		"definicion": "Reunión al final de un ciclo de trabajo en la que el equipo analiza qué funcionó, qué no y acuerda acciones concretas de mejora."
+	}
+]

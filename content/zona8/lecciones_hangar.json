@@ -1,0 +1,244 @@
+[
+	{
+		"id": "L173",
+		"zona": 8,
+		"sala": "z8_hangar_k8s",
+		"orden": 173,
+		"nivel": "intermedio",
+		"titulo": "Deployments y ReplicaSets en Kubernetes",
+		"resumen": "Cómo K8s mantiene el número deseado de réplicas y ejecuta actualizaciones declarativas.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Gestión declarativa con Deployments",
+				"texto": "En Kubernetes, un [[deployment]] define el estado deseado de la aplicación:\n\n• **Réplicas:** cuántas copias idénticas del Pod deben estar corriendo en todo momento (ej. `replicas: 3`).\n• **ReplicaSet:** controlador subyacente que garantiza que siempre existan N pods vivos (si un nodo muere, crea otro en un nodo sano).\n• **Estrategia RollingUpdate:** parámetros `maxSurge` (cuántos pods extra se crean temporalmente) y `maxUnavailable` (cuántos pueden estar inactivos durante la actualización)."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Manifiesto de Deployment",
+				"texto": "El Deployment crea un ReplicaSet, que mantiene 3 Pods con la plantilla indicada. La contraseña de la base de datos se lee de un **Secret**, no se escribe en el manifiesto:",
+				"lenguaje": "texto",
+				"codigo": "apiVersion: apps/v1\nkind: Deployment\nmetadata: { name: qatu-api }\nspec:\n  replicas: 3\n  selector:\n    matchLabels: { app: qatu-api }\n  template:\n    metadata:\n      labels: { app: qatu-api }\n    spec:\n      containers:\n        - name: api\n          image: registry.gitlab.com/qatu/api:8f3c2a1\n          env:\n            - name: DB_PASSWORD\n              valueFrom:\n                secretKeyRef: { name: qatu-db, key: password }"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Escalado horizontal",
+				"texto": "Si se borra un Pod, el ReplicaSet crea otro al instante para volver a 3. Escalar o volver atrás es un comando:",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ kubectl delete pod qatu-api-6c8b-x2kqp",
+								"$ kubectl get pods -l app=qatu-api",
+								"qatu-api-6c8b-7hf2m  1/1  Running  0  2d",
+								"qatu-api-6c8b-p9d4s  1/1  Running  0  2d",
+								"qatu-api-6c8b-r1k8z  1/1  Running  0  4s   <- recreado",
+								"$ kubectl scale deploy/qatu-api --replicas=10",
+								"$ kubectl rollout undo deploy/qatu-api"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores con Deployments",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "selector:\n  matchLabels: { app: api }\ntemplate:\n  metadata:\n    labels: { app: qatu-api }",
+						"bien": "selector:\n  matchLabels: { app: qatu-api }\ntemplate:\n  metadata:\n    labels: { app: qatu-api }",
+						"explicacion": "El selector debe coincidir con las etiquetas de la plantilla; si no, Kubernetes rechaza el Deployment."
+					},
+					{
+						"mal": "env:\n  - name: DB_PASSWORD\n    value: alpaca123",
+						"bien": "env:\n  - name: DB_PASSWORD\n    valueFrom:\n      secretKeyRef: { name: qatu-db, key: password }",
+						"explicacion": "El manifiesto se versiona en Git. Los datos sensibles se guardan en un Secret con acceso restringido."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Función del Deployment",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Borras a mano uno de los 3 Pods de un Deployment. ¿Qué ocurre?",
+					"opciones": [
+						"El Deployment queda con 2 réplicas",
+						"El ReplicaSet crea un Pod nuevo para volver a 3",
+						"Se borran los otros dos",
+						"Kubernetes detiene el Deployment"
+					],
+					"correcta": 1,
+					"explicacion": "El ReplicaSet compara el estado real con el deseado y lo corrige."
+				}
+			}
+		]
+	},
+	{
+		"id": "L174",
+		"zona": 8,
+		"sala": "z8_hangar_k8s",
+		"orden": 174,
+		"nivel": "intermedio",
+		"titulo": "Servicios en K8s: ClusterIP, NodePort y LoadBalancer",
+		"resumen": "Abstracción de red estable que provee una IP fija y balanceo de carga para pods con IPs efímeras.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "¿Por qué se necesitan Servicios?",
+				"texto": "Los Pods son efímeros: al recrearse o escalar cambian de IP. Un **Service** ofrece un nombre y una IP estables y reparte el tráfico entre los Pods que coinciden con su **selector** de etiquetas.\n\n**Tipos de Service:**\n• **ClusterIP (por defecto):** solo accesible dentro del clúster (por ejemplo, de la API a la base de datos).\n• **NodePort:** expone el servicio en un puerto fijo (30000–32767) de cada nodo.\n• **LoadBalancer:** pide al proveedor de nube un balanceador externo con IP pública (en AWS, por ejemplo, un Network Load Balancer)."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Manifiesto de Service ClusterIP",
+				"texto": "El Service no apunta a Pods concretos sino a **etiquetas**: todo Pod con `app: qatu-api` recibe tráfico, aunque se haya creado hace un segundo.",
+				"lenguaje": "texto",
+				"codigo": "apiVersion: v1\nkind: Service\nmetadata: { name: qatu-api }\nspec:\n  type: ClusterIP\n  selector: { app: qatu-api }\n  ports:\n    - port: 80          # puerto del Service\n      targetPort: 3000  # puerto del contenedor"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Balanceo automático",
+				"texto": "Dentro del clúster, `http://qatu-api` resuelve a la IP del Service, que reparte entre los endpoints (las IP de los Pods):",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ kubectl get svc qatu-api",
+								"NAME      TYPE       CLUSTER-IP     PORT(S)",
+								"qatu-api  ClusterIP  10.96.120.14   80/TCP",
+								"$ kubectl get endpoints qatu-api",
+								"NAME      ENDPOINTS",
+								"qatu-api  10.1.3.17:3000,10.1.4.22:3000,10.1.5.9:3000"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Services que no llegan a los Pods",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "selector: { app: qatuapi }\n# los Pods tienen app: qatu-api",
+						"bien": "selector: { app: qatu-api }",
+						"explicacion": "Con un selector que no coincide, el Service existe pero no tiene endpoints: todas las peticiones fallan."
+					},
+					{
+						"mal": "ports:\n  - port: 80\n    targetPort: 80   # la app escucha en 3000",
+						"bien": "ports:\n  - port: 80\n    targetPort: 3000",
+						"explicacion": "`targetPort` es el puerto en el que escucha el **contenedor**; `port` es el que usan los clientes del Service."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Tipo de Service interno",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Un Service existe pero todas las peticiones fallan y kubectl get endpoints no muestra ninguna IP. ¿Causa más probable?",
+					"opciones": [
+						"El Service es ClusterIP",
+						"El selector no coincide con las etiquetas de los Pods",
+						"Hay demasiadas réplicas",
+						"Falta un Ingress"
+					],
+					"correcta": 1,
+					"explicacion": "Sin Pods que coincidan con el selector, el Service no tiene a quién enviar el tráfico."
+				}
+			}
+		]
+	},
+	{
+		"id": "L175",
+		"zona": 8,
+		"sala": "z8_hangar_k8s",
+		"orden": 175,
+		"nivel": "intermedio",
+		"titulo": "Enrutamiento HTTP externo con Ingress",
+		"resumen": "Gestión de rutas basadas en host y path, terminación SSL/TLS y balanceo HTTP a nivel de aplicación (Capa 7).",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "¿Qué es Ingress?",
+				"texto": "Tener un LoadBalancer por cada microservicio es costoso. Un [[ingress]] unifica la entrada HTTP/HTTPS de todo el clúster a través de un único balanceador de Capa 7 (Nginx Ingress, Traefik, Istio):\n\n• Enrutamiento por dominio (Host-based): `api.qatu.com` -> servicio API; `qatu.com` -> servicio Frontend.\n• Enrutamiento por ruta (Path-based): `/api/v1/auth` -> servicio Auth; `/api/v1/catalogo` -> servicio Catálogo.\n• Terminación TLS centralizada: gestión y renovación de certificados HTTPS."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Reglas de Ingress para Qatu",
+				"texto": "Un único Ingress enruta por dominio y por ruta hacia distintos Services y termina TLS con el certificado guardado en un Secret:",
+				"lenguaje": "texto",
+				"codigo": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata: { name: qatu }\nspec:\n  ingressClassName: nginx\n  tls:\n    - hosts: [qatu.com, api.qatu.com]\n      secretName: qatu-tls\n  rules:\n    - host: qatu.com\n      http:\n        paths:\n          - path: /\n            pathType: Prefix\n            backend: { service: { name: qatu-web, port: { number: 80 } } }\n    - host: api.qatu.com\n      http:\n        paths:\n          - path: /\n            pathType: Prefix\n            backend: { service: { name: qatu-api, port: { number: 80 } } }"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Punto de entrada unificado",
+				"texto": "El clúster expone una única IP pública con enrutamiento inteligente y certificado SSL válido.",
+				"vista": {
+					"bloques": [
+						{
+							"arbol": {
+								"nombre": "Ingress (IP pública)",
+								"hijos": [
+									{
+										"nombre": "qatu.com",
+										"hijos": [
+											{
+												"nombre": "svc qatu-web"
+											}
+										]
+									},
+									{
+										"nombre": "api.qatu.com",
+										"hijos": [
+											{
+												"nombre": "svc qatu-api"
+											}
+										]
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores de Ingress",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "kind: Ingress\n# pero el clúster no tiene ningún\n# Ingress Controller instalado",
+						"bien": "Instalar un controlador (ingress-nginx, Traefik)\ny referenciarlo con ingressClassName",
+						"explicacion": "El recurso Ingress solo son reglas. Sin un controlador que las lea, nadie atiende el tráfico."
+					},
+					{
+						"mal": "Un Service LoadBalancer por cada\nmicroservicio web (web, api, auth...).",
+						"bien": "Services ClusterIP detrás de un\núnico Ingress con reglas por host y ruta.",
+						"explicacion": "Cada LoadBalancer es un balanceador de pago con su IP pública. El Ingress los consolida en uno."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Ventaja de Ingress",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Aplicaste un Ingress correcto, pero nadie atiende el tráfico. ¿Qué falta en el clúster?",
+					"opciones": [
+						"Un Service LoadBalancer por cada Pod",
+						"Un Ingress Controller, como ingress-nginx",
+						"Un volumen persistente",
+						"Una liveness probe"
+					],
+					"correcta": 1,
+					"explicacion": "El recurso Ingress solo describe reglas; un controlador instalado es quien las aplica."
+				}
+			}
+		]
+	}
+]

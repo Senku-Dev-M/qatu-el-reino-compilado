@@ -1,0 +1,153 @@
+[
+	{
+		"id": "L38", "zona": 4, "sala": "z4_terrazas", "orden": 38, "nivel": "inicial",
+		"titulo": "Qué es CSS Grid",
+		"resumen": "Grid es un sistema de layout en dos dimensiones: defines filas y columnas en el contenedor y los elementos se colocan en sus celdas.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Filas y columnas a la vez",
+				"texto": "[[CSS Grid|grid]] organiza elementos en **dos dimensiones**: filas y columnas al mismo tiempo. Mientras Flexbox piensa en una línea, Grid piensa en una **cuadrícula**.\n\nVocabulario:\n\n• **Contenedor grid**: el elemento con `display: grid`.\n• [[Pista|pista]]: cada fila o columna.\n• **Línea**: los bordes que separan pistas, numerados desde 1.\n• **Celda**: la intersección de una fila y una columna.\n• **Elemento grid**: cada hijo directo del contenedor."
+			},
+			{
+				"tipo": "resultado", "titulo": "Definir una rejilla",
+				"texto": "[[grid-template-columns|grid_template_columns]] define cuántas columnas hay y cuánto mide cada una. Los elementos se colocan automáticamente en orden, llenando fila por fila.",
+				"lenguaje": "css",
+				"codigo": ".galeria {\n  display: grid;\n  grid-template-columns: 200px 200px 200px;\n}",
+				"vista": {"sin_navegador": true, "bloques": [{"grid": {"ancho": 480, "columnas": "160px 160px 160px", "gap": 0, "items": ["1", "2", "3", "4", "5"]}}, {"nota": "Tres columnas fijas (escaladas en la vista): el elemento 4 empieza una fila nueva."}]}
+			},
+			{
+				"tipo": "errores", "titulo": "Confusiones",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": ".galeria img {\n  grid-template-columns: 1fr 1fr;\n}",
+						"bien": ".galeria {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n}",
+						"explicacion": "Las columnas se definen en el **contenedor**, no en los elementos."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba", "titulo": "Una o dos dimensiones",
+				"pregunta": {
+					"enunciado": "Necesitas un catálogo con filas y columnas alineadas entre sí. ¿Qué sistema está pensado para eso?",
+					"opciones": ["float", "Flexbox", "CSS Grid", "display: inline"],
+					"correcta": 2,
+					"explicacion": "Grid controla filas y columnas a la vez, así que las celdas quedan alineadas en ambas direcciones."
+				}
+			}
+		]
+	},
+	{
+		"id": "L39", "zona": 4, "sala": "z4_terrazas", "orden": 39, "nivel": "inicial",
+		"titulo": "La unidad fr, repeat() y gap",
+		"resumen": "fr reparte el espacio disponible en fracciones; repeat() evita repetir pistas iguales; gap separa filas y columnas.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Fracciones del espacio libre",
+				"texto": "La [[unidad fr|unidad_fr]] representa una **fracción del espacio disponible** en el contenedor grid.\n\n`grid-template-columns: 1fr 2fr` crea dos columnas: el espacio se divide en 3 partes; la primera recibe 1 y la segunda 2.\n\nSe puede mezclar con medidas fijas: en `200px 1fr` la primera columna mide 200 px y la segunda ocupa **todo lo que sobra**. Primero se restan las medidas fijas y los `gap`; lo que queda se reparte entre las `fr`."
+			},
+			{
+				"tipo": "resultado", "titulo": "repeat() y gap",
+				"texto": "[[repeat()|repeat]] repite una pista: `repeat(3, 1fr)` equivale a `1fr 1fr 1fr`. `gap` separa las celdas sin añadir espacio en los bordes.",
+				"lenguaje": "css",
+				"codigo": ".productos {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 16px;\n}",
+				"vista": {"sin_navegador": true, "bloques": [{"grid": {"ancho": 480, "columnas": "repeat(3, 1fr)", "gap": 16, "items": ["Manta", "Poncho", "Gorro", "Bolso", "Vasija", "Plato"]}}]}
+			},
+			{
+				"tipo": "resultado", "titulo": "Fijo más flexible",
+				"lenguaje": "css",
+				"codigo": ".tienda {\n  display: grid;\n  grid-template-columns: 150px 1fr;\n  gap: 10px;\n}",
+				"vista": {"sin_navegador": true, "bloques": [{"grid": {"ancho": 480, "columnas": "150px 1fr", "gap": 10, "items": ["Filtros", "Resultados", "Categorías", "Ofertas"]}}]}
+			},
+			{
+				"tipo": "comprueba", "titulo": "Calcula las columnas",
+				"pregunta": {
+					"enunciado": "Contenedor de 620 px con grid-template-columns: 1fr 2fr y gap: 20px. ¿Cuánto mide la segunda columna?",
+					"opciones": ["300 px", "400 px", "413 px", "600 px"],
+					"correcta": 1,
+					"explicacion": "Se resta el gap: 620 − 20 = 600 px libres. Se divide en 3 partes de 200 px: la primera columna mide 200 y la segunda 2 × 200 = **400 px**."
+				}
+			}
+		]
+	},
+	{
+		"id": "L40", "zona": 4, "sala": "z4_terrazas", "orden": 40, "nivel": "intermedio",
+		"titulo": "Grid explícito, implícito y colocación",
+		"resumen": "El grid explícito son las pistas que defines; el implícito, las filas que el navegador crea automáticamente. grid-column permite que un elemento ocupe varias columnas.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Explícito e implícito",
+				"texto": "• **Grid explícito**: las pistas que declaras con `grid-template-columns` y `grid-template-rows`.\n• [[Grid implícito|grid_implicito]]: si hay más elementos que celdas declaradas, el navegador **crea filas nuevas** automáticamente. Su tamaño se controla con `grid-auto-rows`.\n\nPor eso es habitual declarar solo las columnas y dejar que las filas se generen según haya contenido."
+			},
+			{
+				"tipo": "resultado", "titulo": "Ocupar varias columnas",
+				"texto": "[[grid-column|grid_column]] coloca un elemento entre líneas. `grid-column: 1 / 3` va de la línea 1 a la 3 (ocupa **dos** columnas). También puedes escribir `grid-column: span 2`.",
+				"lenguaje": "css",
+				"codigo": ".catalogo {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  grid-auto-rows: 80px;\n  gap: 10px;\n}\n\n.destacado {\n  grid-column: span 2;\n}",
+				"vista": {"sin_navegador": true, "bloques": [{"grid": {"ancho": 480, "columnas": "repeat(3, 1fr)", "gap": 10, "items": [{"texto": "Destacado (span 2)", "span": 2}, {"texto": "B"}, {"texto": "C"}, {"texto": "D"}, {"texto": "E"}]}}]}
+			},
+			{
+				"tipo": "errores", "titulo": "Contar líneas, no columnas",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": ".destacado {\n  grid-column: 1 / 2;   /* quería 2 columnas */\n}",
+						"bien": ".destacado {\n  grid-column: 1 / 3;\n}",
+						"explicacion": "Los números son **líneas**. De la línea 1 a la 2 hay una sola columna; para dos columnas hay que llegar a la línea 3."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba", "titulo": "¿Cuántas columnas ocupa?",
+				"pregunta": {
+					"enunciado": "Un elemento tiene grid-column: 2 / 5. ¿Cuántas columnas ocupa?",
+					"opciones": ["2", "3", "4", "5"],
+					"correcta": 1,
+					"explicacion": "De la línea 2 a la 5 hay tres columnas (entre 2–3, 3–4 y 4–5)."
+				}
+			}
+		]
+	},
+	{
+		"id": "L41", "zona": 4, "sala": "z4_terrazas", "orden": 41, "nivel": "intermedio",
+		"titulo": "grid-template-areas: layouts con nombre",
+		"resumen": "grid-template-areas dibuja el layout con nombres de área; cada elemento se asigna a su área con grid-area. Las áreas deben ser rectangulares.",
+		"paginas": [
+			{
+				"tipo": "sintaxis", "titulo": "Dibujar el layout con texto",
+				"texto": "[[grid-template-areas|grid_template_areas]] permite escribir el layout como un «mapa»: cada cadena es una fila y cada palabra una celda. Repetir un nombre hace que el área ocupe varias celdas. El punto `.` deja una celda vacía.\n\nDespués, cada elemento indica su área con `grid-area`.",
+				"lenguaje": "css",
+				"codigo": ".pagina {\n  display: grid;\n  grid-template-columns: 180px 1fr;\n  grid-template-areas:\n    \"cabecera cabecera\"\n    \"menu     contenido\"\n    \"pie      pie\";\n}\n\nheader { grid-area: cabecera; }\nnav    { grid-area: menu; }\nmain   { grid-area: contenido; }\nfooter { grid-area: pie; }"
+			},
+			{
+				"tipo": "resultado", "titulo": "El resultado",
+				"vista": {"sin_navegador": true, "bloques": [{"grid": {"ancho": 480, "columnas": "150px 1fr", "gap": 8, "fila_alto": 52, "areas": [["cabecera", "cabecera"], ["menu", "contenido"], ["pie", "pie"]]}}]}
+			},
+			{
+				"tipo": "errores", "titulo": "Áreas inválidas",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": "grid-template-areas:\n  \"menu contenido\"\n  \"contenido menu\";",
+						"bien": "grid-template-areas:\n  \"menu contenido\"\n  \"menu contenido\";",
+						"explicacion": "Cada área debe formar un **rectángulo**. Si un nombre aparece en celdas separadas o en forma de L, la declaración es inválida y el navegador la ignora."
+					},
+					{
+						"mal": "grid-template-areas:\n  \"cabecera cabecera\"\n  \"menu\";",
+						"bien": "grid-template-areas:\n  \"cabecera cabecera\"\n  \"menu .\";",
+						"explicacion": "Todas las filas deben tener el mismo número de celdas. Usa `.` para las vacías."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba", "titulo": "Celda vacía",
+				"pregunta": {
+					"enunciado": "¿Qué se escribe en grid-template-areas para dejar una celda sin área?",
+					"opciones": ["none", "vacio", "Un punto (.)", "Un guion (-)"],
+					"correcta": 2,
+					"explicacion": "El punto `.` indica una celda sin nombre de área."
+				}
+			}
+		]
+	}
+]

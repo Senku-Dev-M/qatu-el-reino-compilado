@@ -1,0 +1,303 @@
+[
+	{
+		"id": "L116",
+		"zona": 1,
+		"sala": "z1_atrio",
+		"orden": 116,
+		"nivel": "inicial",
+		"titulo": "El rol del Tech Lead",
+		"resumen": "El líder técnico guía la arquitectura, la calidad del código, la toma de decisiones técnicas y la mentoría del equipo.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Liderazgo técnico",
+				"texto": "En el desarrollo de software moderno, el [[tech_lead]] combina excelencia en programación con visión estratégica. Sus responsabilidades abarcan:\n\n• **Supervisión arquitectónica:** definir patrones, modularidad y estándares de código.\n• **Gestión de deuda técnica:** balancear entregas rápidas con sostenibilidad a largo plazo.\n• **Mentoría y code reviews:** elevar el nivel técnico del equipo mediante retroalimentación continua.\n• **Puente con negocio:** traducir requerimientos funcionales en especificaciones técnicas claras."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Una decisión registrada (ADR)",
+				"lenguaje": "texto",
+				"texto": "El Tech Lead no solo decide: **deja por escrito** por qué. Un Architecture Decision Record (ADR) es un documento corto con el contexto, la decisión y sus consecuencias, para que el equipo no repita la misma discusión dentro de seis meses.",
+				"codigo": "# ADR-003: Base de datos del catálogo\n\nEstado: aceptada\nContexto: los productos tienen atributos distintos\n  (talla, material, voltaje) y el catálogo crece rápido.\nDecisión: catálogo en MongoDB; pedidos y pagos en PostgreSQL.\nConsecuencias:\n  + esquema flexible para productos\n  + transacciones ACID donde hay dinero\n  - dos motores que operar y respaldar"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Comparar antes de decidir",
+				"texto": "Toda decisión técnica implica **compensaciones** (trade-offs). Antes de elegir, las opciones se ponen en una tabla con los criterios que importan: coste, rendimiento, mantenibilidad y tiempo de entrega.",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Criterio",
+									"Solo PostgreSQL",
+									"PostgreSQL + MongoDB"
+								],
+								"filas": [
+									[
+										"Atributos variables",
+										"columna JSONB",
+										"nativo"
+									],
+									[
+										"Transacciones de pago",
+										"ACID",
+										"ACID (en PostgreSQL)"
+									],
+									[
+										"Operación",
+										"un motor",
+										"dos motores"
+									],
+									[
+										"Curva del equipo",
+										"baja",
+										"media"
+									]
+								],
+								"resaltar": 2
+							}
+						},
+						{
+							"nota": "Ninguna opción es gratis: la tabla hace visible qué se gana y qué se paga."
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Revisiones de código que ayudan",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Comentario en el pull request:\n\"Esto está mal.\"",
+						"bien": "Comentario en el pull request:\n\"calcularTotal() suma el envío dos veces si\nel carrito tiene cupón (línea 42). Propongo\nsacar el envío del bucle. Te dejo un test.\"",
+						"explicacion": "Una revisión útil señala **dónde**, **por qué** y **cómo** corregir. Gran parte de la mentoría de un Tech Lead ocurre en estos comentarios."
+					},
+					{
+						"mal": "El Tech Lead programa solo las partes difíciles\ny aprueba sus propios pull requests.",
+						"bien": "El Tech Lead reparte las partes difíciles en pareja\ny todo pull request lo revisa otra persona.",
+						"explicacion": "Concentrar el conocimiento en una persona crea un cuello de botella. Delegar y revisar en pareja reparte el conocimiento del sistema."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Responsabilidad principal",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "El equipo discute por tercera vez si usar MongoDB para el catálogo. ¿Qué haría un Tech Lead para cerrar el tema?",
+					"opciones": [
+						"Decidir en silencio y cambiar el código sin avisar",
+						"Registrar la decisión en un ADR con contexto, opciones y consecuencias",
+						"Dejar que cada desarrollador use la base de datos que prefiera",
+						"Posponer la decisión hasta el final del proyecto"
+					],
+					"correcta": 1,
+					"explicacion": "Un ADR deja por escrito por qué se eligió una opción y qué se sacrificó, así la discusión no se repite."
+				}
+			}
+		]
+	},
+	{
+		"id": "L117",
+		"zona": 1,
+		"sala": "z1_atrio",
+		"orden": 117,
+		"nivel": "inicial",
+		"titulo": "Ciclo de vida del software (SDLC)",
+		"resumen": "El SDLC estructura el desarrollo desde la concepción hasta el despliegue y mantenimiento continuo.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Etapas del SDLC",
+				"texto": "El [[sdlc]] define las fases por las que atraviesa un producto de software:\n\n**1. Requerimientos y Análisis:** entender el problema del negocio.\n**2. Diseño y Arquitectura:** modelar bases de datos, APIs y componentes.\n**3. Implementación:** codificación bajo estándares y buenas prácticas.\n**4. Pruebas y Verificación:** pruebas unitarias, de integración y seguridad.\n**5. Despliegue:** puesta en producción mediante pipelines automatizados.\n**6. Mantenimiento y Monitoreo:** observabilidad y resolución de incidencias."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "PoC frente a MVP",
+				"texto": "Antes de construir la versión definitiva se usan artefactos de validación, cada uno con un objetivo distinto:\n\n• **Prototipo:** maqueta, a menudo sin backend real, para validar la **experiencia de usuario**: ¿se entiende el flujo de compra?\n• [[poc]]: prueba de concepto interna para comprobar si una **tecnología es viable** (¿soporta MongoDB el volumen estimado de productos?). Se descarta al terminar.\n• [[MVP|producto_minimo_viable]]: producto mínimo **funcional** que usan clientes reales para validar el **negocio** (primer catálogo de Qatu con carrito y pago)."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Tres preguntas distintas",
+				"texto": "Cada artefacto responde una pregunta diferente y tiene un destino distinto.",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"",
+									"Prototipo",
+									"PoC",
+									"MVP"
+								],
+								"filas": [
+									[
+										"Pregunta",
+										"¿se entiende?",
+										"¿es viable?",
+										"¿lo quieren?"
+									],
+									[
+										"Quién lo usa",
+										"pruebas de UX",
+										"el equipo",
+										"clientes reales"
+									],
+									[
+										"Código",
+										"mínimo o nulo",
+										"desechable",
+										"de producción"
+									],
+									[
+										"Después",
+										"se rediseña",
+										"se descarta",
+										"se itera"
+									]
+								],
+								"resaltar": 3
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores al definir un MVP",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "MVP de Qatu:\n- catálogo\n- carrito y pagos\n- chat con vendedores\n- recomendaciones con IA\n- app móvil",
+						"bien": "MVP de Qatu:\n- catálogo con búsqueda\n- carrito\n- pago con una pasarela",
+						"explicacion": "Un MVP contiene lo **mínimo** para validar la propuesta de valor. El resto se prioriza en iteraciones posteriores según lo que digan los usuarios."
+					},
+					{
+						"mal": "La PoC de búsqueda funcionó:\nla subimos tal cual a producción.",
+						"bien": "La PoC de búsqueda funcionó:\nse documenta lo aprendido y se implementa\ncon pruebas, manejo de errores y monitoreo.",
+						"explicacion": "El código de una PoC se escribe rápido para responder una pregunta técnica. No está pensado para mantenerse ni para soportar usuarios reales."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Diferencia PoC y MVP",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Qatu quiere comprobar si su motor de búsqueda soporta 2 millones de productos antes de comprometerse con él. ¿Qué artefacto corresponde?",
+					"opciones": [
+						"Un MVP publicado para clientes",
+						"Una prueba de concepto (PoC)",
+						"Un prototipo de pantallas",
+						"Una versión de mantenimiento"
+					],
+					"correcta": 1,
+					"explicacion": "La pregunta es de viabilidad técnica, no de experiencia de usuario ni de negocio: la responde una PoC."
+				}
+			}
+		]
+	},
+	{
+		"id": "L118",
+		"zona": 1,
+		"sala": "z1_atrio",
+		"orden": 118,
+		"nivel": "inicial",
+		"titulo": "Diagramación con el Modelo C4",
+		"resumen": "El modelo C4 permite visualizar la arquitectura de software en 4 niveles de abstracción jerárquica.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Los 4 niveles de C4",
+				"texto": "El [[c4_model]] (creado por Simon Brown) proporciona un mapa zoomable de la arquitectura:\n\n• **Nivel 1 (Contexto):** muestra el sistema global, los usuarios (compradores, vendedores) y los sistemas externos (pasarelas de pago, IdP).\n• **Nivel 2 (Contenedores):** aplicaciones web, APIs backend, microservicios y bases de datos que componen el sistema.\n• **Nivel 3 (Componentes):** controladores, servicios de negocio y repositorios dentro de un contenedor.\n• **Nivel 4 (Código):** diagramas de clases, interfaces y modelos internos."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Estructura C4 de Qatu",
+				"texto": "Con **C4-PlantUML** el diagrama de contenedores se escribe como código y se versiona junto al proyecto. `Person` es un usuario, `Container` una aplicación desplegable y `Rel` una comunicación con su protocolo.",
+				"lenguaje": "texto",
+				"codigo": "@startuml\n!include <C4/C4_Container>\nPerson(comprador, \"Comprador\")\nSystem_Boundary(qatu, \"Qatu\") {\n  Container(spa, \"Tienda web\", \"SPA\", \"Catálogo y carrito\")\n  Container(api, \"API\", \"ASP.NET Core\", \"Reglas de negocio\")\n  ContainerDb(bd, \"Base de datos\", \"PostgreSQL\")\n}\nSystem_Ext(pagos, \"Pasarela de pagos\")\nRel(comprador, spa, \"Usa\", \"HTTPS\")\nRel(spa, api, \"Llama\", \"JSON/HTTPS\")\nRel(api, bd, \"Lee y escribe\", \"SQL\")\nRel(api, pagos, \"Cobra\", \"HTTPS\")\n@enduml"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Visualización del sistema",
+				"texto": "Cada nivel es un **zoom** del anterior: el sistema (nivel 1) se abre en contenedores (nivel 2), un contenedor en componentes (nivel 3) y un componente en código (nivel 4). Para la API de Qatu:",
+				"vista": {
+					"bloques": [
+						{
+							"arbol": {
+								"nombre": "Qatu (sistema)",
+								"hijos": [
+									{
+										"nombre": "Tienda web"
+									},
+									{
+										"nombre": "API",
+										"hijos": [
+											{
+												"nombre": "Controller"
+											},
+											{
+												"nombre": "Service",
+												"hijos": [
+													{
+														"nombre": "clase Pedido",
+														"tipo": "texto"
+													}
+												]
+											},
+											{
+												"nombre": "Repositorio"
+											}
+										]
+									},
+									{
+										"nombre": "Base de datos"
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores al diagramar",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Diagrama de contenedores:\n[API] -> [PedidoService] -> [clase Pedido]",
+						"bien": "Diagrama de contenedores:\n[Tienda web] -> [API] -> [Base de datos]\n\nDiagrama de componentes de la API:\n[PedidosController] -> [PedidoService]",
+						"explicacion": "Mezclar niveles confunde al lector. Cada diagrama muestra **un** nivel de abstracción; el detalle se lleva al nivel siguiente."
+					},
+					{
+						"mal": "Rel(spa, api, \"usa\")",
+						"bien": "Rel(spa, api, \"Llama\", \"JSON/HTTPS\")",
+						"explicacion": "Una relación sin tecnología deja preguntas abiertas. C4 recomienda indicar qué se hace y con qué protocolo."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Nivel de contenedores",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿En qué nivel del modelo C4 aparecen la tienda web, la API y la base de datos de Qatu como cajas separadas?",
+					"opciones": [
+						"Nivel 1: contexto",
+						"Nivel 2: contenedores",
+						"Nivel 3: componentes",
+						"Nivel 4: código"
+					],
+					"correcta": 1,
+					"explicacion": "Los contenedores son las aplicaciones y almacenes de datos que se despliegan por separado."
+				}
+			}
+		]
+	}
+]

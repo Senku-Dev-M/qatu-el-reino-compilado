@@ -1,0 +1,250 @@
+[
+	{
+		"id": "L119",
+		"zona": 1,
+		"sala": "z1_catacumbas",
+		"orden": 119,
+		"nivel": "inicial",
+		"titulo": "Introducción a las APIs y HTTP",
+		"resumen": "Una API define la interfaz para comunicar programas; HTTP es el protocolo estándar de comunicación web.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "¿Qué es una API?",
+				"texto": "Una [[api]] permite que dos aplicaciones interactúen sin conocer los detalles de implementación interna de la otra. El protocolo web por excelencia es [[http]] (o su versión cifrada HTTPS), operando bajo el modelo cliente-servidor sin estado."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Tipos de APIs",
+				"texto": "• **APIs Públicas:** abiertas a desarrolladores externos (ej. Stripe, Google Maps).\n• **APIs Privadas / Internas:** utilizadas exclusivamente dentro de la organización (ej. comunicación entre servicios de Qatu).\n• **APIs de Socios:** accesibles bajo acuerdos comerciales específicos."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Modelos de integración: API y webhook",
+				"lenguaje": "js",
+				"texto": "Tres formas habituales de integrar sistemas:\n\n• **API (pull):** Qatu pregunta cuando necesita algo.\n• **Webhook (push):** el otro sistema **llama a una URL de Qatu** cuando ocurre un evento, sin que Qatu pregunte.\n• **Orientada a eventos:** los servicios publican eventos en un broker (RabbitMQ, Kafka) y los procesa quien esté suscrito.\n\nEste endpoint recibe el webhook de la pasarela de pagos:",
+				"codigo": "// La pasarela llama aquí cuando un pago cambia de estado\napp.post('/webhooks/pagos', verificarFirma, async (req, res) => {\n  const { evento, pedidoId } = req.body;\n  if (evento === 'pago.aprobado') {\n    await pedidos.marcarPagado(pedidoId);\n  }\n  res.sendStatus(200); // confirma la recepción\n});"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "API y webhook en el tiempo",
+				"texto": "Con una API, Qatu inicia la comunicación; con el webhook la inicia la pasarela, cuando el pago se aprueba.",
+				"vista": {
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"api.qatu.com",
+									"Pasarela de pagos"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "POST /cobros (API)"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "202 Accepted · pendiente"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "POST /webhooks/pagos (pago.aprobado)"
+									},
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "200 OK"
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Protocolo base",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "La pasarela de pagos avisa a Qatu con un POST a /webhooks/pagos cuando un cobro se aprueba. ¿Qué modelo de integración es?",
+					"opciones": [
+						"Una API que Qatu consulta periódicamente (pull)",
+						"Un webhook (push)",
+						"Una migración ETL",
+						"Una consulta GraphQL"
+					],
+					"correcta": 1,
+					"explicacion": "En un webhook el sistema externo inicia la llamada hacia una URL de Qatu cuando ocurre el evento."
+				}
+			}
+		]
+	},
+	{
+		"id": "L120",
+		"zona": 1,
+		"sala": "z1_catacumbas",
+		"orden": 120,
+		"nivel": "inicial",
+		"titulo": "Anatomía de un mensaje HTTP",
+		"resumen": "Un mensaje HTTP se divide en línea de inicio, cabeceras (headers) y cuerpo (body).",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Estructura de la petición",
+				"texto": "Una petición HTTP contiene:\n\n1. **Request Line:** método (`GET`, `POST`), URI (`/productos`) y versión (`HTTP/1.1`).\n2. **Headers:** metadatos clave-valor (`Content-Type`, `Authorization`, `Accept`).\n3. **Body:** carga útil con los datos enviados (generalmente en JSON en peticiones POST/PUT).",
+				"lenguaje": "texto",
+				"codigo": "POST /api/pedidos HTTP/1.1\nHost: api.qatu.com\nContent-Type: application/json\nAuthorization: Bearer eyJhbGciOi...\n\n{\"productoId\": 42, \"cantidad\": 2}"
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Estructura de la respuesta",
+				"texto": "La respuesta del servidor contiene:\n\n1. **Status Line:** versión y [[codigo_estado]] (`HTTP/1.1 200 OK`).\n2. **Response Headers:** metadatos (`Content-Type: application/json`, `Cache-Control`).\n3. **Response Body:** el recurso solicitado o mensaje de confirmación/error.",
+				"lenguaje": "texto",
+				"codigo": "HTTP/1.1 201 Created\nContent-Type: application/json\nLocation: /api/pedidos/913\n\n{\"id\": 913, \"estado\": \"pendiente\", \"total\": 50.00}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El mensaje en las DevTools",
+				"texto": "En la pestaña **Network** las tres partes aparecen separadas: la línea de inicio arriba, las cabeceras en Headers y el cuerpo en Payload y Response.",
+				"vista": {
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "POST",
+								"url": "/api/pedidos",
+								"cabeceras": [
+									"Content-Type: application/json",
+									"Authorization: Bearer eyJhbGciOi..."
+								],
+								"cuerpo": "{\"productoId\":42,\"cantidad\":2}",
+								"estado": "201 Created",
+								"respuesta_cabeceras": [
+									"Location: /api/pedidos/913"
+								],
+								"respuesta": "{ \"id\": 913, \"estado\": \"pendiente\" }"
+							}
+						}
+					],
+					"pestana": "DevTools · Network"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores comunes de cabecera",
+				"texto": "",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "POST /api/pedidos\n\n{\"productoId\": 42}",
+						"bien": "POST /api/pedidos\nContent-Type: application/json\n\n{\"productoId\": 42}",
+						"explicacion": "Sin `Content-Type` el servidor no sabe cómo interpretar el cuerpo y puede responder **415 Unsupported Media Type**."
+					},
+					{
+						"mal": "Authorization: eyJhbGciOi...",
+						"bien": "Authorization: Bearer eyJhbGciOi...",
+						"explicacion": "La cabecera `Authorization` lleva primero el **esquema** (`Bearer`, `Basic`) y después la credencial."
+					},
+					{
+						"mal": "GET /api/productos\n\n{\"categoria\": \"ropa\"}",
+						"bien": "GET /api/productos?categoria=ropa",
+						"explicacion": "Un cuerpo en GET no tiene semántica definida y muchos servidores y proxies lo ignoran. Los filtros de lectura van en la query string."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Partes del mensaje",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Una petición POST con cuerpo JSON recibe 415 Unsupported Media Type. ¿Cuál es la causa más probable?",
+					"opciones": [
+						"Falta la cabecera Content-Type: application/json",
+						"El método debería ser GET",
+						"La URL tiene demasiados segmentos",
+						"El servidor está caído"
+					],
+					"correcta": 0,
+					"explicacion": "415 indica que el servidor no acepta el formato del cuerpo; sin Content-Type no sabe que es JSON."
+				}
+			}
+		]
+	},
+	{
+		"id": "L121",
+		"zona": 1,
+		"sala": "z1_catacumbas",
+		"orden": 121,
+		"nivel": "inicial",
+		"titulo": "Formatos de intercambio: JSON frente a XML",
+		"resumen": "JSON es el estándar dominante por su ligereza y facilidad de parseo en frontend; XML destaca por esquemas formales.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "JSON vs XML",
+				"texto": "Los dos formatos históricos de intercambio de datos son:\n\n• [[json]]: texto plano estructurado en objetos `{}` y arrays `[]`. Se corresponde directamente con los objetos de JavaScript y de la mayoría de lenguajes modernos.\n• [[xml]]: estructura jerárquica con etiquetas de apertura y cierre `<tag>...</tag>`. Admite validación estricta con esquemas (XSD) y es el formato de los servicios **SOAP**, pero produce mensajes más pesados."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Comparativa de código",
+				"texto": "El mismo producto en XML. En JSON sería `{\"id\": 42, \"nombre\": \"Poncho\", \"precio\": 25.0, \"tallas\": [\"S\", \"M\"]}`: los arrays son nativos, mientras que XML necesita repetir etiquetas.",
+				"lenguaje": "html",
+				"codigo": "<producto id=\"42\">\n  <nombre>Poncho</nombre>\n  <precio moneda=\"USD\">25.00</precio>\n  <tallas>\n    <talla>S</talla>\n    <talla>M</talla>\n  </tallas>\n</producto>"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Parseo directo",
+				"texto": "En el cliente, `response.json()` convierte el texto JSON en un objeto listo para usar. Con XML haría falta un parser (`DOMParser`) y recorrer nodos.",
+				"lenguaje": "js",
+				"codigo": "const response = await fetch('/api/productos/42');\nconst producto = await response.json();\nconsole.log(producto.nombre, producto.tallas.length);",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"> console.log(producto.nombre, producto.tallas.length)",
+								"Poncho 2"
+							]
+						}
+					],
+					"pestana": "DevTools · Console"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "JSON inválido",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "{\n  'nombre': 'Poncho',\n  'precio': 25,\n}",
+						"bien": "{\n  \"nombre\": \"Poncho\",\n  \"precio\": 25\n}",
+						"explicacion": "JSON exige **comillas dobles** en claves y cadenas y no admite comas finales. `JSON.parse` lanza `SyntaxError` con el primer ejemplo."
+					},
+					{
+						"mal": "{\"precio\": \"25.00\"}",
+						"bien": "{\"precio\": 25.00}",
+						"explicacion": "Un número entre comillas es una cadena: `\"25.00\" + 5` da `\"25.005\"`. Cada dato debe viajar con su tipo real."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Ventaja de JSON",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Cuál de estos textos es JSON válido?",
+					"opciones": [
+						"{'nombre': 'Poncho'}",
+						"{\"nombre\": \"Poncho\",}",
+						"{\"nombre\": \"Poncho\", \"tallas\": [\"S\", \"M\"]}",
+						"{nombre: \"Poncho\"}"
+					],
+					"correcta": 2,
+					"explicacion": "JSON exige comillas dobles en claves y cadenas y no admite comas finales."
+				}
+			}
+		]
+	}
+]

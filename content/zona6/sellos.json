@@ -1,0 +1,111 @@
+[
+	{
+		"id": "S10", "zona": 6, "nombre": "Sello del Índice",
+		"lecciones": ["L75", "L76", "L78", "L79"],
+		"pista": "Página n de tamaño t: $skip=(n−1)×t. OData usa eq, gt, lt… y comillas simples para textos. En sort, el signo menos es descendente.",
+		"retos": [
+			{
+				"tipo": "completar", "lenguaje": "texto",
+				"enunciado": "Completa el operador para pedir los productos con precio menor que 100.",
+				"codigo": "GET /odata/Productos?$filter=Precio ___ 100",
+				"opciones": ["lt", "<", "le", "gt"],
+				"correcta": 0,
+				"explicacion": "`lt` es «menor que». `le` incluiría el 100 y OData no admite el símbolo `<`."
+			},
+			{
+				"tipo": "elegir", "lenguaje": "texto",
+				"enunciado": "Con 20 elementos por página, ¿qué petición devuelve la página 5?",
+				"opciones": ["$top=5&$skip=20", "$top=20&$skip=80", "$top=20&$skip=100", "$top=20&$skip=5"],
+				"correcta": 1,
+				"explicacion": "Se saltan 4 páginas completas: 4 × 20 = 80."
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "texto",
+				"enunciado": "Esta consulta debe devolver los textiles del más caro al más barato, pero el servidor responde 400. ¿Qué línea tiene el error?",
+				"lineas": ["GET /odata/Productos", "  ?$filter=Categoria eq \"textil\"", "  &$orderby=Precio desc", "  &$top=10"],
+				"correcta": 1,
+				"corregida": "  ?$filter=Categoria eq 'textil'",
+				"explicacion": "En OData los textos literales van entre comillas simples."
+			},
+			{
+				"tipo": "ordenar", "lenguaje": "js",
+				"enunciado": "Ordena el código que pide la siguiente página con cursor y la añade a la lista.",
+				"lineas": ["const params = new URLSearchParams({ limit: 20, cursor: siguienteCursor });", "const response = await fetch(`/api/productos?${params}`);", "const pagina = await response.json();", "agregarTarjetas(pagina.data);", "siguienteCursor = pagina.meta.nextCursor;"],
+				"explicacion": "Se construyen los parámetros, se hace la petición, se lee el cuerpo, se pintan los elementos y se guarda el cursor para la próxima página."
+			}
+		]
+	},
+	{
+		"id": "S11", "zona": 6, "nombre": "Sello del Rendimiento",
+		"lecciones": ["L81", "L83", "L86", "L87"],
+		"pista": "JSON:API: include trae relacionados, fields reduce atributos. IntersectionObserver vigila un centinela. Content-Encoding la envía el servidor. Las conexiones del pool se devuelven con release().",
+		"retos": [
+			{
+				"tipo": "completar", "lenguaje": "texto",
+				"enunciado": "Completa el parámetro de JSON:API para recibir los productos con su vendedor en la misma respuesta.",
+				"codigo": "GET /api/productos?___=vendedor\nAccept: application/vnd.api+json",
+				"opciones": ["include", "fields", "expand", "filter"],
+				"correcta": 0,
+				"explicacion": "`include` crea un documento compuesto con los vendedores en `included`. `$expand` es de OData, no de JSON:API."
+			},
+			{
+				"tipo": "elegir", "lenguaje": "texto",
+				"enunciado": "La respuesta llega con estas cabeceras. ¿Qué afirmación es correcta?",
+				"codigo": "Content-Type: application/json\nContent-Encoding: gzip\nContent-Length: 38 104",
+				"opciones": ["El JavaScript debe descomprimir el cuerpo antes de usar response.json()", "El navegador descomprime el cuerpo; response.json() recibe el JSON normal", "El cuerpo no es JSON", "El cliente pidió que no se comprimiera"],
+				"correcta": 1,
+				"explicacion": "La descompresión la hace el navegador de forma transparente; `Content-Length` refleja el tamaño comprimido transferido."
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "js",
+				"enunciado": "Tras un rato con tráfico, todas las peticiones quedan esperando una conexión. ¿Qué línea causa el problema?",
+				"lineas": ["app.get('/api/pedidos', async (req, res) => {", "  const cliente = await pool.connect();", "  const r = await cliente.query('SELECT * FROM pedidos LIMIT 20');", "  res.json(r.rows);", "});"],
+				"correcta": 3,
+				"corregida": "  res.json(r.rows); cliente.release();",
+				"explicacion": "La conexión tomada del pool nunca se devuelve. Hay que llamar a `release()` (idealmente en un bloque `finally`) o usar `pool.query`, que la libera sola."
+			},
+			{
+				"tipo": "ordenar", "lenguaje": "js",
+				"enunciado": "Ordena el código del scroll infinito con un centinela.",
+				"lineas": ["const observer = new IntersectionObserver(async ([entrada]) => {", "  if (!entrada.isIntersecting) return;", "  await cargarSiguientePagina();", "});", "observer.observe(document.querySelector('#centinela'));"],
+				"explicacion": "Se crea el observador con su callback (que ignora las salidas de pantalla y carga la página) y después se le indica qué elemento vigilar."
+			}
+		]
+	},
+	{
+		"id": "S12", "zona": 6, "nombre": "Sello del Middleware",
+		"lecciones": ["L88", "L89", "L90", "L92", "L93"],
+		"pista": "Cache-aside: primero la caché, después la fuente y guardar. Datos personales: private o no-store. Un middleware termina la respuesta o llama a next(); el orden de registro importa.",
+		"retos": [
+			{
+				"tipo": "ordenar", "lenguaje": "js",
+				"enunciado": "Ordena la función con la estrategia cache-aside.",
+				"lineas": ["async function obtenerCatalogo() {", "  const enCache = await redis.get('catalogo');", "  if (enCache) return JSON.parse(enCache);", "  const catalogo = await db.productos.findAll();", "  await redis.set('catalogo', JSON.stringify(catalogo), { EX: 600 });", "  return catalogo;", "}"],
+				"explicacion": "Se consulta la caché; si hay acierto se devuelve. Si no, se lee la base de datos, se guarda con TTL y se devuelve."
+			},
+			{
+				"tipo": "completar", "lenguaje": "js",
+				"enunciado": "Completa el middleware para que la petición continúe hacia el controlador cuando el usuario está autenticado.",
+				"codigo": "function autenticar(req, res, next) {\n  if (!req.headers.authorization) {\n    return res.status(401).end();\n  }\n  ___;\n}",
+				"opciones": ["next()", "return", "res.end()", "req.next()"],
+				"correcta": 0,
+				"explicacion": "`next()` pasa el control al siguiente eslabón. Sin él, la petición quedaría colgada."
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "js",
+				"enunciado": "Cualquiera puede ver los pedidos sin autenticarse. ¿Qué línea está mal colocada?",
+				"lineas": ["app.use(express.json());", "app.get('/api/pedidos', listarPedidos);", "app.use(autenticar);", "app.get('/api/perfil', verPerfil);"],
+				"correcta": 1,
+				"corregida": "app.get('/api/pedidos', autenticar, listarPedidos);",
+				"explicacion": "La ruta de pedidos se registró antes del middleware global de autenticación, así que responde sin pasar por él. Colócala después o añade el middleware en la propia ruta."
+			},
+			{
+				"tipo": "elegir", "lenguaje": "texto",
+				"enunciado": "La respuesta de /api/mi-cuenta contiene datos personales y pasa por una CDN. ¿Qué cabecera usar?",
+				"opciones": ["Cache-Control: public, max-age=3600", "Cache-Control: private, no-store", "Cache-Control: max-age=86400", "ETag sin Cache-Control"],
+				"correcta": 1,
+				"explicacion": "`private` impide que cachés compartidas la guarden y `no-store` evita guardarla en cualquier sitio."
+			}
+		]
+	}
+]

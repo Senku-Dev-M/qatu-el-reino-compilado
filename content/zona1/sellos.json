@@ -1,0 +1,240 @@
+[
+	{
+		"id": "S16",
+		"zona": 1,
+		"nombre": "Sello del Protocolo",
+		"lecciones": [
+			"L119",
+			"L120",
+			"L122",
+			"L124"
+		],
+		"pista": "Recuerda: GET es seguro e idempotente; POST crea recursos y devuelve 201 Created; DELETE elimina y devuelve 204 No Content.",
+		"retos": [
+			{
+				"tipo": "completar",
+				"lenguaje": "texto",
+				"enunciado": "Completa la cabecera estándar para indicar al servidor que el cuerpo de la petición contiene datos en formato JSON.",
+				"codigo": "POST /api/v1/productos HTTP/1.1\nHost: api.qatu.com\nContent-Type: application/___;\n\n{\"nombre\": \"Manta\"}",
+				"opciones": [
+					"json",
+					"xml",
+					"html",
+					"text"
+				],
+				"correcta": 0,
+				"explicacion": "`application/json` es el tipo MIME estándar de la cabecera `Content-Type` para mensajes JSON.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "POST",
+								"url": "https://api.qatu.com/api/v1/productos",
+								"cabeceras": [
+									"Content-Type: application/json"
+								],
+								"estado": "201 Created",
+								"respuesta": "{\"id\": 1, \"nombre\": \"Manta\"}"
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "encontrar_error",
+				"lenguaje": "texto",
+				"enunciado": "Un desarrollador diseñó endpoints no RESTful que usan verbos en la URI. ¿Qué línea viola los principios REST?",
+				"lineas": [
+					"GET    /api/v1/productos",
+					"POST   /api/v1/productos",
+					"GET    /api/v1/productos/eliminar/15",
+					"DELETE /api/v1/productos/15"
+				],
+				"correcta": 2,
+				"corregida": "DELETE /api/v1/productos/15",
+				"explicacion": "En REST las URIs identifican recursos (sustantivos). La acción de eliminar debe expresarse mediante el verbo HTTP DELETE sobre `/productos/15`, no con un GET a `/eliminar`."
+			},
+			{
+				"tipo": "ordenar",
+				"lenguaje": "texto",
+				"enunciado": "Ordena cronológicamente las fases estándar del ciclo de vida de una API bajo el enfoque API First:",
+				"lineas": [
+					"Planificación y análisis de requerimientos del negocio",
+					"Diseño del contrato de la API con OpenAPI (Swagger)",
+					"Implementación de los servicios y acceso a datos",
+					"Ejecución de pruebas unitarias y de integración",
+					"Despliegue en producción y monitoreo continuo"
+				],
+				"orden_correcto": [
+					0,
+					1,
+					2,
+					3,
+					4
+				],
+				"explicacion": "API First define el contrato OpenAPI antes de la codificación y despliegue."
+			},
+			{
+				"tipo": "elegir",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué código de estado HTTP debe devolver el servidor tras eliminar exitosamente un producto cuando no retorna contenido en el cuerpo?",
+				"opciones": [
+					"200 OK",
+					"201 Created",
+					"204 No Content",
+					"404 Not Found"
+				],
+				"correcta": 2,
+				"explicacion": "204 No Content indica que la acción fue exitosa y la respuesta no contiene cuerpo."
+			}
+		]
+	},
+	{
+		"id": "S17",
+		"zona": 1,
+		"nombre": "Sello de los Datos",
+		"lecciones": [
+			"L128",
+			"L129",
+			"L131",
+			"L133"
+		],
+		"pista": "La arquitectura en 3 capas separa Controller, Service y Repository. La migración por fases permite cero tiempo de inactividad.",
+		"retos": [
+			{
+				"tipo": "elegir",
+				"lenguaje": "texto",
+				"enunciado": "En una arquitectura de 3 capas, ¿qué componente debe contener las reglas de negocio como el cálculo de impuestos y validación de stock?",
+				"opciones": [
+					"El Controlador (Controller)",
+					"El Servicio (Service)",
+					"El Repositorio (Repository)",
+					"El archivo de configuración"
+				],
+				"correcta": 1,
+				"explicacion": "La capa de servicios (Business Logic Layer) alberga las reglas de dominio y lógica de negocio."
+			},
+			{
+				"tipo": "completar",
+				"lenguaje": "texto",
+				"enunciado": "Completa el nombre del patrón de diseño que abstrae el acceso a datos proveyendo una interfaz similar a una colección en memoria.",
+				"codigo": "public interface IProducto___ {\n  Task<Producto> ObtenerPorIdAsync(int id);\n  Task GuardarAsync(Producto p);\n}",
+				"opciones": [
+					"Repository",
+					"Controller",
+					"View",
+					"Middleware"
+				],
+				"correcta": 0,
+				"explicacion": "El patrón Repositorio (Repository) abstrae la persistencia de datos para la capa de servicios."
+			},
+			{
+				"tipo": "encontrar_error",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué afirmación sobre bases de datos y migración es errónea?",
+				"lineas": [
+					"RDBMS ofrece consistencia estricta mediante transacciones ACID.",
+					"NoSQL documental como MongoDB almacena documentos flexibles BSON.",
+					"La migración Big Bang garantiza cero tiempo de inactividad durante la transición.",
+					"El Sharding particiona horizontalmente los datos entre varios servidores."
+				],
+				"correcta": 2,
+				"corregida": "La migración por fases (Trickle) garantiza cero tiempo de inactividad mediante sincronización dual.",
+				"explicacion": "La migración Big Bang requiere una ventana de mantenimiento con tiempo de inactividad; la migración por fases es la que permite zero downtime."
+			},
+			{
+				"tipo": "ordenar",
+				"lenguaje": "texto",
+				"enunciado": "Ordena el flujo de ejecución en 3 capas al recibir una petición de compra:",
+				"lineas": [
+					"El Controlador recibe el HTTP POST y valida el DTO",
+					"El Servicio ejecuta las reglas de negocio y calcula el saldo",
+					"El Repositorio persiste la entidad del pedido en la base de datos",
+					"El Controlador responde con HTTP 201 Created al cliente"
+				],
+				"orden_correcto": [
+					0,
+					1,
+					2,
+					3
+				],
+				"explicacion": "Flujo estricto: Controller -> Service -> Repository -> Controller Response."
+			}
+		]
+	},
+	{
+		"id": "S18",
+		"zona": 1,
+		"nombre": "Sello de la Integración",
+		"lecciones": [
+			"L130",
+			"L134",
+			"L135",
+			"L136"
+		],
+		"pista": "La inyección de dependencias desacopla clases; los tokens JWT son stateless y se verifican por firma criptográfica.",
+		"retos": [
+			{
+				"tipo": "elegir",
+				"lenguaje": "texto",
+				"enunciado": "¿Por qué un token JWT permite validar peticiones de forma stateless sin consultar la base de datos?",
+				"opciones": [
+					"Porque el token guarda la contraseña en texto plano",
+					"Porque la firma criptográfica en el token garantiza la autenticidad e integridad de sus datos",
+					"Porque la base de datos se guarda en la memoria del navegador",
+					"Porque solo funciona en local"
+				],
+				"correcta": 1,
+				"explicacion": "La firma criptográfica del JWT (Header.Payload.Signature) permite al servidor validar la información sin consultas de sesión a base de datos."
+			},
+			{
+				"tipo": "completar",
+				"lenguaje": "texto",
+				"enunciado": "Completa el ciclo de vida en ASP.NET Core que crea una nueva instancia de la dependencia por cada petición HTTP.",
+				"codigo": "builder.Services.Add___<IProductoService, ProductoService>();",
+				"opciones": [
+					"Scoped",
+					"Singleton",
+					"Transient",
+					"Static"
+				],
+				"correcta": 0,
+				"explicacion": "`AddScoped` registra un servicio con ciclo de vida por petición HTTP."
+			},
+			{
+				"tipo": "encontrar_error",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué cabecera contiene un error de sintaxis para autenticación con clave de API o portador de token?",
+				"lineas": [
+					"Authorization: Bearer eyJhbGciOi...",
+					"X-API-Key: sec_key_99128",
+					"Authentication-Token: Bearer 12345",
+					"Content-Type: application/json"
+				],
+				"correcta": 2,
+				"corregida": "Authorization: Bearer 12345",
+				"explicacion": "La cabecera HTTP estándar definida en RFC 7235 es `Authorization`, no `Authentication-Token`."
+			},
+			{
+				"tipo": "ordenar",
+				"lenguaje": "texto",
+				"enunciado": "Ordena los pasos de un middleware que autentica con JWT:",
+				"lineas": [
+					"Leer la cabecera Authorization de la petición",
+					"Quitar el prefijo Bearer para obtener el token",
+					"Verificar la firma y la expiración con jwt.verify",
+					"Guardar los claims en req.usuario",
+					"Llamar a next() para continuar"
+				],
+				"orden_correcto": [
+					0,
+					1,
+					2,
+					3
+				],
+				"explicacion": "Primero se obtiene el token, después se valida y solo entonces se confía en sus datos y se deja pasar la petición."
+			}
+		]
+	}
+]

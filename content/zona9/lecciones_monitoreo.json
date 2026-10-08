@@ -1,0 +1,202 @@
+[
+	{
+		"id": "L194",
+		"zona": 9,
+		"sala": "z9_torre_monitoreo",
+		"orden": 194,
+		"nivel": "intermedio",
+		"titulo": "Análisis Estático de Seguridad (SAST)",
+		"resumen": "Escaneo automatizado del código fuente en el pipeline CI con SonarQube y Semgrep.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Inspección de Código en Reposo",
+				"texto": "Las herramientas [[SAST|sast]] (Static Application Security Testing) analizan el código **sin ejecutarlo** y encuentran secretos escritos en el código, criptografía débil, rutas de inyección y malas prácticas antes del merge a `main`. Ejemplos: SonarQube, Semgrep, CodeQL."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Quality Gates",
+				"texto": "Un Quality Gate en CI/CD bloquea automáticamente el despliegue si se introduce una vulnerabilidad crítica o si la cobertura cae por debajo del umbral establecido."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "SAST en el pipeline",
+				"lenguaje": "texto",
+				"codigo": "sast:\n  stage: test\n  image: semgrep/semgrep\n  script:\n    - semgrep scan --config p/owasp-top-ten --error src/\n  rules:\n    - if: $CI_PIPELINE_SOURCE == \"merge_request_event\""
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Un hallazgo que bloquea el merge",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"src/pedidos.js",
+								"  javascript.sql-injection.tainted-sql-string",
+								"  Consulta SQL construida con datos del usuario.",
+								"   18┆ pool.query(`SELECT * FROM pedidos WHERE id = ${req.params.id}`)",
+								"Ran 312 rules on 84 files: 1 finding (ERROR) -> job failed"
+							]
+						}
+					],
+					"pestana": "GitLab CI"
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Análisis Estático de Seguridad (SAST)",
+				"pregunta": {
+					"enunciado": "¿Qué caracteriza a una herramienta SAST como Semgrep?",
+					"opciones": [
+						"Ataca la aplicación desplegada desde fuera",
+						"Analiza el código fuente sin ejecutarlo",
+						"Mide la latencia bajo carga",
+						"Genera el inventario de dependencias"
+					],
+					"correcta": 1,
+					"explicacion": "SAST es análisis estático del código; el análisis de la aplicación en ejecución es DAST."
+				}
+			}
+		]
+	},
+	{
+		"id": "L195",
+		"zona": 9,
+		"sala": "z9_torre_monitoreo",
+		"orden": 195,
+		"nivel": "intermedio",
+		"titulo": "Análisis Dinámico de Seguridad (DAST)",
+		"resumen": "Escaneo de aplicaciones en ejecución con OWASP ZAP frente a ataques en tiempo real.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Pruebas de Caja Negra en Runtime",
+				"texto": "El [[DAST|dast]] (Dynamic Application Security Testing) evalúa la aplicación **en ejecución** desde fuera, como un atacante: prueba cabeceras HTTP, configuración del servidor, formularios y endpoints expuestos. Es el **análisis activo** de la metodología OWASP. La herramienta de referencia libre es **OWASP ZAP**."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Complementariedad SAST + DAST",
+				"texto": "SAST localiza la línea exacta de código vulnerable; DAST valida si dicha vulnerabilidad es realmente explotable a través de la infraestructura de red."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Un escaneo de ZAP contra staging",
+				"lenguaje": "texto",
+				"texto": "El escaneo baseline es pasivo y rápido; el escaneo completo lanza ataques reales, por eso se ejecuta contra staging y nunca contra producción:",
+				"codigo": "$ docker run -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \\\n    -t https://staging.qatu.com -r informe-zap.html"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Hallazgos del escaneo",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Riesgo",
+									"Hallazgo",
+									"Dónde"
+								],
+								"filas": [
+									[
+										"Medio",
+										"Falta Content-Security-Policy",
+										"todas las páginas"
+									],
+									[
+										"Medio",
+										"Cookie sin atributo SameSite",
+										"/login"
+									],
+									[
+										"Bajo",
+										"Servidor revela versión (X-Powered-By)",
+										"/api/*"
+									]
+								]
+							}
+						},
+						{
+							"nota": "SAST señala la línea de código; DAST confirma qué es realmente explotable desde fuera. Se complementan."
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Análisis Dinámico de Seguridad (DAST)",
+				"pregunta": {
+					"enunciado": "¿Por qué el escaneo completo de OWASP ZAP se ejecuta contra staging y no contra producción?",
+					"opciones": [
+						"Porque ZAP no admite HTTPS",
+						"Porque lanza ataques reales que pueden alterar datos o degradar el servicio",
+						"Porque en producción no hay cabeceras",
+						"Porque es más lento en producción"
+					],
+					"correcta": 1,
+					"explicacion": "El análisis activo envía entradas maliciosas de verdad; se hace en un entorno de pruebas."
+				}
+			}
+		]
+	},
+	{
+		"id": "L196",
+		"zona": 9,
+		"sala": "z9_torre_monitoreo",
+		"orden": 196,
+		"nivel": "intermedio",
+		"titulo": "Seguridad en la Cadena de Suministro (SCA)",
+		"resumen": "Gestión de dependencias de terceros, escaneo de CVEs y SBOM.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Riesgo de Paquetes de Terceros",
+				"texto": "Buena parte del código de una aplicación moderna viene de librerías de terceros (npm, NuGet, Maven, PyPI). Una vulnerabilidad en una dependencia, como **Log4Shell** en Log4j, expone a todas las aplicaciones que la usan.\n\nEl **análisis de composición de software** (SCA) compara las dependencias, incluidas las transitivas, con bases de datos de vulnerabilidades públicas (CVE)."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Software Bill of Materials (SBOM)",
+				"texto": "Un [[SBOM|sbom]] (Software Bill of Materials) es el inventario de todos los componentes de una aplicación o imagen, con sus versiones. Cuando se publica una vulnerabilidad nueva, permite responder en minutos: ¿la usamos?, ¿dónde?"
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Generar el SBOM y buscar vulnerabilidades",
+				"lenguaje": "texto",
+				"codigo": "# inventario de la imagen en formato CycloneDX\n$ syft registry.gitlab.com/qatu/api:8f3c2a1 -o cyclonedx-json > sbom.json\n\n# vulnerabilidades conocidas en ese inventario\n$ grype sbom:sbom.json --fail-on high"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Resultado del análisis",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"NAME        INSTALLED  FIXED-IN  VULNERABILITY   SEVERITY",
+								"axios       1.5.1      1.6.0     CVE-2023-45857  Medium",
+								"express     4.17.1     4.19.2    CVE-2024-29041  Medium",
+								"discovered vulnerability at severity high: no"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Seguridad en la Cadena de Suministro (SCA)",
+				"pregunta": {
+					"enunciado": "Se publica una vulnerabilidad crítica en una librería. ¿Qué permite saber en minutos si Qatu la usa?",
+					"opciones": [
+						"El Dockerfile",
+						"El SBOM de cada imagen",
+						"Los logs de la API",
+						"La cobertura de pruebas"
+					],
+					"correcta": 1,
+					"explicacion": "El SBOM inventaria todos los componentes y versiones, incluidas las dependencias transitivas."
+				}
+			}
+		]
+	}
+]

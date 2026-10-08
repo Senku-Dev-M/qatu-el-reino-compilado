@@ -1,0 +1,304 @@
+[
+	{
+		"id": "layout",
+		"termino": "Layout",
+		"leccion": "L29",
+		"definicion": "Disposición de los elementos en la página: dónde se coloca cada uno y cuánto espacio ocupa. En CSS se controla con display, Flexbox, Grid y position."
+	},
+	{
+		"id": "float",
+		"termino": "float",
+		"leccion": "L29",
+		"definicion": "Propiedad pensada para que el texto rodee una imagen. Antes de Flexbox y Grid se usaba para construir columnas, con muchos problemas; hoy no se recomienda para layouts.",
+		"ejemplo": "img {\n  float: left;\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "flujo_normal",
+		"termino": "Flujo normal",
+		"leccion": "L29",
+		"definicion": "Forma en que el navegador coloca los elementos si no aplicas ningún layout: los de bloque uno debajo de otro y los de línea uno al lado de otro dentro del texto."
+	},
+	{
+		"id": "display",
+		"termino": "display",
+		"leccion": "L30",
+		"definicion": "Propiedad que define cómo se comporta una caja en el layout: block, inline, inline-block, flex, grid o none.",
+		"ejemplo": "nav {\n  display: flex;\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "elemento_de_bloque",
+		"termino": "Elemento de bloque (block)",
+		"leccion": "L30",
+		"definicion": "Elemento que empieza en una línea nueva y ocupa todo el ancho disponible. Acepta width, height, margin y padding. Ejemplos: div, p, h1, section."
+	},
+	{
+		"id": "elemento_en_linea",
+		"termino": "Elemento en línea (inline)",
+		"leccion": "L30",
+		"definicion": "Elemento que se coloca dentro del texto, junto a otros, y solo ocupa el ancho de su contenido. Ignora width y height. Ejemplos: span, a, strong."
+	},
+	{
+		"id": "inline_block",
+		"termino": "inline-block",
+		"leccion": "L30",
+		"definicion": "Valor de display que coloca el elemento en línea con otros, pero respetando width, height y márgenes verticales como un bloque.",
+		"ejemplo": ".boton {\n  display: inline-block;\n  width: 120px;\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "flexbox",
+		"termino": "Flexbox",
+		"leccion": "L31",
+		"definicion": "Modelo de layout de CSS en una dimensión (fila o columna) para alinear y repartir espacio entre elementos. Se activa con display: flex.",
+		"ejemplo": ".menu {\n  display: flex;\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "contenedor_flex",
+		"termino": "Contenedor flex",
+		"leccion": "L31",
+		"definicion": "Elemento con display: flex. Sus propiedades (flex-direction, justify-content, align-items, flex-wrap, gap) organizan a sus hijos directos."
+	},
+	{
+		"id": "elemento_flex",
+		"termino": "Elemento flex",
+		"leccion": "L31",
+		"definicion": "Cada hijo directo de un contenedor flex. Admite propiedades propias como flex-grow, flex-shrink, flex-basis y align-self."
+	},
+	{
+		"id": "eje_principal",
+		"termino": "Eje principal",
+		"leccion": "L32",
+		"definicion": "Dirección en la que se colocan los elementos flex: horizontal con flex-direction: row, vertical con column. justify-content trabaja sobre él."
+	},
+	{
+		"id": "eje_transversal",
+		"termino": "Eje transversal",
+		"leccion": "L32",
+		"definicion": "Eje perpendicular al principal. align-items y align-self alinean los elementos sobre él."
+	},
+	{
+		"id": "flex_direction",
+		"termino": "flex-direction",
+		"leccion": "L32",
+		"definicion": "Propiedad del contenedor flex que define el eje principal: row (por defecto), row-reverse, column o column-reverse.",
+		"ejemplo": ".tarjeta {\n  display: flex;\n  flex-direction: column;\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "justify_content",
+		"termino": "justify-content",
+		"leccion": "L33",
+		"definicion": "Propiedad del contenedor flex que reparte los elementos en el eje principal: flex-start, flex-end, center, space-between, space-around o space-evenly.",
+		"ejemplo": ".cabecera {\n  justify-content: space-between;\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "gap",
+		"termino": "gap",
+		"leccion": "L33",
+		"definicion": "Propiedad que fija la separación entre elementos de un contenedor flex o grid, sin añadir espacio en los bordes exteriores.",
+		"ejemplo": ".menu {\n  display: flex;\n  gap: 16px;\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "align_items",
+		"termino": "align-items",
+		"leccion": "L34",
+		"definicion": "Propiedad del contenedor flex que alinea los elementos en el eje transversal: stretch (por defecto), flex-start, flex-end, center o baseline.",
+		"ejemplo": ".cabecera {\n  align-items: center;\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "align_self",
+		"termino": "align-self",
+		"leccion": "L34",
+		"definicion": "Propiedad de un elemento flex que sobrescribe align-items solo para ese elemento.",
+		"ejemplo": ".destacado {\n  align-self: flex-end;\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "flex_wrap",
+		"termino": "flex-wrap",
+		"leccion": "L35",
+		"definicion": "Propiedad del contenedor flex que decide si los elementos se quedan en una línea (nowrap, por defecto) o pasan a varias líneas (wrap).",
+		"ejemplo": ".productos {\n  flex-wrap: wrap;\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "flex_basis",
+		"termino": "flex-basis",
+		"leccion": "L36",
+		"definicion": "Tamaño inicial de un elemento flex en el eje principal antes de repartir el espacio sobrante o faltante."
+	},
+	{
+		"id": "flex_grow",
+		"termino": "flex-grow",
+		"leccion": "L36",
+		"definicion": "Proporción del espacio sobrante que recibe un elemento flex. Con 0 (por defecto) no crece.",
+		"ejemplo": "input {\n  flex-grow: 1;\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "flex_shrink",
+		"termino": "flex-shrink",
+		"leccion": "L36",
+		"definicion": "Proporción en que un elemento flex se encoge cuando falta espacio. Con 0 no se encoge; por defecto vale 1."
+	},
+	{
+		"id": "grid",
+		"termino": "CSS Grid",
+		"leccion": "L38",
+		"definicion": "Modelo de layout de CSS en dos dimensiones: organiza elementos en filas y columnas a la vez. Se activa con display: grid.",
+		"ejemplo": ".galeria {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "pista",
+		"termino": "Pista (track)",
+		"leccion": "L38",
+		"definicion": "Cada fila o columna de una rejilla grid, delimitada por dos líneas."
+	},
+	{
+		"id": "grid_template_columns",
+		"termino": "grid-template-columns",
+		"leccion": "L38",
+		"definicion": "Propiedad del contenedor grid que define el número de columnas y el tamaño de cada una.",
+		"ejemplo": "grid-template-columns: 200px 1fr;",
+		"lenguaje": "css"
+	},
+	{
+		"id": "unidad_fr",
+		"termino": "Unidad fr",
+		"leccion": "L39",
+		"definicion": "Unidad de Grid que representa una fracción del espacio libre del contenedor, después de restar medidas fijas y gaps.",
+		"ejemplo": "grid-template-columns: 1fr 2fr;",
+		"lenguaje": "css"
+	},
+	{
+		"id": "repeat",
+		"termino": "repeat()",
+		"leccion": "L39",
+		"definicion": "Función de Grid que repite una o varias pistas: repeat(3, 1fr) equivale a 1fr 1fr 1fr.",
+		"ejemplo": "grid-template-columns: repeat(4, 1fr);",
+		"lenguaje": "css"
+	},
+	{
+		"id": "grid_implicito",
+		"termino": "Grid implícito",
+		"leccion": "L40",
+		"definicion": "Filas o columnas que el navegador crea automáticamente cuando hay más elementos que celdas declaradas. Su tamaño se controla con grid-auto-rows."
+	},
+	{
+		"id": "grid_column",
+		"termino": "grid-column",
+		"leccion": "L40",
+		"definicion": "Propiedad de un elemento grid que indica entre qué líneas de columna se coloca, o cuántas ocupa con span.",
+		"ejemplo": ".destacado {\n  grid-column: 1 / 3;\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "grid_template_areas",
+		"termino": "grid-template-areas",
+		"leccion": "L41",
+		"definicion": "Propiedad del contenedor grid que define áreas con nombre dibujando la rejilla como texto. Cada elemento se asigna a un área con grid-area.",
+		"ejemplo": "grid-template-areas:\n  \"cabecera cabecera\"\n  \"menu contenido\";",
+		"lenguaje": "css"
+	},
+	{
+		"id": "diseno_responsivo",
+		"termino": "Diseño responsivo",
+		"leccion": "L42",
+		"definicion": "Técnica para que una misma página se adapte a cualquier tamaño de pantalla mediante layouts fluidos, imágenes flexibles y media queries."
+	},
+	{
+		"id": "viewport",
+		"termino": "Viewport",
+		"leccion": "L42",
+		"definicion": "Área visible de la página en la pantalla del dispositivo. La etiqueta meta viewport indica al navegador móvil que use el ancho real del dispositivo.",
+		"ejemplo": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+		"lenguaje": "html"
+	},
+	{
+		"id": "media_query",
+		"termino": "Media query",
+		"leccion": "L43",
+		"definicion": "Regla @media que aplica un bloque de CSS solo cuando el dispositivo cumple una condición, como un ancho mínimo.",
+		"ejemplo": "@media (min-width: 768px) {\n  .menu { display: flex; }\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "punto_de_quiebre",
+		"termino": "Punto de quiebre (breakpoint)",
+		"leccion": "L43",
+		"definicion": "Ancho de pantalla a partir del cual cambia el diseño mediante una media query, por ejemplo 768 px o 1024 px."
+	},
+	{
+		"id": "mobile_first",
+		"termino": "Mobile first",
+		"leccion": "L43",
+		"definicion": "Enfoque que escribe primero los estilos para móvil y añade cambios para pantallas mayores con media queries min-width."
+	},
+	{
+		"id": "macro_layout",
+		"termino": "Macro layout",
+		"leccion": "L44",
+		"definicion": "Estructura general de la página (cabecera, navegación, contenido, pie). Suele construirse con Grid y reorganizarse con media queries."
+	},
+	{
+		"id": "micro_layout",
+		"termino": "Micro layout",
+		"leccion": "L45",
+		"definicion": "Layout interno de un componente (tarjetas, barras, formularios) que se adapta a su espacio sin media queries, por ejemplo con flex-wrap o auto-fit."
+	},
+	{
+		"id": "minmax",
+		"termino": "minmax()",
+		"leccion": "L45",
+		"definicion": "Función de Grid que define un tamaño mínimo y máximo para una pista. Con auto-fit crea tantas columnas como quepan.",
+		"ejemplo": "grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));",
+		"lenguaje": "css"
+	},
+	{
+		"id": "rem",
+		"termino": "rem",
+		"leccion": "L45",
+		"definicion": "Unidad relativa al tamaño de fuente del elemento raíz (html), normalmente 16 px. 1.5rem = 24 px con la configuración por defecto.",
+		"ejemplo": "h2 {\n  font-size: 1.5rem;\n}",
+		"lenguaje": "css"
+	},
+	{
+		"id": "framework_css",
+		"termino": "Framework CSS",
+		"leccion": "L46",
+		"definicion": "Colección de estilos, rejillas y componentes ya escritos que se aplican mediante clases. Ejemplos: Bootstrap, Tailwind CSS, Foundation."
+	},
+	{
+		"id": "tailwind",
+		"termino": "Tailwind CSS",
+		"leccion": "L47",
+		"definicion": "Framework CSS basado en clases utilitarias. Incluye prefijos responsivos (sm:, md:, lg:) que aplican estilos desde un ancho mínimo.",
+		"ejemplo": "<div class=\"flex gap-4 md:grid md:grid-cols-3\">",
+		"lenguaje": "html"
+	},
+	{
+		"id": "clase_utilitaria",
+		"termino": "Clase utilitaria",
+		"leccion": "L47",
+		"definicion": "Clase CSS pequeña que aplica una sola propiedad o muy pocas, como p-4 (padding: 1rem) o items-center (align-items: center)."
+	},
+	{
+		"id": "justify-content",
+		"termino": "justify-content",
+		"leccion": "L33",
+		"definicion": "Propiedad flexbox que alinea los elementos a lo largo del eje principal."
+	},
+	{
+		"id": "align-items",
+		"termino": "align-items",
+		"leccion": "L34",
+		"definicion": "Propiedad flexbox que alinea los elementos en el eje cruzado."
+	}
+]

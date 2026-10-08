@@ -1,0 +1,335 @@
+[
+	{
+		"id": "L58",
+		"zona": 5,
+		"sala": "z5_manantial",
+		"orden": 58,
+		"nivel": "inicial",
+		"titulo": "Código síncrono, asíncrono y callbacks",
+		"resumen": "El código síncrono se ejecuta línea a línea y bloquea. Las operaciones lentas (red, temporizadores) son asíncronas: JavaScript sigue ejecutando y llama a una función callback cuando terminan.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Esperar o seguir",
+				"texto": "El [[código síncrono|codigo_sincrono]] se ejecuta **en orden**: cada línea espera a que termine la anterior. JavaScript en el navegador tiene **un solo hilo** principal: si una tarea tarda 3 segundos en ese hilo, la página se congela 3 segundos.\n\nPedir datos a un servidor puede tardar. Por eso esas operaciones son [[asíncronas|codigo_asincrono]]: se **inician**, JavaScript continúa con el resto del código y, cuando la operación termina, se ejecuta el código que la espera."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Callbacks",
+				"texto": "Un [[callback]] es una función que pasas a otra función para que la **llame más tarde**. Ya los usaste con [[addEventListener]]. `setTimeout` también recibe un callback que se ejecuta tras un tiempo.",
+				"lenguaje": "js",
+				"codigo": "console.log('1. Pido el catálogo');\n\nsetTimeout(() => {\n  console.log('3. Llegó el catálogo');\n}, 2000);\n\nconsole.log('2. Sigo mostrando la página');",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"consola": [
+								"1. Pido el catálogo",
+								"2. Sigo mostrando la página",
+								"3. Llegó el catálogo"
+							]
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "¿Por qué ese orden?",
+				"texto": "`setTimeout` no pausa el programa: **programa** el callback y devuelve el control inmediatamente. Por eso se imprime primero la línea 2.\n\nCuando el tiempo se cumple, el callback entra en una cola de tareas. El **event loop** (bucle de eventos) lo ejecuta en cuanto el hilo principal queda libre. Lo mismo ocurre con las respuestas de red y los clics: nada se interrumpe a mitad de una función."
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Error frecuente",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "let productos;\ncargarProductos((lista) => {\n  productos = lista;\n});\nmostrar(productos); // undefined",
+						"bien": "cargarProductos((lista) => {\n  mostrar(lista);\n});",
+						"explicacion": "La línea `mostrar` se ejecuta antes de que llegue la respuesta. Lo que depende del resultado debe ir dentro del callback (o, como verás, después de un `await`)."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Predice la salida",
+				"pregunta": {
+					"enunciado": "¿Qué se imprime? console.log('A'); setTimeout(() => console.log('B'), 0); console.log('C');",
+					"opciones": [
+						"A B C",
+						"A C B",
+						"B A C",
+						"C A B"
+					],
+					"correcta": 1,
+					"explicacion": "Aunque el retardo sea 0, el callback espera en la cola hasta que termina el código actual: primero A y C, después B."
+				}
+			}
+		]
+	},
+	{
+		"id": "L59",
+		"zona": 5,
+		"sala": "z5_manantial",
+		"orden": 59,
+		"nivel": "intermedio",
+		"titulo": "AJAX: XMLHttpRequest y jQuery",
+		"resumen": "AJAX es pedir datos al servidor desde JavaScript sin recargar la página. Durante años se hizo con XMLHttpRequest y callbacks (o $.ajax de jQuery), lo que llevaba a callbacks anidados difíciles de leer: el callback hell.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Actualizar sin recargar",
+				"texto": "Enviar un formulario clásico **recarga la página** completa. [[AJAX|ajax]] (Asynchronous JavaScript and XML) es la técnica de hacer peticiones al servidor **desde JavaScript** y actualizar solo una parte del DOM: filtrar el catálogo, añadir al carrito, cargar más reseñas.\n\nA pesar del nombre, hoy los datos casi siempre viajan en **JSON**, no en XML."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "XMLHttpRequest",
+				"texto": "[[XMLHttpRequest|xmlhttprequest]] (XHR) es la API original del navegador para AJAX. Funciona con eventos y callbacks: creas el objeto, registras qué hacer al terminar y lo envías.",
+				"lenguaje": "js",
+				"codigo": "const xhr = new XMLHttpRequest();\nxhr.open('GET', '/api/productos');\n\nxhr.onload = function () {\n  if (xhr.status === 200) {\n    const lista = JSON.parse(xhr.responseText);\n    mostrar(lista);\n  }\n};\nxhr.onerror = function () {\n  console.error('Error de red');\n};\n\nxhr.send();"
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "jQuery y $.ajax",
+				"texto": "[[jQuery]] es una biblioteca muy usada entre 2006 y 2015 que simplificaba el DOM y AJAX con una sintaxis más corta y compatible con navegadores antiguos. Hoy los navegadores ofrecen APIs nativas equivalentes, pero lo encontrarás en muchos proyectos existentes.",
+				"lenguaje": "js",
+				"codigo": "$.ajax({\n  url: '/api/productos',\n  method: 'GET',\n  success: function (lista) { mostrar(lista); },\n  error: function () { console.error('Falló'); }\n});"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El problema: callback hell",
+				"texto": "Cuando una petición depende de otra, cada callback va **dentro** del anterior. El código crece hacia la derecha, los errores se manejan en cada nivel y es difícil de leer y mantener. A esto se le llama [[callback hell|callback_hell]].",
+				"lenguaje": "js",
+				"codigo": "obtenerUsuario(id, function (usuario) {\n  obtenerPedidos(usuario, function (pedidos) {\n    obtenerDetalle(pedidos[0], function (detalle) {\n      mostrar(detalle);\n    }, manejarError);\n  }, manejarError);\n}, manejarError);"
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Qué es AJAX?",
+				"pregunta": {
+					"enunciado": "¿Qué describe mejor AJAX?",
+					"opciones": [
+						"Un lenguaje de programación del servidor",
+						"Pedir datos al servidor desde JavaScript y actualizar parte de la página sin recargarla",
+						"Un formato de datos que sustituye a JSON",
+						"Un tipo de base de datos"
+					],
+					"correcta": 1,
+					"explicacion": "AJAX es una técnica: peticiones asíncronas desde JavaScript (XHR, jQuery o fetch) y actualización parcial del DOM."
+				}
+			}
+		]
+	},
+	{
+		"id": "L60",
+		"zona": 5,
+		"sala": "z5_manantial",
+		"orden": 60,
+		"nivel": "intermedio",
+		"titulo": "Promesas: then, catch y Promise.all",
+		"resumen": "Una promesa representa un resultado futuro: pending, fulfilled o rejected. then() recibe el valor, catch() el error y finally() se ejecuta siempre. Encadenar then aplana los callbacks; Promise.all espera varias promesas.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Un valor que llegará",
+				"texto": "Una [[promesa|promesa]] (`Promise`) es un objeto que representa el **resultado futuro** de una operación asíncrona. Tiene tres estados:\n\n• `pending`: la operación sigue en curso.\n• `fulfilled`: terminó bien y tiene un **valor**.\n• `rejected`: falló y tiene un **motivo** (un error).\n\nUna vez que se cumple o se rechaza, queda **resuelta** y su estado ya no cambia. Así funciona la habilidad Promesa: la fuente pasa por los mismos estados."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "then, catch y finally",
+				"texto": "• [[then()|then]] registra qué hacer con el valor cuando se cumple. **Devuelve otra promesa**, por eso se puede encadenar.\n• [[catch()|catch]] recibe el error si **cualquier** paso anterior de la cadena falla.\n• `finally()` se ejecuta en ambos casos (por ejemplo, para ocultar un indicador de carga).",
+				"lenguaje": "js",
+				"codigo": "obtenerUsuario(id)\n  .then((usuario) => obtenerPedidos(usuario))\n  .then((pedidos) => obtenerDetalle(pedidos[0]))\n  .then((detalle) => mostrar(detalle))\n  .catch((error) => avisar(error))\n  .finally(() => ocultarCargando());"
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Crear una promesa",
+				"texto": "`new Promise` recibe una función con dos parámetros: `resolve` (cumplirla con un valor) y `reject` (rechazarla con un error). Las APIs modernas, como `fetch`, ya devuelven promesas, así que crearlas a mano es menos habitual.",
+				"lenguaje": "js",
+				"codigo": "function esperar(ms) {\n  return new Promise((resolve) => {\n    setTimeout(() => resolve('listo'), ms);\n  });\n}\n\nesperar(1000).then((valor) => console.log(valor));"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Varias a la vez: Promise.all",
+				"texto": "[[Promise.all|promise_all]] recibe una lista de promesas y devuelve una que se cumple cuando **todas** se cumplen, con un array de resultados en el mismo orden. Si **una** se rechaza, se rechaza entera. Las peticiones corren en paralelo.",
+				"lenguaje": "js",
+				"codigo": "Promise.all([obtenerProductos(), obtenerUsuario(id)])\n  .then(([productos, usuario]) => {\n    pintarTienda(productos, usuario);\n  })\n  .catch(avisar);",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Navegador",
+									"API"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "GET /productos"
+									},
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "GET /usuarios/7"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "usuario"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "productos"
+									},
+									{
+										"de": 0,
+										"a": 0,
+										"texto": "then: ambas listas"
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Estados",
+				"pregunta": {
+					"enunciado": "Una promesa que ya se cumplió con el valor 5, ¿puede después pasar a rejected?",
+					"opciones": [
+						"Sí, si ocurre un error más tarde",
+						"No: una vez resuelta, su estado y valor no cambian",
+						"Sí, al llamar a catch()",
+						"Solo dentro de Promise.all"
+					],
+					"correcta": 1,
+					"explicacion": "Una promesa se resuelve una sola vez. Los errores posteriores afectan a las promesas nuevas que devuelven then o catch, no a la original."
+				}
+			}
+		]
+	},
+	{
+		"id": "L61",
+		"zona": 5,
+		"sala": "z5_manantial",
+		"orden": 61,
+		"nivel": "intermedio",
+		"titulo": "async y await",
+		"resumen": "Una función async siempre devuelve una promesa. Dentro, await pausa esa función hasta que la promesa se resuelve, sin bloquear la página. Los errores se manejan con try/catch.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Código asíncrono que se lee en orden",
+				"texto": "[[async/await|async_await]] es una sintaxis sobre las promesas (ES2017) que permite escribir código asíncrono **como si fuera secuencial**:\n\n• `async` delante de una función hace que **siempre devuelva una promesa**.\n• `await` delante de una promesa **pausa esa función** hasta que se resuelve y devuelve su valor (o lanza su error).\n\nMientras la función espera, el resto de la página sigue funcionando: `await` no bloquea el hilo principal. `await` solo puede usarse dentro de funciones `async` (y en el nivel superior de los módulos)."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "La misma cadena, con await",
+				"texto": "Compara con la cadena de `then` de la lección anterior. Los errores se capturan con [[try/catch|try_catch]], igual que en el código síncrono.",
+				"lenguaje": "js",
+				"codigo": "async function verDetalle(id) {\n  try {\n    const usuario = await obtenerUsuario(id);\n    const pedidos = await obtenerPedidos(usuario);\n    const detalle = await obtenerDetalle(pedidos[0]);\n    mostrar(detalle);\n  } catch (error) {\n    avisar(error);\n  } finally {\n    ocultarCargando();\n  }\n}"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores frecuentes",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "async function cargar() {\n  const productos = obtenerProductos();\n  mostrar(productos); // una Promise, no la lista\n}",
+						"bien": "async function cargar() {\n  const productos = await obtenerProductos();\n  mostrar(productos);\n}",
+						"explicacion": "Sin `await` obtienes la promesa pendiente, no su valor."
+					},
+					{
+						"mal": "const a = await obtenerProductos();\nconst b = await obtenerUsuarios(); // espera a que termine a",
+						"bien": "const [a, b] = await Promise.all([\n  obtenerProductos(),\n  obtenerUsuarios()\n]);",
+						"explicacion": "Dos `await` seguidos hacen las peticiones una tras otra. Si no dependen entre sí, `Promise.all` las lanza en paralelo y tarda menos."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Qué devuelve?",
+				"pregunta": {
+					"enunciado": "async function total() { return 42; } ¿Qué devuelve total()?",
+					"opciones": [
+						"El número 42",
+						"Una promesa que se cumple con 42",
+						"undefined",
+						"Un error, porque no hay await"
+					],
+					"correcta": 1,
+					"explicacion": "Una función `async` siempre devuelve una promesa; el valor retornado es el valor con el que se cumple."
+				}
+			}
+		]
+	},
+	{
+		"id": "L62",
+		"zona": 5,
+		"sala": "z5_manantial",
+		"orden": 62,
+		"nivel": "intermedio",
+		"titulo": "Closures",
+		"resumen": "Un closure es una función que recuerda las variables del ámbito donde se creó, incluso cuando se ejecuta más tarde. Es la razón por la que los callbacks pueden usar variables de fuera y permite crear estado privado.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Funciones con memoria",
+				"texto": "Cada función tiene acceso a las variables de su [[ámbito|ambito]] (scope): las suyas y las de las funciones que la contienen, según **dónde está escrita** en el código.\n\nUn [[closure]] es la combinación de una función y ese ámbito. Aunque la función exterior ya haya terminado, la interior **sigue recordando** sus variables. Por eso un callback que se ejecuta segundos después todavía puede usar variables definidas junto a él."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Estado privado",
+				"texto": "`crearCarrito` termina, pero las funciones que devuelve siguen accediendo a `total`. Nadie más puede modificar `total` directamente: solo a través de esas funciones.",
+				"lenguaje": "js",
+				"codigo": "function crearCarrito() {\n  let total = 0;\n  return {\n    agregar(precio) { total += precio; },\n    verTotal() { return total; }\n  };\n}\n\nconst carrito = crearCarrito();\ncarrito.agregar(120);\ncarrito.agregar(35);\nconsole.log(carrito.verTotal());",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"consola": [
+								"155"
+							]
+						}
+					]
+				}
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Closures en callbacks",
+				"texto": "Cada botón recibe su propio callback, y cada callback recuerda **su** `producto` gracias al closure. `let` crea una variable nueva en cada vuelta del bucle.",
+				"lenguaje": "js",
+				"codigo": "for (const producto of productos) {\n  const boton = document.createElement('button');\n  boton.textContent = `Comprar ${producto.nombre}`;\n  boton.addEventListener('click', () => {\n    comprar(producto.id);\n  });\n  lista.append(boton);\n}"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Error clásico con var",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "for (var i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 100);\n} // 3 3 3",
+						"bien": "for (let i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 100);\n} // 0 1 2",
+						"explicacion": "`var` crea una sola variable para todo el bucle: los tres callbacks recuerdan la misma `i`, que ya vale 3. `let` crea una variable por iteración."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Qué recuerda?",
+				"pregunta": {
+					"enunciado": "function contador() { let n = 0; return () => ++n; } const c = contador(); c(); c(); ¿Cuánto devuelve la tercera llamada c()?",
+					"opciones": [
+						"1",
+						"2",
+						"3",
+						"0"
+					],
+					"correcta": 2,
+					"explicacion": "La función devuelta conserva la misma variable `n` entre llamadas gracias al closure: 1, 2 y 3."
+				}
+			}
+		]
+	}
+]

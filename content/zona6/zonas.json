@@ -1,0 +1,11 @@
+[
+	{
+		"id": "z6", "zona": 6, "semana": 6,
+		"nombre": "Archivo Paginado",
+		"tema": "Filtrado, ordenamiento y paginación, OData, JSON:API, scroll infinito, rendimiento, caché y middlewares",
+		"salas": ["z6_vestibulo", "z6_estanteria", "z6_catalogo", "z6_galeria", "z6_sotano", "z6_boveda", "z6_pasillo"],
+		"habilidad": "cache",
+		"jefe": "scroll_infinito",
+		"fragmentos": ["z6_catalogo:fragmento"]
+	}
+]

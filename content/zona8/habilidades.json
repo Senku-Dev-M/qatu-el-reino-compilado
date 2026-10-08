@@ -1,0 +1,11 @@
+[
+	{
+		"id": "contenedor",
+		"zona": 8,
+		"nombre": "Contenedor",
+		"descripcion": "Despliega un Pod bajo tus pies mientras estás en el aire: sirve de plataforma durante unos segundos. Desplegarlo sobre un nodo del clúster completa el Deployment que abre su compuerta.",
+		"leccion": "Un Pod es la unidad mínima que ejecuta Kubernetes: uno o varios contenedores que comparten red y almacenamiento. Es efímero: se crea, cumple su función y se elimina, y un Deployment se asegura de que exista el número deseado. Lo estudias en el Santuario de Pods.",
+		"control": "contenedor",
+		"instruccion": "Salta y pulsa [%s] en el aire para desplegar un Pod bajo tus pies."
+	}
+]

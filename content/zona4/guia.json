@@ -1,0 +1,81 @@
+[
+	{
+		"id": "z4_mirador", "nombre": "Mirador del Flujo",
+		"intro": [
+			"Bienvenido a los Cañones Flexibles. Soy El Manual, y esta semana estudiaremos cómo se colocan los elementos en una página: el layout.",
+			"En la semana anterior aprendiste a crear elementos y a darles estilo. Pero ¿qué decide que un título quede arriba y un menú a la derecha?",
+			"En este mirador empezamos por lo que hace el navegador cuando no le indicas nada: el flujo normal, con elementos de bloque y en línea.",
+			"Recoge también el mapa de la zona: los cañones son largos."
+		],
+		"recordatorio": "Antes de Flexbox y Grid hay que entender el flujo normal: bloques uno debajo de otro, elementos en línea uno al lado de otro.",
+		"cierre": [
+			"Bien. Ya sabes qué es el layout, por qué float no sirve para construirlo y cómo se comportan block, inline e inline-block.",
+			"Siguiente sala: el Desfiladero de los Ejes. Allí conocerás Flexbox y recibirás una habilidad para cambiar contenedores flex del propio cañón."
+		]
+	},
+	{
+		"id": "z4_desfiladero", "nombre": "Desfiladero de los Ejes",
+		"intro": [
+			"Este es el Desfiladero de los Ejes. Aquí estudiaremos Flexbox, el sistema de layout en una dimensión.",
+			"Iremos en orden: contenedor y elementos, los dos ejes, justify-content para repartir en el eje principal y align-items para alinear en el transversal.",
+			"Más adelante hay un precipicio con un puente de losas. Es un contenedor flex: cuando tengas la habilidad, acércate a su marco y cambia su justify-content hasta que las losas te dejen cruzar."
+		],
+		"recordatorio": "justify-content trabaja en el eje principal; align-items, en el transversal. Si el puente no te deja cruzar, piensa en cómo reparte el espacio cada valor.",
+		"cierre": [
+			"Excelente. Ya sabes crear un contenedor flex, identificar sus ejes y usar justify-content y align-items.",
+			"Siguiente sala: el Paso de la Caravana. Veremos qué pasa cuando los elementos no caben y cómo crecen o se encogen."
+		]
+	},
+	{
+		"id": "z4_caravana", "nombre": "Paso de la Caravana",
+		"intro": [
+			"El Paso de la Caravana. Aquí completamos Flexbox con tres temas: flex-wrap, el tamaño flexible de los elementos (grow, shrink y basis) y los contenedores anidados.",
+			"Este cañón tiene contenedores en columna: con flex-direction: column el eje principal es vertical, así que justify-content mueve las losas arriba y abajo.",
+			"Al final hay un puente bajo un techo de roca. Ese contenedor cambia align-items: si las losas se estiran, no hay espacio para pasar."
+		],
+		"recordatorio": "En un contenedor en columna, justify-content es vertical. align-items: stretch estira los elementos en el eje transversal hasta ocupar todo el contenedor.",
+		"cierre": [
+			"Muy bien. Ya dominas Flexbox: wrap, flex-grow, flex-shrink, flex-basis y cómo anidar contenedores.",
+			"Siguiente sala: las Terrazas de la Rejilla. Pasamos a dos dimensiones con CSS Grid."
+		]
+	},
+	{
+		"id": "z4_terrazas", "nombre": "Terrazas de la Rejilla",
+		"intro": [
+			"Las Terrazas de la Rejilla. Hasta ahora colocaste elementos en una línea; ahora trabajarás con filas y columnas a la vez: CSS Grid.",
+			"Veremos qué es una rejilla, la unidad fr con repeat() y gap, el grid explícito e implícito, y los layouts con nombre de grid-template-areas.",
+			"Si buscas algo más, al final de la terraza hay una columna flex que lleva a una cornisa alta."
+		],
+		"recordatorio": "Grid define pistas en el contenedor. fr reparte el espacio libre después de restar medidas fijas y gaps.",
+		"cierre": [
+			"Perfecto. Ya sabes crear rejillas, calcular columnas con fr, ocupar varias pistas y dibujar layouts con áreas.",
+			"Siguiente sala: la Atalaya Responsiva. Aprenderás a adaptar todo esto a pantallas de cualquier tamaño."
+		]
+	},
+	{
+		"id": "z4_atalaya", "nombre": "Atalaya Responsiva",
+		"intro": [
+			"La Atalaya Responsiva. Desde aquí se ve el cañón entero, igual que un diseño debe verse bien en cualquier pantalla.",
+			"Estudiaremos el diseño responsivo: su historia y la etiqueta viewport, las media queries con mobile first, los macro layouts y los micro layouts, junto con tipografía e imágenes responsivas.",
+			"Al final hay un sello que combina Flexbox, Grid y media queries."
+		],
+		"recordatorio": "Mobile first: estilos base para móvil y @media (min-width: …) para ampliar. Sin la etiqueta meta viewport, nada de esto funciona en el móvil.",
+		"cierre": [
+			"Muy bien. Ya sabes hacer páginas que se adaptan: viewport, media queries, macro y micro layouts, rem, clamp() e imágenes fluidas.",
+			"Última sala: el Taller de Frameworks. Veremos las herramientas que usan los equipos para escribir menos CSS."
+		]
+	},
+	{
+		"id": "z4_taller", "nombre": "Taller de Frameworks",
+		"intro": [
+			"El Taller de Frameworks. Ya escribes layouts con CSS puro; ahora conocerás las herramientas que lo aceleran.",
+			"Veremos los tipos de frameworks CSS con sus ventajas y desventajas, Tailwind CSS con sus clases utilitarias y, para cerrar la semana, cómo elegir entre Flexbox y Grid.",
+			"Después del sello de este taller espera el Guardián del Parcial. Te pedirá aplicar propiedades flex en pleno combate."
+		],
+		"recordatorio": "Un framework no sustituye saber CSS: md:flex es solo una media query con display: flex.",
+		"cierre": [
+			"Has terminado la Semana 4: layout, Flexbox, Grid, diseño responsivo y frameworks CSS.",
+			"Queda el Guardián del Parcial. Recuerda: justify-content en el eje principal, align-items en el transversal."
+		]
+	}
+]

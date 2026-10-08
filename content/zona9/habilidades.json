@@ -1,0 +1,11 @@
+[
+	{
+		"id": "inspector",
+		"zona": 9,
+		"nombre": "Inspector",
+		"descripcion": "Activa durante unos segundos una lente que revela las aserciones ocultas a tu alrededor. Una aserción revelada queda verificada y desbloquea la barrera que protege.",
+		"leccion": "Una aserción comprueba que una condición se cumple (assert). En pruebas y en seguridad sirve para verificar supuestos, como que la entrada del usuario llega saneada, antes de dejar pasar el flujo. Lo estudias en el Santuario del Inspector.",
+		"control": "inspector",
+		"instruccion": "Pulsa [%s] para activar el Inspector y revelar las aserciones cercanas."
+	}
+]

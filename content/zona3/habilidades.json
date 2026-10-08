@@ -1,0 +1,8 @@
+[
+	{
+		"id": "event_listener", "zona": 3, "nombre": "Event Listener",
+		"descripcion": "Engánchate a los nodos brillantes: tu cuerpo responde al evento y sale disparado hacia ellos.",
+		"leccion": "En JavaScript, elemento.addEventListener('click', funcion) registra una función que se ejecuta cada vez que ocurre ese evento. Lo estudiarás paso a paso en la Copa de los Eventos.",
+		"control": "grapple"
+	}
+]

@@ -1,0 +1,242 @@
+[
+	{
+		"id": "L185",
+		"zona": 9,
+		"sala": "z9_camara_selenium",
+		"orden": 185,
+		"nivel": "intermedio",
+		"titulo": "Automatización E2E con Selenium",
+		"resumen": "Selenium WebDriver controla navegadores reales para automatizar flujos de usuario; el proceso va de elegir casos a revisar resultados.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Selenium y el proceso de automatización",
+				"texto": "[[Selenium WebDriver|selenium]] controla navegadores reales (Chrome, Firefox, Edge, Safari) a través del protocolo **WebDriver**: abre páginas, escribe, hace clic y lee el resultado igual que un usuario. Herramientas como [[Playwright|playwright_e2e]] y Cypress siguen la misma idea con otras APIs.\n\nEl **proceso de automatización** tiene tres pasos:\n1. **Seleccionar casos:** flujos críticos, repetitivos y estables (iniciar sesión, comprar).\n2. **Ejecutar:** en local y en el pipeline, en varios navegadores.\n3. **Revisar resultados:** fallos, capturas de pantalla y tendencias."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Iniciar sesión con Selenium",
+				"texto": "Con `selenium-webdriver` para Node.js y Jest. `until` espera a que el elemento aparezca en vez de usar pausas fijas:",
+				"lenguaje": "js",
+				"codigo": "const { Builder, By, until } = require('selenium-webdriver');\n\ntest('el comprador inicia sesión y ve su carrito', async () => {\n  const driver = await new Builder().forBrowser('firefox').build();\n  try {\n    await driver.get('https://staging.qatu.com/login');\n    await driver.findElement(By.id('email')).sendKeys('ana@qatu.com');\n    await driver.findElement(By.id('password')).sendKeys(process.env.CLAVE_PRUEBA);\n    await driver.findElement(By.css('button[type=submit]')).click();\n\n    const contador = await driver.wait(\n      until.elementLocated(By.css('[data-test=carrito-contador]')), 5000);\n    expect(await contador.getText()).toBe('3');\n  } finally {\n    await driver.quit();\n  }\n});"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "La misma prueba en varios navegadores",
+				"texto": "Con **Selenium Grid** la suite se reparte entre navegadores y máquinas en paralelo: así escala la prueba de compatibilidad.",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Navegador",
+									"login",
+									"checkout",
+									"búsqueda"
+								],
+								"filas": [
+									[
+										"Chrome 128",
+										"✓",
+										"✓",
+										"✓"
+									],
+									[
+										"Firefox 130",
+										"✓",
+										"✓",
+										"✓"
+									],
+									[
+										"Safari 17",
+										"✓",
+										"✕ botón oculto",
+										"✓"
+									],
+									[
+										"Edge 128",
+										"✓",
+										"✓",
+										"✓"
+									]
+								]
+							}
+						},
+						{
+							"nota": "El fallo solo en Safari es exactamente lo que una prueba en un único navegador no habría detectado."
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Scripts E2E frágiles",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "By.xpath('/html/body/div[2]/div/form/button[1]')",
+						"bien": "By.css('[data-test=boton-pagar]')",
+						"explicacion": "Un XPath absoluto se rompe con cualquier cambio de maquetación. Un atributo dedicado a pruebas es estable y expresa la intención."
+					},
+					{
+						"mal": "await driver.findElement(By.id('password'))\n  .sendKeys('Secreta123!');",
+						"bien": "await driver.findElement(By.id('password'))\n  .sendKeys(process.env.CLAVE_PRUEBA);",
+						"explicacion": "Las credenciales no se escriben en el código de las pruebas: se usan cuentas de prueba y variables del pipeline."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Automatización E2E con Playwright y Selenium",
+				"pregunta": {
+					"enunciado": "¿Qué localizador es más resistente a cambios de maquetación en un script de Selenium?",
+					"opciones": [
+						"/html/body/div[2]/div/form/button[1]",
+						"[data-test=boton-pagar]",
+						"La tercera etiqueta button de la página",
+						"La posición x,y del botón"
+					],
+					"correcta": 1,
+					"explicacion": "Un atributo dedicado a pruebas no cambia cuando se reordena el HTML o los estilos."
+				}
+			}
+		]
+	},
+	{
+		"id": "L186",
+		"zona": 9,
+		"sala": "z9_camara_selenium",
+		"orden": 186,
+		"nivel": "intermedio",
+		"titulo": "Flaky Tests y Esperas Reactivas",
+		"resumen": "Técnicas deterministas para eliminar falsos positivos en suites E2E.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Causas de Tests Flaky",
+				"texto": "Un [[flaky test|flaky_def]] pasa o falla sin que cambie el código. Causas habituales:\n\n• **Esperas fijas** (`sleep(3000)`): a veces sobran y a veces no alcanzan.\n• **Animaciones** o peticiones asíncronas que aún no terminaron.\n• **Datos compartidos** entre pruebas o que dependen de la fecha.\n• **Orden de ejecución**: una prueba deja estado que otra necesita."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Esperas Explícitas y Auto-Waiting",
+				"texto": "La solución es **esperar una condición**, no un tiempo:\n\n• En Selenium, las **esperas explícitas** (`driver.wait(until...)`) repiten la comprobación hasta que se cumple o vence un tiempo máximo.\n• Playwright incorpora **auto-waiting**: antes de hacer clic espera a que el elemento esté visible, estable y habilitado.\n\nAdemás, cada prueba crea sus propios datos y no depende de las demás."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Esperar una condición",
+				"lenguaje": "js",
+				"codigo": "// Selenium: espera explícita\nconst boton = await driver.wait(\n  until.elementLocated(By.css('[data-test=boton-pagar]')), 5000);\nawait driver.wait(until.elementIsEnabled(boton), 5000);\nawait boton.click();\n\n// Playwright: auto-waiting incorporado\nawait page.getByTestId('boton-pagar').click();\nawait expect(page.getByText('Pago aprobado')).toBeVisible();"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Fuentes de inestabilidad",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "await boton.click();\nawait driver.sleep(3000);\nconst msg = await driver.findElement(By.id('ok'));",
+						"bien": "await boton.click();\nconst msg = await driver.wait(\n  until.elementLocated(By.id('ok')), 5000);",
+						"explicacion": "Una pausa fija hace la suite lenta cuando sobra e inestable cuando la red va lenta. La espera explícita termina en cuanto se cumple."
+					},
+					{
+						"mal": "test('compra', ...)   // usa el usuario creado\ntest('registro', ...) // por esta otra prueba",
+						"bien": "beforeEach(async () => {\n  usuario = await crearUsuarioDePrueba();\n});",
+						"explicacion": "Si una prueba depende de otra, cambiar el orden o ejecutarlas en paralelo las rompe."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Flaky Tests y Esperas Reactivas",
+				"pregunta": {
+					"enunciado": "Una prueba usa sleep(3000) antes de leer el mensaje de confirmación y falla a veces en el pipeline. ¿Qué hacer?",
+					"opciones": [
+						"Subir el sleep a 10 segundos",
+						"Esperar explícitamente a que el mensaje aparezca, con un tiempo máximo",
+						"Reintentar la prueba hasta que pase",
+						"Ejecutarla solo en local"
+					],
+					"correcta": 1,
+					"explicacion": "Una espera explícita termina en cuanto se cumple la condición y no depende de cuánto tarde la red."
+				}
+			}
+		]
+	},
+	{
+		"id": "L187",
+		"zona": 9,
+		"sala": "z9_camara_selenium",
+		"orden": 187,
+		"nivel": "intermedio",
+		"titulo": "Pruebas de rendimiento: carga, estrés y navegador",
+		"resumen": "Carga, estrés, carga de UI y rendimiento web: qué mide cada prueba y cómo se automatiza con k6.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Qué mide cada prueba",
+				"texto": "Las pruebas de rendimiento responden preguntas distintas:\n\n• [[Prueba de carga|prueba_carga]]: ¿aguanta la carga **esperada** (Black Friday: 500 compras por minuto)?\n• [[Prueba de estrés|prueba_estres]]: ¿dónde se **rompe** si se supera esa carga, y cómo se recupera?\n• **Carga de UI y rendimiento web:** ¿cuánto tarda la página en ser usable (tiempo hasta el primer contenido, interactividad)?\n• **Carga basada en navegador:** usuarios virtuales con navegadores reales, que ejecutan también el JavaScript del frontend.\n\nMétricas clave: **peticiones por segundo**, **latencia p95/p99** (el 95% o el 99% de las respuestas tarda menos que ese valor) y **tasa de errores**."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Una prueba de carga con k6",
+				"texto": "k6 escribe las pruebas en JavaScript. Las etapas suben usuarios virtuales y los `thresholds` convierten los objetivos en criterios de aprobado:",
+				"lenguaje": "js",
+				"codigo": "import http from 'k6/http';\nimport { check, sleep } from 'k6';\n\nexport const options = {\n  stages: [\n    { duration: '2m', target: 200 },  // sube a 200 usuarios\n    { duration: '5m', target: 200 },  // carga sostenida\n    { duration: '1m', target: 0 },\n  ],\n  thresholds: {\n    http_req_duration: ['p(95)<400'],  // p95 menor que 400 ms\n    http_req_failed: ['rate<0.01'],    // menos del 1% de errores\n  },\n};\n\nexport default function () {\n  const r = http.get('https://staging.qatu.com/api/productos');\n  check(r, { 'status 200': (res) => res.status === 200 });\n  sleep(1);\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Informe de k6",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ k6 run carga-catalogo.js",
+								"  ✓ status 200",
+								"  http_req_duration: avg=182ms  p(95)=356ms  p(99)=611ms",
+								"  http_req_failed:   0.42%",
+								"  http_reqs:         118 430   246/s",
+								"  ✓ thresholds: p(95)<400  rate<0.01"
+							]
+						},
+						{
+							"nota": "El p99 de 611 ms indica que el 1% más lento lo pasa mal, aunque la media parezca buena."
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Pruebas de rendimiento engañosas",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "\"La latencia media es 180 ms:\nel rendimiento es bueno.\"",
+						"bien": "\"Media 180 ms, pero p99 611 ms:\nel 1% de usuarios espera más de medio segundo.\"",
+						"explicacion": "La media oculta los casos lentos. Los objetivos de rendimiento se fijan con percentiles."
+					},
+					{
+						"mal": "Lanzar la prueba de estrés contra producción\nen horario comercial y sin avisar.",
+						"bien": "Entorno de staging con datos y tamaño similares,\no ventana acordada con operaciones.",
+						"explicacion": "Una prueba de estrés busca romper el sistema: hacerlo con clientes reales convierte la prueba en una caída."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Pruebas de Carga y Rendimiento con k6",
+				"pregunta": {
+					"enunciado": "Qatu quiere saber hasta cuántas compras por minuto aguanta antes de empezar a devolver errores. ¿Qué prueba es?",
+					"opciones": [
+						"Prueba de carga con el tráfico esperado",
+						"Prueba de estrés",
+						"Prueba de usabilidad",
+						"Prueba unitaria"
+					],
+					"correcta": 1,
+					"explicacion": "La prueba de estrés supera la carga esperada para encontrar el punto de ruptura."
+				}
+			}
+		]
+	}
+]

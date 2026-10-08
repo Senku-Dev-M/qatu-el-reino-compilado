@@ -1,0 +1,255 @@
+[
+	{
+		"id": "L46",
+		"zona": 4,
+		"sala": "z4_taller",
+		"orden": 46,
+		"nivel": "inicial",
+		"titulo": "Frameworks CSS: tipos, ventajas y desventajas",
+		"resumen": "Un framework CSS ofrece estilos y componentes ya escritos. Hay de propósito general, basados en utilidades, ligeros, sin clases y especializados.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Qué es un framework CSS",
+				"texto": "Un [[framework CSS|framework_css]] es una colección de estilos listos para usar: rejillas, tipografía, botones, formularios y utilidades responsivas. En lugar de escribir todo el CSS desde cero, aplicas sus clases en tu HTML.\n\nTipos principales:\n\n• **Propósito general**: componentes completos (Bootstrap, Foundation).\n• **Basados en utilidades**: clases pequeñas de una sola propiedad (Tailwind CSS).\n• **Ligeros**: pocos estilos base y poco peso (Milligram, Pure.css).\n• **Sin clases**: dan estilo a los elementos HTML directamente (Water.css).\n• **Especializados**: resuelven una sola necesidad, como animaciones (Animate.css)."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Ventajas y desventajas",
+				"texto": "**Ventajas**\n• Desarrollo más rápido y diseño consistente en todo el equipo.\n• Responsivo y compatible entre navegadores desde el principio.\n• Documentación y comunidad grandes.\n\n**Desventajas**\n• Añade CSS que quizá no uses (peso de la página).\n• Los sitios pueden parecerse mucho entre sí.\n• Hay que aprender sus convenciones, y personalizar ciertos componentes puede costar más que escribirlos.\n• No sustituye entender CSS: para depurar o personalizar necesitas saber Flexbox, Grid y el modelo de cajas."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Un componente de Bootstrap",
+				"texto": "Con un framework de propósito general, una clase aplica un componente completo ya diseñado.",
+				"lenguaje": "html",
+				"codigo": "<button class=\"btn btn-primary\">Comprar</button>",
+				"vista": {
+					"pestana": "Tienda",
+					"bloques": [
+						{
+							"texto": {
+								"valor": "Comprar",
+								"color": "#ffffff",
+								"fondo": "#0d6efd",
+								"padding": 10,
+								"tamano": 18
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Identifica el tipo",
+				"pregunta": {
+					"enunciado": "Un framework da estilo a <button>, <table> y <form> sin que escribas ninguna clase. ¿De qué tipo es?",
+					"opciones": [
+						"Basado en utilidades",
+						"Sin clases",
+						"Especializado en animaciones",
+						"De propósito general"
+					],
+					"correcta": 1,
+					"explicacion": "Los frameworks sin clases (classless) aplican estilos directamente a los elementos HTML."
+				}
+			}
+		]
+	},
+	{
+		"id": "L47",
+		"zona": 4,
+		"sala": "z4_taller",
+		"orden": 47,
+		"nivel": "intermedio",
+		"titulo": "Tailwind CSS: clases utilitarias",
+		"resumen": "Tailwind usa clases utilitarias que aplican una sola propiedad (flex, p-4, gap-4). Los prefijos sm:, md: y lg: aplican estilos desde un ancho mínimo (mobile first).",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Una clase, una propiedad",
+				"texto": "[[Tailwind CSS|tailwind]] es un framework basado en [[clases utilitarias|clase_utilitaria]]: cada clase aplica una propiedad (o muy pocas). Construyes el diseño combinándolas directamente en el HTML:\n\n• `flex` → `display: flex`\n• `justify-between` → `justify-content: space-between`\n• `items-center` → `align-items: center`\n• `p-4` → `padding: 1rem`\n• `gap-4` → `gap: 1rem`\n• `grid grid-cols-3` → rejilla de tres columnas iguales\n\nTodo lo que ves en estas clases ya lo aprendiste en CSS: Tailwind solo lo abrevia."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Cabecera con utilidades",
+				"lenguaje": "html",
+				"codigo": "<header class=\"flex justify-between items-center p-4\">\n  <span>QATU</span>\n  <nav class=\"flex gap-4\">\n    <a href=\"#\">Inicio</a>\n    <a href=\"#\">Tienda</a>\n  </nav>\n</header>",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"flex": {
+								"ancho": 500,
+								"alto": 60,
+								"justify": "space-between",
+								"align": "center",
+								"items": [
+									{
+										"texto": "QATU",
+										"ancho": 90,
+										"alto": 36
+									},
+									{
+										"texto": "Inicio · Tienda",
+										"ancho": 170,
+										"alto": 36
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Responsivo con prefijos",
+				"texto": "Los prefijos aplican una clase **a partir** de un ancho mínimo, siguiendo mobile first. Por defecto: `sm:` 640 px, `md:` 768 px, `lg:` 1024 px, `xl:` 1280 px.\n\nAquí la galería tiene 1 columna en móvil, 2 desde 768 px y 4 desde 1024 px. Sobre Tailwind existen librerías de componentes como daisyUI o Flowbite.",
+				"lenguaje": "html",
+				"codigo": "<div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4\">\n  ...\n</div>",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"responsive": {
+								"items": [
+									"1",
+									"2",
+									"3",
+									"4"
+								],
+								"anchos": [
+									{
+										"etiqueta": "Móvil",
+										"columnas": 1,
+										"ancho": 110
+									},
+									{
+										"etiqueta": "md (768 px)",
+										"columnas": 2,
+										"ancho": 200
+									},
+									{
+										"etiqueta": "lg (1024 px)",
+										"columnas": 4,
+										"ancho": 300
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Malentendidos con los prefijos",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<!-- Quiero 1 columna solo en móvil -->\n<div class=\"grid md:grid-cols-1 grid-cols-3\">",
+						"bien": "<div class=\"grid grid-cols-1 md:grid-cols-3\">",
+						"explicacion": "`md:` significa «desde 768 px en adelante», no «solo en tabletas». La clase sin prefijo es la de móvil; las prefijadas amplían hacia pantallas mayores."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Traduce a CSS",
+				"pregunta": {
+					"enunciado": "¿Qué hace la clase md:flex en Tailwind?",
+					"opciones": [
+						"Aplica display: flex solo en pantallas menores de 768 px",
+						"Aplica display: flex desde 768 px de ancho en adelante",
+						"Aplica display: flex solo en tabletas",
+						"Oculta el elemento en móviles"
+					],
+					"correcta": 1,
+					"explicacion": "Es equivalente a `@media (min-width: 768px) { display: flex; }`."
+				}
+			}
+		]
+	},
+	{
+		"id": "L48",
+		"zona": 4,
+		"sala": "z4_taller",
+		"orden": 48,
+		"nivel": "intermedio",
+		"titulo": "Flexbox o Grid: cómo elegir",
+		"resumen": "Flexbox para alinear en una dimensión según el contenido; Grid para estructuras en dos dimensiones. Lo habitual es Grid para el macro layout y Flexbox dentro de los componentes.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Criterios",
+				"texto": "**Usa Flexbox cuando…**\n• trabajas en **una dimensión** (una fila o una columna);\n• el tamaño de los elementos depende de su **contenido**;\n• necesitas alinear o repartir espacio: menús, barras de botones, centrar algo.\n\n**Usa Grid cuando…**\n• controlas **filas y columnas a la vez**;\n• el layout se define primero y el contenido se adapta a él;\n• quieres que los elementos se alineen en ambas direcciones: galerías, estructura de página.\n\nNo compiten: se **combinan**."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Combinados",
+				"texto": "Grid organiza la página (macro layout) y Flexbox organiza el interior de la cabecera y de cada tarjeta (micro layouts).",
+				"lenguaje": "css",
+				"codigo": ".pagina {\n  display: grid;\n  grid-template-columns: 200px 1fr;\n}\n\n.cabecera {\n  display: flex;\n  justify-content: space-between;\n}\n\n.tarjeta {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"grid": {
+								"etiqueta": "Grid: estructura",
+								"ancho": 480,
+								"columnas": "140px 1fr",
+								"gap": 8,
+								"fila_alto": 40,
+								"areas": [
+									[
+										"cabecera",
+										"cabecera"
+									],
+									[
+										"menu",
+										"tarjetas"
+									]
+								]
+							}
+						},
+						{
+							"flex": {
+								"etiqueta": "Flexbox: dentro de la cabecera",
+								"ancho": 480,
+								"alto": 44,
+								"justify": "space-between",
+								"align": "center",
+								"items": [
+									{
+										"texto": "logo",
+										"ancho": 80,
+										"alto": 30
+									},
+									{
+										"texto": "menú",
+										"ancho": 140,
+										"alto": 30
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige la herramienta",
+				"pregunta": {
+					"enunciado": "Una barra de botones debe mostrar sus botones en fila, con separación y alineados a la derecha. ¿Qué herramienta es la más directa?",
+					"opciones": [
+						"Grid con grid-template-areas",
+						"Flexbox con justify-content: flex-end y gap",
+						"float: right en cada botón",
+						"Una tabla"
+					],
+					"correcta": 1,
+					"explicacion": "Es un problema de una sola dimensión: Flexbox lo resuelve con `justify-content: flex-end` y `gap`."
+				}
+			}
+		]
+	}
+]

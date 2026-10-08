@@ -1,0 +1,11 @@
+[
+	{
+		"id": "data_binding",
+		"zona": 2,
+		"nombre": "Data Binding",
+		"descripcion": "Enlaza un nodo del modelo con su vista. Mientras está enlazado, las plataformas y compuertas conectadas reflejan su estado; si lo desenlazas, vuelven a su posición.",
+		"leccion": "El data binding sincroniza automáticamente el modelo con la vista: al cambiar el dato, la interfaz se actualiza sin escribir código de sincronización. En el enlace bidireccional, además, lo que cambia en la vista vuelve al modelo. Lo estudias en el Santuario de Inyección.",
+		"control": "binding",
+		"instruccion": "Acércate a un nodo del modelo y pulsa [%s] para enlazarlo o desenlazarlo."
+	}
+]

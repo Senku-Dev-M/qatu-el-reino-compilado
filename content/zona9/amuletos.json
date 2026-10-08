@@ -1,0 +1,18 @@
+[
+	{
+		"id": "test_lens",
+		"zona": 9,
+		"nombre": "Lente de Cobertura 100%",
+		"coste": 2,
+		"efecto": "Incrementa el daño crítico contra entidades con debilidad descubierta.",
+		"leccion": "L188"
+	},
+	{
+		"id": "flaky_shield",
+		"zona": 9,
+		"nombre": "Blindaje Antiflakes",
+		"coste": 2,
+		"efecto": "Otorga 1 segundo adicional de invulnerabilidad tras esquivar ataques.",
+		"leccion": "L186"
+	}
+]

@@ -1,0 +1,520 @@
+[
+	{
+		"id": "L31",
+		"zona": 4,
+		"sala": "z4_desfiladero",
+		"orden": 31,
+		"nivel": "inicial",
+		"titulo": "Flexbox: contenedor y elementos",
+		"resumen": "display: flex convierte un elemento en contenedor flex y a sus hijos directos en elementos flex, que se colocan en fila por defecto.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Por qué Flexbox",
+				"texto": "[[Flexbox]] (Flexible Box Layout) es un sistema de layout para **alinear y distribuir elementos en una dimensión**: en una fila o en una columna.\n\nResuelve tareas que antes eran difíciles: poner elementos en fila sin `float`, repartir el espacio sobrante, centrar verticalmente o hacer que todos los elementos tengan la misma altura."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Dos roles",
+				"texto": "Flexbox siempre involucra dos niveles:\n\n• El [[contenedor flex|contenedor_flex]]: el elemento al que le aplicas `display: flex`.\n• Los [[elementos flex|elemento_flex]]: sus **hijos directos**. Los nietos no se ven afectados.\n\nLas propiedades de distribución (`justify-content`, `align-items`…) se escriben en el **contenedor**.",
+				"lenguaje": "html",
+				"codigo": "<nav class=\"menu\">      <!-- contenedor flex -->\n  <a href=\"#\">Inicio</a>  <!-- elemento flex -->\n  <a href=\"#\">Tienda</a>  <!-- elemento flex -->\n  <a href=\"#\">Ayuda</a>   <!-- elemento flex -->\n</nav>"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Comportamiento por defecto",
+				"texto": "Solo con `display: flex` los elementos:\n\n• se colocan **en fila**, uno junto a otro;\n• **no saltan** de línea, aunque no quepan;\n• se estiran a la **altura** del contenedor (`align-items: stretch`).",
+				"lenguaje": "css",
+				"codigo": ".menu {\n  display: flex;\n  height: 120px;\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"flex": {
+								"ancho": 520,
+								"alto": 120,
+								"items": [
+									{
+										"texto": "Inicio",
+										"ancho": 110,
+										"alto": 40
+									},
+									{
+										"texto": "Tienda",
+										"ancho": 110,
+										"alto": 40
+									},
+									{
+										"texto": "Ayuda",
+										"ancho": 110,
+										"alto": 40
+									}
+								]
+							}
+						},
+						{
+							"nota": "Los tres enlaces ocupan toda la altura por el valor por defecto stretch."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Dónde va display: flex",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": ".menu a {\n  display: flex;\n}",
+						"bien": ".menu {\n  display: flex;\n}",
+						"explicacion": "`display: flex` se aplica al **padre** para colocar a sus hijos. Aplicarlo a cada enlace no los pone en fila."
+					},
+					{
+						"mal": ".menu {\n  display: flexbox;\n}",
+						"bien": ".menu {\n  display: flex;\n}",
+						"explicacion": "El valor correcto es `flex`. «flexbox» es el nombre del sistema, no un valor válido."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Quién es elemento flex?",
+				"pregunta": {
+					"enunciado": "Aplicas display: flex a un <ul>. Cada <li> contiene un <a>. ¿Qué elementos se convierten en elementos flex?",
+					"opciones": [
+						"El <ul>",
+						"Los <li>",
+						"Los <a>",
+						"Los <li> y los <a>"
+					],
+					"correcta": 1,
+					"explicacion": "Solo los hijos **directos** del contenedor (los `<li>`) son elementos flex. Los `<a>` son nietos."
+				}
+			}
+		]
+	},
+	{
+		"id": "L32",
+		"zona": 4,
+		"sala": "z4_desfiladero",
+		"orden": 32,
+		"nivel": "inicial",
+		"titulo": "Los ejes: principal y transversal",
+		"resumen": "flex-direction define el eje principal. Con row es horizontal y el transversal vertical; con column ocurre al revés.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Dos ejes",
+				"texto": "Todo contenedor flex tiene dos ejes perpendiculares:\n\n• El [[eje principal|eje_principal]]: la dirección en la que se colocan los elementos.\n• El [[eje transversal|eje_transversal]]: la dirección perpendicular.\n\nEntender los ejes es la clave de Flexbox, porque las propiedades de alineación se refieren a ellos y no a «horizontal» o «vertical»."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "flex-direction: row",
+				"texto": "[[flex-direction|flex_direction]] define el eje principal. Su valor por defecto es `row`: el eje principal es **horizontal** (de izquierda a derecha) y el transversal es **vertical**.",
+				"lenguaje": "css",
+				"codigo": ".contenedor {\n  display: flex;\n  flex-direction: row;\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"flex": {
+								"ancho": 480,
+								"alto": 110,
+								"align": "flex-start",
+								"mostrar_ejes": true,
+								"items": [
+									{
+										"texto": "1",
+										"ancho": 80,
+										"alto": 50
+									},
+									{
+										"texto": "2",
+										"ancho": 80,
+										"alto": 50
+									},
+									{
+										"texto": "3",
+										"ancho": 80,
+										"alto": 50
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "flex-direction: column",
+				"texto": "Con `column` los ejes se intercambian: el principal pasa a ser **vertical** y el transversal **horizontal**. También existen `row-reverse` y `column-reverse`, que invierten el sentido.",
+				"lenguaje": "css",
+				"codigo": ".contenedor {\n  display: flex;\n  flex-direction: column;\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"flex": {
+								"ancho": 260,
+								"alto": 200,
+								"direccion": "column",
+								"align": "flex-start",
+								"mostrar_ejes": true,
+								"items": [
+									{
+										"texto": "1",
+										"ancho": 90,
+										"alto": 50
+									},
+									{
+										"texto": "2",
+										"ancho": 90,
+										"alto": 50
+									},
+									{
+										"texto": "3",
+										"ancho": 90,
+										"alto": 50
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Identifica el eje",
+				"pregunta": {
+					"enunciado": "Un contenedor tiene flex-direction: column. ¿Cuál es su eje principal?",
+					"opciones": [
+						"Horizontal",
+						"Vertical",
+						"Diagonal",
+						"Depende del ancho de la pantalla"
+					],
+					"correcta": 1,
+					"explicacion": "Con `column` los elementos se apilan de arriba abajo: el eje principal es vertical y el transversal horizontal."
+				}
+			}
+		]
+	},
+	{
+		"id": "L33",
+		"zona": 4,
+		"sala": "z4_desfiladero",
+		"orden": 33,
+		"nivel": "inicial",
+		"titulo": "justify-content: distribuir en el eje principal",
+		"resumen": "justify-content reparte el espacio libre del eje principal: flex-start, center, flex-end, space-between, space-around y space-evenly.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El espacio libre",
+				"texto": "Si los elementos no ocupan todo el eje principal, queda **espacio libre**. [[justify-content]] decide dónde va ese espacio:\n\n• `flex-start` (por defecto): elementos al inicio.\n• `flex-end`: elementos al final.\n• `center`: elementos en el centro.\n• `space-between`: primer elemento al inicio, último al final, espacio igual **entre** ellos.\n• `space-around`: cada elemento con el mismo espacio a **ambos lados** (en los extremos queda la mitad).\n• `space-evenly`: **todos** los huecos iguales, incluidos los extremos."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Los seis valores",
+				"texto": "Mismo contenedor (500 px) y mismos tres elementos; solo cambia `justify-content`. La habilidad **Flex** de este cañón usa exactamente estas reglas.",
+				"lenguaje": "css",
+				"codigo": ".contenedor {\n  display: flex;\n  justify-content: space-between;\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"flex": {
+								"etiqueta": "flex-start",
+								"ancho": 500,
+								"alto": 44,
+								"items": [
+									{
+										"texto": "1",
+										"ancho": 70
+									},
+									{
+										"texto": "2",
+										"ancho": 70
+									},
+									{
+										"texto": "3",
+										"ancho": 70
+									}
+								]
+							}
+						},
+						{
+							"flex": {
+								"etiqueta": "center",
+								"ancho": 500,
+								"alto": 44,
+								"justify": "center",
+								"items": [
+									{
+										"texto": "1",
+										"ancho": 70
+									},
+									{
+										"texto": "2",
+										"ancho": 70
+									},
+									{
+										"texto": "3",
+										"ancho": 70
+									}
+								]
+							}
+						},
+						{
+							"flex": {
+								"etiqueta": "space-between",
+								"ancho": 500,
+								"alto": 44,
+								"justify": "space-between",
+								"items": [
+									{
+										"texto": "1",
+										"ancho": 70
+									},
+									{
+										"texto": "2",
+										"ancho": 70
+									},
+									{
+										"texto": "3",
+										"ancho": 70
+									}
+								]
+							}
+						},
+						{
+							"flex": {
+								"etiqueta": "space-evenly",
+								"ancho": 500,
+								"alto": 44,
+								"justify": "space-evenly",
+								"items": [
+									{
+										"texto": "1",
+										"ancho": 70
+									},
+									{
+										"texto": "2",
+										"ancho": 70
+									},
+									{
+										"texto": "3",
+										"ancho": 70
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "gap: separación fija",
+				"texto": "La propiedad [[gap]] añade una separación **fija** entre elementos flex (y también entre celdas de Grid). A diferencia de `margin`, no deja espacio en los extremos del contenedor.",
+				"lenguaje": "css",
+				"codigo": ".botones {\n  display: flex;\n  gap: 12px;\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"flex": {
+								"ancho": 480,
+								"alto": 50,
+								"gap": 12,
+								"items": [
+									{
+										"texto": "Comprar",
+										"ancho": 110
+									},
+									{
+										"texto": "Guardar",
+										"ancho": 110
+									},
+									{
+										"texto": "Compartir",
+										"ancho": 110
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores comunes",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": ".menu a {\n  justify-content: center;\n}",
+						"bien": ".menu {\n  display: flex;\n  justify-content: center;\n}",
+						"explicacion": "`justify-content` distribuye a los **hijos**: se escribe en el contenedor, no en cada elemento."
+					},
+					{
+						"mal": ".menu {\n  justify-content: center;\n}",
+						"bien": ".menu {\n  display: flex;\n  justify-content: center;\n}",
+						"explicacion": "Sin `display: flex` el elemento no es un contenedor flex y `justify-content` no tiene efecto."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige el valor",
+				"pregunta": {
+					"enunciado": "Quieres el logo pegado a la izquierda y el menú pegado a la derecha de la cabecera. ¿Qué valor de justify-content usas?",
+					"opciones": [
+						"center",
+						"flex-end",
+						"space-between",
+						"space-evenly"
+					],
+					"correcta": 2,
+					"explicacion": "`space-between` coloca el primer elemento al inicio y el último al final, con todo el espacio libre entre ellos."
+				}
+			}
+		]
+	},
+	{
+		"id": "L34",
+		"zona": 4,
+		"sala": "z4_desfiladero",
+		"orden": 34,
+		"nivel": "intermedio",
+		"titulo": "align-items: alinear en el eje transversal",
+		"resumen": "align-items alinea los elementos en el eje transversal: stretch (por defecto), flex-start, center, flex-end y baseline. align-self lo cambia para un solo elemento.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "La otra dirección",
+				"texto": "[[align-items]] alinea los elementos en el **eje transversal**. Con `flex-direction: row` eso significa alineación **vertical**:\n\n• `stretch` (por defecto): se estiran hasta ocupar todo el alto.\n• `flex-start`: pegados arriba.\n• `center`: centrados verticalmente.\n• `flex-end`: pegados abajo.\n• `baseline`: alinea la línea base del texto de cada elemento.\n\nPara que se note, el contenedor debe tener más alto que sus elementos."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Comparación",
+				"lenguaje": "css",
+				"codigo": ".contenedor {\n  display: flex;\n  height: 110px;\n  align-items: center;\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"flex": {
+								"etiqueta": "flex-start",
+								"ancho": 460,
+								"alto": 90,
+								"justify": "space-evenly",
+								"align": "flex-start",
+								"items": [
+									{
+										"texto": "1",
+										"ancho": 70,
+										"alto": 40
+									},
+									{
+										"texto": "2",
+										"ancho": 70,
+										"alto": 60
+									},
+									{
+										"texto": "3",
+										"ancho": 70,
+										"alto": 30
+									}
+								]
+							}
+						},
+						{
+							"flex": {
+								"etiqueta": "center",
+								"ancho": 460,
+								"alto": 90,
+								"justify": "space-evenly",
+								"align": "center",
+								"items": [
+									{
+										"texto": "1",
+										"ancho": 70,
+										"alto": 40
+									},
+									{
+										"texto": "2",
+										"ancho": 70,
+										"alto": 60
+									},
+									{
+										"texto": "3",
+										"ancho": 70,
+										"alto": 30
+									}
+								]
+							}
+						},
+						{
+							"flex": {
+								"etiqueta": "stretch",
+								"ancho": 460,
+								"alto": 90,
+								"justify": "space-evenly",
+								"align": "stretch",
+								"items": [
+									{
+										"texto": "1",
+										"ancho": 70,
+										"alto": 40
+									},
+									{
+										"texto": "2",
+										"ancho": 70,
+										"alto": 60
+									},
+									{
+										"texto": "3",
+										"ancho": 70,
+										"alto": 30
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Centrar en ambos ejes y align-self",
+				"texto": "Combinando las dos propiedades se centra un elemento **horizontal y verticalmente**, algo que antes de Flexbox era complicado.\n\n[[align-self|align_self]] se escribe en un **elemento** y sobrescribe `align-items` solo para él.",
+				"lenguaje": "css",
+				"codigo": ".pantalla {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 100vh;\n}\n\n.aviso {\n  align-self: flex-end;\n}"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "No se ve el cambio",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": ".contenedor {\n  display: flex;\n  align-items: center;\n}",
+						"bien": ".contenedor {\n  display: flex;\n  align-items: center;\n  min-height: 200px;\n}",
+						"explicacion": "Si el contenedor mide lo mismo que su elemento más alto, no sobra espacio transversal y el centrado no se aprecia."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Centrado vertical",
+				"pregunta": {
+					"enunciado": "En un contenedor con flex-direction: row, ¿qué propiedad centra los elementos verticalmente?",
+					"opciones": [
+						"justify-content: center",
+						"align-items: center",
+						"text-align: center",
+						"vertical-align: middle"
+					],
+					"correcta": 1,
+					"explicacion": "Con `row` el eje transversal es vertical, y `align-items` controla ese eje."
+				}
+			}
+		]
+	}
+]

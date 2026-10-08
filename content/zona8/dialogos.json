@@ -1,0 +1,31 @@
+[
+	{
+		"id": "santuario_pod",
+		"speaker": "mentora",
+		"lineas": [
+			"Bienvenido al Astillero del Aislamiento, en el corazón del Puerto.",
+			"Aquí reside la habilidad Cápsula Contenedor: el poder de empaquetar y aislar la ejecución.",
+			"Pulsa {contenedor} para desplegar un Pod que sirve de plataforma y te protege del entorno.",
+			"Úsalo para cruzar hacia los hangares de orquestación de Kubernetes."
+		]
+	},
+	{
+		"id": "final_z8",
+		"speaker": "mentora",
+		"lineas": [
+			"¡El Timonel ha sido alineado y el clúster está en estado óptimo!",
+			"Las aplicaciones de Qatu ahora se despliegan automáticamente en contenedores escalables.",
+			"El octavo farol de la Plaza resplandece con la luz del despliegue continuo.",
+			"Solo resta el Laboratorio de Pruebas y la Gran Demo."
+		]
+	},
+	{
+		"id": "mentora_victoria_z8",
+		"speaker": "mentora",
+		"lineas": [
+			"Gran maestría en el Puerto de Contenedores.",
+			"Dominas CI/CD, Dockerfiles multi-stage y la orquestación con Kubernetes.",
+			"Tus sistemas ahora son reproducibles e indestructibles."
+		]
+	}
+]

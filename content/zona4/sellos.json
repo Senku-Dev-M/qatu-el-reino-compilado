@@ -1,0 +1,117 @@
+[
+	{
+		"id": "S4", "zona": 4, "nombre": "Sello del Eje",
+		"lecciones": ["L32", "L33", "L34", "L36"],
+		"pista": "justify-content reparte en el eje principal; align-items alinea en el transversal. Con flex-direction: column los ejes se intercambian. flex-grow reparte solo el espacio sobrante.",
+		"retos": [
+			{
+				"tipo": "completar", "lenguaje": "css",
+				"enunciado": "El logo debe quedar a la izquierda y el menú a la derecha, con todo el espacio libre entre ellos. Completa el valor.",
+				"codigo": ".cabecera {\n  display: flex;\n  justify-content: ___;\n}",
+				"opciones": ["center", "space-between", "flex-end", "stretch"],
+				"correcta": 1,
+				"explicacion": "`space-between` coloca el primer elemento al inicio, el último al final y reparte el espacio libre entre ellos.",
+				"vista": {"sin_navegador": true, "bloques": [{"flex": {"ancho": 460, "alto": 56, "justify": "space-between", "align": "center", "items": [{"texto": "logo", "ancho": 90, "alto": 36}, {"texto": "menú", "ancho": 150, "alto": 36}]}}]}
+			},
+			{
+				"tipo": "elegir", "lenguaje": "css",
+				"enunciado": "Este contenedor está en columna. ¿Qué declaración centra los elementos verticalmente?",
+				"codigo": ".panel {\n  display: flex;\n  flex-direction: column;\n  height: 400px;\n}",
+				"opciones": ["align-items: center;", "justify-content: center;", "text-align: center;", "vertical-align: middle;"],
+				"correcta": 1,
+				"explicacion": "Con `flex-direction: column` el eje principal es vertical, así que es `justify-content` quien mueve los elementos arriba y abajo."
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "css",
+				"enunciado": "Los botones deberían quedar centrados verticalmente dentro de la barra, pero aparecen estirados. ¿Qué línea tiene el error?",
+				"lineas": [".barra {", "  display: flex;", "  height: 80px;", "  align-items: stretch;", "}"],
+				"correcta": 3,
+				"corregida": "  align-items: center;",
+				"explicacion": "`stretch` estira los elementos en el eje transversal hasta ocupar toda la altura. Para centrarlos se usa `align-items: center`."
+			},
+			{
+				"tipo": "elegir", "lenguaje": "css",
+				"enunciado": "Contenedor de 500 px. Dos elementos con flex-basis: 100px; el primero tiene flex-grow: 1 y el segundo flex-grow: 2. ¿Cuánto mide el segundo?",
+				"opciones": ["200 px", "300 px", "333 px", "400 px"],
+				"correcta": 1,
+				"explicacion": "Sobran 500 − 200 = 300 px, repartidos 1:2. El segundo recibe 200 px: 100 + 200 = **300 px**."
+			}
+		]
+	},
+	{
+		"id": "S5", "zona": 4, "nombre": "Sello de la Rejilla",
+		"lecciones": ["L39", "L41", "L43", "L45"],
+		"pista": "fr reparte el espacio libre tras restar gaps y medidas fijas. Las áreas deben ser rectangulares. Mobile first: estilos base primero y @media (min-width) después.",
+		"retos": [
+			{
+				"tipo": "completar", "lenguaje": "css",
+				"enunciado": "Crea tres columnas iguales sin escribir 1fr tres veces.",
+				"codigo": ".productos {\n  display: grid;\n  grid-template-columns: ___;\n  gap: 16px;\n}",
+				"opciones": ["repeat(3, 1fr)", "3fr", "repeat(1fr, 3)", "1fr * 3"],
+				"correcta": 0,
+				"explicacion": "`repeat(3, 1fr)` repite la pista `1fr` tres veces.",
+				"vista": {"sin_navegador": true, "bloques": [{"grid": {"ancho": 460, "columnas": "repeat(3, 1fr)", "gap": 16, "items": ["Manta", "Poncho", "Gorro"]}}]}
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "css",
+				"enunciado": "El navegador ignora este grid-template-areas. ¿Qué línea lo invalida?",
+				"lineas": ["grid-template-areas:", "  \"cabecera cabecera\"", "  \"menu     contenido\"", "  \"contenido pie\";"],
+				"correcta": 3,
+				"corregida": "  \"pie      pie\";",
+				"explicacion": "El área `contenido` quedaría en forma de L (no rectangular), así que toda la declaración es inválida."
+			},
+			{
+				"tipo": "ordenar", "lenguaje": "css",
+				"enunciado": "Escribe una rejilla mobile first: una columna en móvil y tres desde 768 px. Ordena las líneas.",
+				"lineas": [".galeria {", "  display: grid;", "  grid-template-columns: 1fr;", "}", "@media (min-width: 768px) {", "  .galeria { grid-template-columns: repeat(3, 1fr); }", "}"],
+				"explicacion": "Primero la regla base para móvil y después la media query con `min-width`, que la sobrescribe en pantallas grandes porque va escrita más tarde.",
+				"vista": {"sin_navegador": true, "bloques": [{"responsive": {"items": ["1", "2", "3"], "anchos": [{"etiqueta": "Móvil", "columnas": 1, "ancho": 130}, {"etiqueta": "768 px o más", "columnas": 3, "ancho": 330}]}}]}
+			},
+			{
+				"tipo": "elegir", "lenguaje": "css",
+				"enunciado": "Contenedor de 540 px con grid-template-columns: 140px 1fr 1fr y gap: 20px. ¿Cuánto mide cada columna 1fr?",
+				"opciones": ["180 px", "200 px", "170 px", "270 px"],
+				"correcta": 0,
+				"explicacion": "Espacio libre: 540 − 140 − 2 × 20 = 360 px. Dos fracciones: 360 ÷ 2 = **180 px**."
+			}
+		]
+	},
+	{
+		"id": "S6", "zona": 4, "nombre": "Sello del Taller",
+		"lecciones": ["L46", "L47", "L48"],
+		"pista": "En Tailwind, cada clase es una propiedad y md: significa «desde 768 px». Flexbox para una dimensión; Grid para filas y columnas a la vez.",
+		"retos": [
+			{
+				"tipo": "completar", "lenguaje": "html",
+				"enunciado": "Completa la clase de Tailwind para que los enlaces del menú queden centrados verticalmente.",
+				"codigo": "<nav class=\"flex ___ gap-4\">",
+				"opciones": ["items-center", "justify-center", "text-center", "center"],
+				"correcta": 0,
+				"explicacion": "`items-center` equivale a `align-items: center`, que alinea en el eje transversal (vertical en una fila)."
+			},
+			{
+				"tipo": "elegir", "lenguaje": "html",
+				"enunciado": "¿Cuántas columnas muestra esta galería en una pantalla de 900 px?",
+				"codigo": "<div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4\">",
+				"opciones": ["1", "2", "4", "7"],
+				"correcta": 1,
+				"explicacion": "900 px supera `md` (768 px) pero no llega a `lg` (1024 px), así que se aplica `md:grid-cols-2`."
+			},
+			{
+				"tipo": "elegir", "lenguaje": "css",
+				"enunciado": "Debes construir la estructura de un panel: cabecera arriba, barra lateral a la izquierda, contenido y pie, alineados en filas y columnas. ¿Qué eliges?",
+				"opciones": ["Flexbox con flex-wrap", "CSS Grid con grid-template-areas", "float en cada sección", "display: inline-block"],
+				"correcta": 1,
+				"explicacion": "Es un layout en dos dimensiones: Grid controla filas y columnas a la vez. Dentro de cada sección puedes usar Flexbox."
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "html",
+				"enunciado": "Se quería una sola columna en móvil y tres desde 768 px, pero en móvil aparecen tres. ¿Qué línea está mal?",
+				"lineas": ["<section", "  class=\"grid", "         grid-cols-3 md:grid-cols-1", "         gap-4\">"],
+				"correcta": 2,
+				"corregida": "         grid-cols-1 md:grid-cols-3",
+				"explicacion": "La clase sin prefijo es la de móvil y `md:` aplica desde 768 px. Estaban intercambiadas."
+			}
+		]
+	}
+]

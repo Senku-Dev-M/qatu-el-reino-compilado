@@ -1,0 +1,252 @@
+[
+	{
+		"id": "L140",
+		"zona": 2,
+		"sala": "z2_sala_flujo",
+		"orden": 140,
+		"nivel": "inicial",
+		"titulo": "Aplicaciones Multi-Página (MPA)",
+		"resumen": "Arquitectura tradicional donde cada clic solicita y recarga un documento HTML completo desde el servidor.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "¿Qué es una MPA?",
+				"texto": "En una [[mpa]], cada enlace (`<a href=\"/perfil\">`) solicita al servidor un nuevo archivo HTML. El navegador descarta la página actual y dibuja la nueva desde cero.\n\n**Características:**\n• El servidor procesa plantillas (JSP, PHP, ASP.NET MVC, Blade).\n• La lógica de renderizado vive principalmente en el backend.\n• El estado entre páginas se mantiene mediante cookies o sesiones de servidor."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Navegar en una MPA",
+				"lenguaje": "html",
+				"texto": "En una MPA la navegación usa los mecanismos nativos del navegador: los enlaces piden otro documento y los formularios envían los datos al servidor, que responde con una página nueva.",
+				"codigo": "<!-- productos.html, generado por el servidor -->\n<nav>\n  <a href=\"/productos\">Catálogo</a>\n  <a href=\"/carrito\">Carrito</a>\n</nav>\n<article>\n  <h2>Poncho de alpaca</h2>\n  <form action=\"/carrito\" method=\"post\">\n    <input type=\"hidden\" name=\"productoId\" value=\"42\">\n    <button>Añadir al carrito</button>\n  </form>\n</article>"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Navegación tradicional",
+				"texto": "Cada interacción es un documento completo. Al pulsar el botón, el navegador envía el formulario, descarta la página y dibuja la que devuelve el servidor.",
+				"vista": {
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Navegador",
+									"Servidor"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "GET /productos"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "HTML completo (catálogo)"
+									},
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "POST /carrito (formulario)"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "303 See Other · Location: /carrito"
+									},
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "GET /carrito"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "HTML completo (carrito)"
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comportamiento MPA",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "En una MPA, el usuario pulsa «Añadir al carrito» dentro de un <form method=\"post\">. ¿Qué hace el navegador?",
+					"opciones": [
+						"Actualiza solo el contador del carrito con JavaScript",
+						"Envía el formulario al servidor y carga la página HTML que este devuelve",
+						"Guarda el producto en LocalStorage sin contactar al servidor",
+						"Abre una conexión WebSocket"
+					],
+					"correcta": 1,
+					"explicacion": "En una MPA cada envío de formulario y cada enlace producen una navegación completa a un documento nuevo."
+				}
+			}
+		]
+	},
+	{
+		"id": "L141",
+		"zona": 2,
+		"sala": "z2_sala_flujo",
+		"orden": 141,
+		"nivel": "intermedio",
+		"titulo": "Ventajas y Desafíos de las MPAs",
+		"resumen": "Las MPAs destacan por SEO nativo y analítica sencilla, pero presentan mayor consumo de datos y menor fluidez visual.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Ventajas de las MPAs",
+				"texto": "• **SEO Excelente:** los motores de búsqueda reciben HTML completo con todo el contenido indexable de inmediato.\n• **Analítica Directa:** cada URL representa una página única fácil de rastrear con herramientas estándar.\n• **Menor Complejidad en Cliente:** no requiere frameworks pesados de JavaScript para funcionar."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Desafíos de las MPAs",
+				"texto": "• **Experiencia de Usuario (UX):** recargas visibles y transiciones bruscas entre pantallas.\n• **Redundancia:** cabeceras, menús y pies de página se vuelven a descargar y renderizar en cada petición.\n• **Mayor Carga en Servidor:** el servidor debe renderizar el HTML para cada petición de cada usuario."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "MPA frente a SPA",
+				"texto": "Ni MPA ni SPA son mejores en abstracto: cada una gana en criterios distintos.",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Criterio",
+									"MPA",
+									"SPA (CSR)"
+								],
+								"filas": [
+									[
+										"SEO inicial",
+										"excelente",
+										"requiere SSR o prerender"
+									],
+									[
+										"Primera carga",
+										"rápida",
+										"más lenta (bundle JS)"
+									],
+									[
+										"Navegación posterior",
+										"recarga completa",
+										"instantánea"
+									],
+									[
+										"Carga del servidor",
+										"renderiza cada página",
+										"solo sirve JSON"
+									],
+									[
+										"Analítica por URL",
+										"directa",
+										"hay que registrar rutas"
+									]
+								],
+								"resaltar": 1
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Ventaja clave de MPA",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Un blog de recetas necesita aparecer muy bien en buscadores y casi no tiene interacción. ¿Qué enfoque encaja mejor?",
+					"opciones": [
+						"SPA con renderizado solo en cliente",
+						"MPA con HTML generado en el servidor",
+						"Una aplicación de escritorio",
+						"Una SPA sin enrutador"
+					],
+					"correcta": 1,
+					"explicacion": "Con poco estado interactivo y el SEO como prioridad, el HTML completo desde el servidor es la opción natural."
+				}
+			}
+		]
+	},
+	{
+		"id": "L142",
+		"zona": 2,
+		"sala": "z2_sala_flujo",
+		"orden": 142,
+		"nivel": "intermedio",
+		"titulo": "Renderizado tradicional en servidor",
+		"resumen": "Cómo los motores de plantillas backend generan documentos HTML dinámicos combinando datos y vistas.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Motores de plantillas",
+				"texto": "En el desarrollo backend tradicional, el servidor combina datos de la BD con plantillas de vista:\n\n`HTML Template + Data Model => Complete HTML Document`\n\nEjemplos: Razor en ASP.NET, Thymeleaf en Spring Boot, Jinja en Python, Blade en Laravel."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Plantilla Razor en C#",
+				"texto": "En **Razor** las expresiones que empiezan por `@` se ejecutan en el servidor. El bucle recorre el modelo y escribe un `<li>` por producto:",
+				"lenguaje": "html",
+				"codigo": "@model IEnumerable<ProductoVm>\n\n<h1>Catálogo</h1>\n<ul>\n  @foreach (var p in Model) {\n    <li>@p.Nombre — @p.Precio.ToString(\"C\")</li>\n  }\n</ul>"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Salida procesada",
+				"texto": "El cliente recibe directamente el HTML limpio sin etiquetas de servidor:",
+				"lenguaje": "html",
+				"codigo": "<h1>Catálogo</h1>\n<ul>\n  <li>Poncho — $25.00</li>\n  <li>Chullo — $12.00</li>\n</ul>",
+				"vista": {
+					"bloques": [
+						{
+							"h1": "Catálogo"
+						},
+						{
+							"ul": [
+								"Poncho — $25.00",
+								"Chullo — $12.00"
+							]
+						}
+					],
+					"pestana": "qatu.com/catalogo"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores en plantillas de servidor",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<p>@Html.Raw(Model.Resena)</p>",
+						"bien": "<p>@Model.Resena</p>",
+						"explicacion": "`@` escapa el HTML automáticamente. `Html.Raw` inserta el texto tal cual: una reseña con `<script>` ejecutaría código en el navegador de otros compradores (XSS)."
+					},
+					{
+						"mal": "@foreach (var p in db.Productos.Where(x => x.Activo)) { ... }",
+						"bien": "// el controlador consulta y pasa el modelo\nreturn View(await _servicio.ProductosActivos());",
+						"explicacion": "Consultar la base de datos desde la vista mezcla presentación y acceso a datos. La vista solo recibe el modelo ya preparado."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Lugar de generación",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Una reseña contiene <script>. ¿Qué forma de mostrarla en Razor evita que se ejecute?",
+					"opciones": [
+						"@Html.Raw(Model.Resena)",
+						"@Model.Resena",
+						"Guardarla en una cookie",
+						"Mostrarla dentro de un comentario HTML"
+					],
+					"correcta": 1,
+					"explicacion": "La expresión @ escapa el HTML automáticamente; Html.Raw lo inserta sin escapar y permite XSS."
+				}
+			}
+		]
+	}
+]

@@ -1,0 +1,276 @@
+[
+	{
+		"id": "L125",
+		"zona": 1,
+		"sala": "z1_altar",
+		"orden": 125,
+		"nivel": "intermedio",
+		"titulo": "Principios RESTful de Roy Fielding",
+		"resumen": "REST define 6 restricciones arquitectónicas para sistemas distribuidos escalables, desacoplados y eficientes.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Las restricciones REST",
+				"texto": "En su tesis doctoral (2000), Roy Fielding definió los pilares de [[rest]]:\n\n**1. Cliente-Servidor:** separación estricta de responsabilidades (interfaz frente a persistencia).\n**2. Sin Estado (Stateless):** cada petición contiene toda la información necesaria; el servidor no almacena contexto de sesión entre peticiones.\n**3. Capacidad de Caché (Cacheable):** las respuestas deben declararse explícitamente como almacenables en caché para mejorar rendimiento.\n**4. Interfaz Uniforme:** recursos identificados por URIs, mensajes autodescriptivos e hipermedios como motor del estado de la aplicación (HATEOAS).\n**5. Sistema por Capas:** intermediarios (proxies, CDNs, gateways) transparentes para el cliente.\n**6. Código bajo demanda (Opcional):** envío de scripts ejecutables al cliente."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "HATEOAS en acción",
+				"texto": "Con **HATEOAS** la respuesta incluye enlaces a las acciones válidas en ese momento. El cliente no construye rutas a mano: sigue los enlaces que recibe.",
+				"lenguaje": "js",
+				"codigo": "{\n  \"id\": 913,\n  \"estado\": \"pendiente\",\n  \"total\": 50.00,\n  \"_links\": {\n    \"self\":     { \"href\": \"/api/pedidos/913\" },\n    \"pagar\":    { \"href\": \"/api/pedidos/913/pago\", \"method\": \"POST\" },\n    \"cancelar\": { \"href\": \"/api/pedidos/913\", \"method\": \"DELETE\" }\n  }\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Sin estado detrás de un balanceador",
+				"texto": "Como cada petición trae su propio token, **cualquier** instancia de la API puede atenderla. Eso permite añadir servidores detrás de un balanceador sin compartir sesiones en memoria.",
+				"vista": {
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Tienda web",
+									"Balanceador",
+									"API #1",
+									"API #2"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "GET /carrito + token"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "reenvía"
+									},
+									{
+										"de": 2,
+										"a": 0,
+										"texto": "200 (valida el token)"
+									},
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "POST /pedidos + token"
+									},
+									{
+										"de": 1,
+										"a": 3,
+										"texto": "reenvía"
+									},
+									{
+										"de": 3,
+										"a": 0,
+										"texto": "201 (valida el token)"
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Romper las restricciones REST",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "// El carrito vive en la memoria de UNA instancia\nconst carritos = {};\napp.post('/carrito', (req, res) => {\n  carritos[req.ip] = req.body;\n});",
+						"bien": "// El carrito se guarda en la base de datos\napp.post('/carrito', autenticar, async (req, res) => {\n  await carritos.guardar(req.usuario.id, req.body);\n  res.sendStatus(204);\n});",
+						"explicacion": "Guardar estado en memoria rompe **stateless**: si la siguiente petición llega a otra instancia, el carrito no existe."
+					},
+					{
+						"mal": "res.json(catalogo);",
+						"bien": "res.set('Cache-Control', 'public, max-age=300');\nres.json(catalogo);",
+						"explicacion": "REST exige que las respuestas **declaren si se pueden cachear**. Sin esa cabecera, clientes y CDN no pueden reutilizarlas."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Principio Stateless",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Qatu guarda el carrito en un objeto en memoria de la API y ahora tiene tres instancias detrás de un balanceador. ¿Qué restricción REST incumple?",
+					"opciones": [
+						"Interfaz uniforme",
+						"Sin estado (stateless)",
+						"Sistema por capas",
+						"Código bajo demanda"
+					],
+					"correcta": 1,
+					"explicacion": "Si el estado vive en la memoria de una instancia, las peticiones que atiende otra no lo encuentran."
+				}
+			}
+		]
+	},
+	{
+		"id": "L126",
+		"zona": 1,
+		"sala": "z1_altar",
+		"orden": 126,
+		"nivel": "intermedio",
+		"titulo": "Enfoque API First y OpenAPI",
+		"resumen": "API First establece el contrato como la fuente de verdad antes de implementar código; OpenAPI lo formaliza.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Filosofía API First",
+				"texto": "Bajo el enfoque [[api_first]], la API es un producto de primera clase. En lugar de programar el backend y luego documentarlo, el equipo diseña y acuerda el contrato primero.\n\n**Ventajas:**\n• Trabajo en paralelo: el equipo frontend genera mocks del contrato mientras el backend implementa.\n• Reducción de retrabajo: inconsistencias detectadas en fase de diseño.\n• Generación de SDKs y documentación automatizada."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Especificación OpenAPI (Swagger)",
+				"texto": "El contrato describe rutas, parámetros y respuestas posibles. Este fragmento de [[openapi]] define la lectura de un producto:",
+				"lenguaje": "texto",
+				"codigo": "openapi: 3.0.3\ninfo: { title: Qatu API, version: 1.0.0 }\npaths:\n  /productos/{id}:\n    get:\n      summary: Obtiene un producto\n      parameters:\n        - name: id\n          in: path\n          required: true\n          schema: { type: integer }\n      responses:\n        '200':\n          description: Producto encontrado\n        '404':\n          description: No existe"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Documentación interactiva",
+				"texto": "Herramientas como Swagger UI generan exploradores interactivos para probar endpoints directamente desde el navegador.",
+				"vista": {
+					"bloques": [
+						{
+							"h2": "Qatu API 1.0.0"
+						},
+						{
+							"p": "GET /productos/{id} — Obtiene un producto"
+						},
+						{
+							"campo": {
+								"etiqueta": "id (path, obligatorio)",
+								"tipo": "number",
+								"valor": "42"
+							}
+						},
+						{
+							"boton": "Execute"
+						},
+						{
+							"consola": [
+								"Code 200",
+								"{ \"id\": 42, \"nombre\": \"Poncho\", \"precio\": 25.0 }"
+							]
+						}
+					],
+					"pestana": "Swagger UI"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Cuando el contrato y el código se separan",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Contrato:  precio: { type: number }\nRespuesta: {\"precio\": \"25.00\"}",
+						"bien": "Contrato:  precio: { type: number }\nRespuesta: {\"precio\": 25.00}",
+						"explicacion": "Si la implementación no cumple el contrato, los mocks del frontend mienten. Las **pruebas de contrato** detectan esa deriva."
+					},
+					{
+						"mal": "responses:\n  '200':\n    description: Producto",
+						"bien": "responses:\n  '200':\n    description: Producto\n  '404':\n    description: No existe",
+						"explicacion": "Documentar solo el caso feliz obliga al frontend a adivinar los errores. El contrato debe listar todas las respuestas posibles."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Objetivo de API First",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "En un enfoque API First, ¿qué permite empezar el frontend antes de que exista el backend?",
+					"opciones": [
+						"Copiar la base de datos al navegador",
+						"Generar mocks a partir del contrato OpenAPI acordado",
+						"Escribir el backend en el mismo repositorio",
+						"Desactivar CORS"
+					],
+					"correcta": 1,
+					"explicacion": "El contrato define rutas y respuestas; con él se generan servidores simulados fieles a lo acordado."
+				}
+			}
+		]
+	},
+	{
+		"id": "L127",
+		"zona": 1,
+		"sala": "z1_altar",
+		"orden": 127,
+		"nivel": "intermedio",
+		"titulo": "Estilos de API: REST frente a GraphQL y RPC",
+		"resumen": "Comparación entre REST, GraphQL y gRPC según casos de uso, granularidad de datos y rendimiento.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Tres paradigmas de comunicación",
+				"texto": "• **REST:** centrado en recursos y verbos HTTP. Excelente para APIs públicas y caché HTTP.\n• [[graphql]]: un único endpoint (`/graphql`) donde el cliente pide exactamente los campos que necesita, evitando el over-fetching (recibir datos de más) y el under-fetching (necesitar varias llamadas).\n• **RPC / gRPC:** llamadas a procedimientos remotos (`crearPedido(...)`). gRPC usa HTTP/2 y Protocol Buffers binarios: ideal entre microservicios internos.\n• **SOAP:** RPC clásico con mensajes XML y contrato WSDL; frecuente en sistemas bancarios y heredados."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Consulta GraphQL en Qatu",
+				"texto": "Una sola consulta pide el producto, su vendedor y las dos últimas reseñas, solo con los campos necesarios:",
+				"lenguaje": "texto",
+				"codigo": "query {\n  producto(id: 42) {\n    nombre\n    precio\n    vendedor { nombre }\n    resenas(ultimas: 2) { estrellas }\n  }\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Respuesta exacta sin exceso",
+				"texto": "La respuesta tiene exactamente la forma de la consulta: ni un campo de más.",
+				"vista": {
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "POST",
+								"url": "/graphql",
+								"cabeceras": [
+									"Content-Type: application/json"
+								],
+								"cuerpo": "{\"query\":\"{ producto(id:42) { nombre precio ... } }\"}",
+								"estado": "200 OK",
+								"respuesta": "{ \"data\": { \"producto\": { \"nombre\": \"Poncho\", \"precio\": 25, \"vendedor\": { \"nombre\": \"Ana\" }, \"resenas\": [{\"estrellas\":5},{\"estrellas\":4}] } } }"
+							}
+						}
+					],
+					"pestana": "DevTools · Network"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Elegir mal el estilo",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "GET /api/productos/42\nGET /api/vendedores/7\nGET /api/vendedores/7/resenas\n(tres viajes para una sola tarjeta)",
+						"bien": "POST /graphql\n{ producto(id: 42) { nombre vendedor { nombre }\n  resenas(ultimas: 2) { estrellas } } }",
+						"explicacion": "Cuando una pantalla combina muchos recursos, REST puede exigir varias llamadas (under-fetching). GraphQL lo resuelve en una."
+					},
+					{
+						"mal": "gRPC para la API pública que consumen\nnavegadores de terceros",
+						"bien": "REST o GraphQL hacia fuera;\ngRPC entre microservicios internos",
+						"explicacion": "Los navegadores no hablan gRPC de forma nativa y su formato binario es difícil de depurar para terceros."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Problema resuelto por GraphQL",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Una tarjeta de producto necesita nombre, vendedor y dos reseñas, y hoy hace tres llamadas REST. ¿Qué problema es y qué lo resuelve?",
+					"opciones": [
+						"Over-fetching; lo resuelve gRPC",
+						"Under-fetching; lo resuelve una consulta GraphQL",
+						"Falta de caché; lo resuelve SOAP",
+						"Falta de autenticación; lo resuelven las API keys"
+					],
+					"correcta": 1,
+					"explicacion": "Necesitar varias llamadas para una vista es under-fetching; GraphQL obtiene todo en una consulta."
+				}
+			}
+		]
+	}
+]

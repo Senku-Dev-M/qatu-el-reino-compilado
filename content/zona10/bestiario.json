@@ -1,0 +1,10 @@
+[
+	{
+		"id": "demo_final",
+		"zona": 10,
+		"nombre": "El Tribunal de la Demo en Vivo",
+		"descripcion": "La prueba de fuego definitiva: la demostración en tiempo real ante stakeholders donde convergen todos los subsistemas de Qatu.",
+		"leccion": "Una demo exitosa es el resultado directo de una arquitectura desacoplada, pruebas continuas, despliegues reproducibles y feedback iterativo.",
+		"derrotas_requeridas": 1
+	}
+]

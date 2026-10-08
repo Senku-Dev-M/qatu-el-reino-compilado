@@ -1,0 +1,11 @@
+[
+	{
+		"id": "z3", "zona": 3, "semana": 3,
+		"nombre": "Bosque del DOM",
+		"tema": "HTML, CSS, DOM, eventos y DevTools",
+		"salas": ["z3_raiz", "z3_galeria", "z3_claro", "z3_tronco", "z3_copa", "z3_cueva", "z3_motor"],
+		"habilidad": "event_listener",
+		"jefe": "nodo_huerfano",
+		"fragmentos": ["z3_claro:fragmento", "z3_motor:fragmento", "tienda:fragmento"]
+	}
+]

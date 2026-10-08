@@ -1,0 +1,321 @@
+[
+	{
+		"id": "L71",
+		"zona": 5,
+		"sala": "z5_observatorio",
+		"orden": 71,
+		"nivel": "inicial",
+		"titulo": "La pestaña Network",
+		"resumen": "Rastrear solicitudes es observar cada petición que hace la página. La pestaña Network de DevTools muestra método, URL, estado, tipo, tamaño y tiempo, y al seleccionar una petición permite ver sus cabeceras, cuerpo y respuesta.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Rastrear solicitudes",
+				"texto": "Cuando algo falla entre el frontend y la API (una lista vacía, un botón que no guarda), adivinar no sirve: hay que **ver qué se envió y qué se recibió**. Eso es rastrear solicitudes.\n\nLa [[pestaña Network|pestana_network]] de las [[DevTools|devtools]] registra cada petición de la página mientras está abierta: el documento HTML, CSS, JavaScript, imágenes y las peticiones `fetch`/XHR. Se abre con F12 (o Ctrl+Shift+I) y se recarga la página para capturar todo desde el inicio."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "La lista de peticiones",
+				"texto": "Cada fila es una petición. Las columnas más útiles: **Name** (recurso), **Status** (código), **Type** (tipo de recurso o `fetch`), **Size** y **Time**. Las filas en rojo indican errores.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"red": {
+								"filtro": "All",
+								"filas": [
+									{
+										"nombre": "index.html",
+										"estado": "200",
+										"tipo": "document",
+										"tiempo": "120 ms",
+										"inicio": 0.0,
+										"fin": 0.15
+									},
+									{
+										"nombre": "estilos.css",
+										"estado": "200",
+										"tipo": "stylesheet",
+										"tiempo": "40 ms",
+										"inicio": 0.16,
+										"fin": 0.22
+									},
+									{
+										"nombre": "productos",
+										"metodo": "GET",
+										"estado": "200",
+										"tipo": "fetch",
+										"tiempo": "310 ms",
+										"inicio": 0.3,
+										"fin": 0.7
+									},
+									{
+										"nombre": "resenas",
+										"metodo": "POST",
+										"estado": "201",
+										"tipo": "fetch",
+										"tiempo": "180 ms",
+										"inicio": 0.72,
+										"fin": 0.95
+									},
+									{
+										"nombre": "logo.png",
+										"estado": "404",
+										"tipo": "png",
+										"tiempo": "25 ms",
+										"inicio": 0.18,
+										"fin": 0.21
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "El detalle de una petición",
+				"texto": "Al hacer clic en una fila se abren sus pestañas:\n\n• **Headers**: URL, método, código de estado, cabeceras de petición y de respuesta.\n• **Payload**: los datos enviados (query string o cuerpo de un POST).\n• **Preview / Response**: la respuesta, con JSON navegable.\n• **Timing**: el desglose de tiempos.\n\nAsí compruebas, por ejemplo, que el POST de una reseña envió `estrellas: 5` y que el servidor respondió `201`."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Una petición POST, por dentro",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"panel": {
+								"titulo": "Headers",
+								"pestanas": [
+									"Headers",
+									"Payload",
+									"Preview",
+									"Response",
+									"Timing"
+								],
+								"lineas": [
+									"Request URL: https://qatu.com/api/resenas",
+									"Request Method: POST",
+									"Status Code: 201 Created",
+									"▶ Content-Type: application/json",
+									"Payload: {\"productoId\":12,\"estrellas\":5}"
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Dónde miras?",
+				"pregunta": {
+					"enunciado": "Quieres confirmar qué datos envió realmente un formulario al servidor. ¿Dónde lo ves?",
+					"opciones": [
+						"En la pestaña Elements",
+						"En la pestaña Network, seleccionando la petición y mirando Payload",
+						"En la consola escribiendo el nombre del campo",
+						"En el código fuente del servidor"
+					],
+					"correcta": 1,
+					"explicacion": "Network registra la petición real; su pestaña Payload muestra los datos enviados."
+				}
+			}
+		]
+	},
+	{
+		"id": "L72",
+		"zona": 5,
+		"sala": "z5_observatorio",
+		"orden": 72,
+		"nivel": "intermedio",
+		"titulo": "El diagrama waterfall y los tiempos",
+		"resumen": "La columna Waterfall dibuja cuándo empieza y cuánto dura cada petición. Permite ver peticiones en serie que podrían ir en paralelo, esperas largas del servidor (TTFB) y descargas pesadas.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Leer la cascada",
+				"texto": "El diagrama [[waterfall]] (cascada) coloca cada petición en una **línea de tiempo**: la barra empieza cuando se inició y su longitud es lo que tardó. Las barras escalonadas muestran **dependencias**: el JavaScript no se descarga hasta que el HTML lo menciona, y el `fetch` no empieza hasta que se ejecuta ese JavaScript.\n\nLas líneas verticales marcan eventos de la página, como `DOMContentLoaded` (HTML procesado) y `load` (todo cargado)."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Las fases de una petición",
+				"texto": "Al pasar el ratón por una barra (o en la pestaña **Timing**) se ve su desglose:\n\n• **Queueing / Stalled**: espera antes de empezar (límite de conexiones, prioridad).\n• **DNS Lookup, Initial connection, SSL**: preparar la conexión.\n• **Request sent**: enviar la petición.\n• **Waiting (TTFB)**: [[tiempo hasta el primer byte|ttfb]]; lo que tarda el servidor en empezar a responder.\n• **Content Download**: recibir el cuerpo.\n\nUn TTFB alto apunta al **servidor** (consulta lenta); una descarga larga apunta al **tamaño** de la respuesta."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "En serie frente a en paralelo",
+				"texto": "Arriba, tres peticiones independientes hechas con `await` una tras otra: cada una espera a la anterior. Abajo, las mismas con `Promise.all`: empiezan a la vez y el total baja al tiempo de la más lenta.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"red": {
+								"filtro": "Fetch/XHR",
+								"filas": [
+									{
+										"nombre": "productos",
+										"metodo": "GET",
+										"estado": "200",
+										"tipo": "fetch",
+										"tiempo": "300 ms",
+										"inicio": 0.0,
+										"fin": 0.3,
+										"espera": 0.8
+									},
+									{
+										"nombre": "usuario",
+										"metodo": "GET",
+										"estado": "200",
+										"tipo": "fetch",
+										"tiempo": "250 ms",
+										"inicio": 0.3,
+										"fin": 0.55,
+										"espera": 0.8
+									},
+									{
+										"nombre": "ofertas",
+										"metodo": "GET",
+										"estado": "200",
+										"tipo": "fetch",
+										"tiempo": "280 ms",
+										"inicio": 0.55,
+										"fin": 0.83,
+										"espera": 0.8
+									}
+								]
+							}
+						},
+						{
+							"red": {
+								"filtro": "Fetch/XHR",
+								"filas": [
+									{
+										"nombre": "productos",
+										"metodo": "GET",
+										"estado": "200",
+										"tipo": "fetch",
+										"tiempo": "300 ms",
+										"inicio": 0.0,
+										"fin": 0.3,
+										"espera": 0.8
+									},
+									{
+										"nombre": "usuario",
+										"metodo": "GET",
+										"estado": "200",
+										"tipo": "fetch",
+										"tiempo": "250 ms",
+										"inicio": 0.0,
+										"fin": 0.25,
+										"espera": 0.8
+									},
+									{
+										"nombre": "ofertas",
+										"metodo": "GET",
+										"estado": "200",
+										"tipo": "fetch",
+										"tiempo": "280 ms",
+										"inicio": 0.0,
+										"fin": 0.28,
+										"espera": 0.8
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Diagnostica la barra",
+				"pregunta": {
+					"enunciado": "Una petición a /api/informe tarda 4 s y casi todo es «Waiting (TTFB)»; la descarga dura 20 ms. ¿Dónde está el problema probable?",
+					"opciones": [
+						"En el tamaño de la respuesta",
+						"En el servidor, que tarda en generar la respuesta",
+						"En el CSS de la página",
+						"En la conexión DNS"
+					],
+					"correcta": 1,
+					"explicacion": "TTFB mide la espera hasta el primer byte: el servidor está tardando en procesar. La descarga, en cambio, es rápida."
+				}
+			}
+		]
+	},
+	{
+		"id": "L73",
+		"zona": 5,
+		"sala": "z5_observatorio",
+		"orden": 73,
+		"nivel": "intermedio",
+		"titulo": "Diagnosticar problemas y usar filtros",
+		"resumen": "Network ayuda a diagnosticar 404, 401/403, 500, errores CORS y peticiones que nunca se envían. Los filtros (Fetch/XHR, texto, estado), Preserve log, Disable cache y el throttling facilitan el análisis.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Problemas comunes y qué indican",
+				"texto": "• **No aparece la petición**: el código no llegó a ejecutar `fetch` (revisa la consola y el listener).\n• **404**: URL mal escrita o endpoint inexistente; compara la Request URL.\n• **400 / 422**: datos inválidos; revisa el Payload y la respuesta del servidor.\n• **401 / 403**: sin autenticar o sin permisos; revisa cookies o el token.\n• **500**: fallo en el servidor; revisa sus registros.\n• **(failed) / CORS error**: bloqueo del navegador o sin conexión; la consola muestra el motivo.\n• **Pendiente mucho tiempo**: servidor lento o sin respuesta."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Un error CORS en Network",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"red": {
+								"filtro": "Fetch/XHR",
+								"filas": [
+									{
+										"nombre": "productos",
+										"metodo": "GET",
+										"estado": "200",
+										"tipo": "fetch",
+										"tiempo": "210 ms",
+										"inicio": 0.0,
+										"fin": 0.4
+									},
+									{
+										"nombre": "otro-origen.com/api",
+										"metodo": "GET",
+										"estado": "CORS error",
+										"tipo": "fetch",
+										"tiempo": "95 ms",
+										"inicio": 0.1,
+										"fin": 0.3,
+										"seleccionada": true
+									}
+								]
+							}
+						},
+						{
+							"consola": [
+								"✖ Access to fetch at 'https://otro-origen.com/api' from origin 'https://qatu.com' has been blocked by CORS policy."
+							]
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Buenas prácticas con filtros",
+				"texto": "• Filtro **Fetch/XHR**: muestra solo las peticiones a la API, sin imágenes ni CSS.\n• **Cuadro de filtro**: escribe parte de la URL (`resenas`), o `status-code:500` o `method:POST`.\n• **Preserve log**: conserva las peticiones al recargar o navegar (útil al enviar formularios clásicos).\n• **Disable cache**: evita respuestas guardadas mientras DevTools está abierto.\n• **Throttling** (Fast 4G, Slow 3G): simula redes lentas para ver indicadores de carga y tiempos reales.\n• Clic derecho → **Copy as fetch / cURL**: reproduce la petición exacta para compartirla o probarla."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Encuentra la causa",
+				"pregunta": {
+					"enunciado": "Al enviar un formulario clásico la página se recarga y la petición POST desaparece de Network antes de poder verla. ¿Qué activas?",
+					"opciones": [
+						"Disable cache",
+						"Preserve log",
+						"Throttling Slow 3G",
+						"El filtro Img"
+					],
+					"correcta": 1,
+					"explicacion": "Preserve log mantiene el registro de peticiones aunque la página se recargue o navegue."
+				}
+			}
+		]
+	}
+]

@@ -1,0 +1,27 @@
+[
+	{
+		"id": "consulta_n1", "zona": 6, "nombre": "Consulta N+1", "derrotas_requeridas": 4,
+		"descripcion": "Un tomo que no lee de una vez: por cada línea, invoca otra hoja.",
+		"leccion": "El problema N+1: se hace 1 consulta para obtener N elementos y luego 1 consulta más por cada uno para sus datos relacionados (por ejemplo, el vendedor de cada producto). Con 100 productos son 101 consultas. Se evita cargando las relaciones en bloque: un JOIN o una consulta con IN en el servidor, $expand en OData o include en JSON:API."
+	},
+	{
+		"id": "cache_obsoleta", "zona": 6, "nombre": "Caché Obsoleta", "derrotas_requeridas": 4,
+		"descripcion": "Un reflejo que siempre llega al lugar donde estabas hace un momento.",
+		"leccion": "Una caché sin invalidación sirve datos obsoletos: precios o stock que ya cambiaron. Define un TTL adecuado a cada dato, invalida las entradas al modificar la fuente y usa ETag con revalidación cuando la frescura importe."
+	},
+	{
+		"id": "payload_gigante", "zona": 6, "nombre": "Payload sin Comprimir", "derrotas_requeridas": 3,
+		"descripcion": "Un bloque de megabytes que avanza despacio. Cada golpe lo comprime.",
+		"leccion": "Respuestas enormes tardan en viajar y en analizarse. Reduce el payload paginando, pidiendo solo los campos necesarios ($select, fields[]) y activando la compresión gzip o Brotli para texto y JSON (Content-Encoding)."
+	},
+	{
+		"id": "log_sincrono", "zona": 6, "nombre": "Log Síncrono", "derrotas_requeridas": 4,
+		"descripcion": "Se detiene a escribir cada línea antes de hacer nada más, y luego lo suelta todo de golpe.",
+		"leccion": "Escribir logs de forma síncrona hace que cada petición espere a la entrada/salida del disco o del servicio de logs. Encola los mensajes y escríbelos en segundo plano (logging asíncrono), con una cola de tamaño limitado y vaciado al apagar."
+	},
+	{
+		"id": "scroll_infinito", "zona": 6, "nombre": "Scroll Infinito", "derrotas_requeridas": 1, "jefe": true,
+		"descripcion": "Una lista que nunca termina de cargar. Cuanto más baja, más memoria devora.",
+		"leccion": "Un scroll infinito sin límites añade elementos al DOM indefinidamente: consume memoria, empeora el rendimiento y hace imposible volver a un punto o llegar al pie. Pagina en el servidor (mejor con cursor), virtualiza la lista o usa «Cargar más», y pide solo los datos exactos con filtros, orden y selección de campos."
+	}
+]

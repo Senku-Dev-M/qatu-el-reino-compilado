@@ -1,0 +1,12 @@
+[
+	{
+		"id": "mfa", "zona": 7, "nombre": "MFA", "coste": 2,
+		"efecto": "El primer golpe que recibes en cada sala no te quita máscara.",
+		"leccion": "Referencia: la autenticación multifactor exige un segundo factor además de la contraseña, así que robarla no basta para entrar. Este amuleto añade ese segundo factor a tu defensa: el primer impacto de cada sala no prospera."
+	},
+	{
+		"id": "sso", "zona": 7, "nombre": "SSO", "coste": 1,
+		"efecto": "El access token dura un 50 % más.",
+		"leccion": "Referencia: con Single Sign-On una sola sesión en el proveedor de identidad abre varias aplicaciones sin volver a autenticarse. Este amuleto alarga la vida de tu access token."
+	}
+]

@@ -1,0 +1,113 @@
+[
+	{
+		"id": "S7", "zona": 5, "nombre": "Sello del Formulario",
+		"lecciones": ["L50", "L51", "L53", "L54"],
+		"pista": "Los datos sensibles van con POST. Cada control necesita name, y for debe coincidir con el id. En un select se envía el value de la opción. Dentro de un form, button sin type es submit.",
+		"retos": [
+			{
+				"tipo": "completar", "lenguaje": "html",
+				"enunciado": "Este formulario envía una contraseña. Completa el método para que los datos no viajen en la URL.",
+				"codigo": "<form action=\"/login\" method=\"___\">\n  <input type=\"password\" name=\"clave\">\n</form>",
+				"opciones": ["get", "post", "put", "secret"],
+				"correcta": 1,
+				"explicacion": "Con `method=\"post\"` los datos viajan en el cuerpo de la petición. En HTML, un formulario solo admite `get` o `post`."
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "html",
+				"enunciado": "El servidor recibe el nombre, pero nunca el correo. ¿Qué línea tiene el error?",
+				"lineas": ["<form action=\"/registro\" method=\"post\">", "  <input id=\"nombre\" name=\"nombre\">", "  <input id=\"email\" type=\"email\">", "  <button type=\"submit\">Crear cuenta</button>", "</form>"],
+				"correcta": 2,
+				"corregida": "  <input id=\"email\" name=\"email\" type=\"email\">",
+				"explicacion": "Un control sin `name` no se envía, aunque tenga `id`."
+			},
+			{
+				"tipo": "ordenar", "lenguaje": "html",
+				"enunciado": "Construye un grupo de envío accesible ordenando las líneas.",
+				"lineas": ["<fieldset>", "  <legend>Método de envío</legend>", "  <label>", "    <input type=\"radio\" name=\"envio\" value=\"tienda\"> Recoger en tienda", "  </label>", "</fieldset>"],
+				"explicacion": "`<legend>` va justo después de abrir `<fieldset>`. El radio va dentro de `<label>`, que así queda asociado sin necesidad de `for` e `id`.",
+				"vista": {"pestana": "Compra", "bloques": [{"fieldset": {"legend": "Método de envío", "campos": [{"tipo": "radio", "opciones": ["Recoger en tienda"], "valor": "Recoger en tienda"}]}}]}
+			},
+			{
+				"tipo": "elegir", "lenguaje": "html",
+				"enunciado": "El usuario elige «Cusco» en este select. ¿Qué par recibe el servidor?",
+				"codigo": "<select name=\"region\">\n  <option value=\"cus\">Cusco</option>\n  <option value=\"pun\">Puno</option>\n</select>",
+				"opciones": ["region=Cusco", "region=cus", "cus=Cusco", "select=cus"],
+				"correcta": 1,
+				"explicacion": "Se envía el `name` del select con el `value` de la opción elegida."
+			}
+		]
+	},
+	{
+		"id": "S8", "zona": 5, "nombre": "Sello de la Promesa",
+		"lecciones": ["L58", "L60", "L61", "L62"],
+		"pista": "Los callbacks asíncronos se ejecutan cuando el código actual termina. fetch devuelve un Response: hay que leer el cuerpo con await response.json(). Los errores de await se capturan con try/catch.",
+		"retos": [
+			{
+				"tipo": "elegir", "lenguaje": "js",
+				"enunciado": "¿Qué imprime este código?",
+				"codigo": "console.log('uno');\nsetTimeout(() => console.log('dos'), 0);\nPromise.resolve().then(() => console.log('tres'));\nconsole.log('cuatro');",
+				"opciones": ["uno dos tres cuatro", "uno cuatro tres dos", "uno cuatro dos tres", "uno tres dos cuatro"],
+				"correcta": 1,
+				"explicacion": "Primero el código síncrono (uno, cuatro). Los callbacks de promesas se ejecutan en cuanto termina ese código, antes que los temporizadores: tres y después dos."
+			},
+			{
+				"tipo": "completar", "lenguaje": "js",
+				"enunciado": "Completa la palabra que falta para obtener los datos y no una promesa pendiente.",
+				"codigo": "async function cargar() {\n  const response = await fetch('/api/productos');\n  const productos = ___ response.json();\n  pintar(productos);\n}",
+				"opciones": ["await", "async", "then", "return"],
+				"correcta": 0,
+				"explicacion": "`response.json()` también devuelve una promesa; `await` espera su valor."
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "js",
+				"enunciado": "Esta función muestra «[object Promise]» en lugar del nombre. ¿Qué línea tiene el error?",
+				"lineas": ["async function mostrarUsuario(id) {", "  const usuario = obtenerUsuario(id);", "  titulo.textContent = usuario.nombre;", "}"],
+				"correcta": 1,
+				"corregida": "  const usuario = await obtenerUsuario(id);",
+				"explicacion": "Sin `await`, `usuario` es la promesa, no el valor con el que se cumple."
+			},
+			{
+				"tipo": "ordenar", "lenguaje": "js",
+				"enunciado": "Ordena la función para cargar las reseñas y avisar si algo falla.",
+				"lineas": ["async function cargarResenas() {", "  try {", "    const response = await fetch('/api/resenas');", "    const resenas = await response.json();", "    pintar(resenas);", "  } catch (error) {", "    avisar(error);", "  }", "}"],
+				"explicacion": "Primero se espera la respuesta, luego su cuerpo y después se usa. Si cualquier `await` falla, el control pasa a `catch`."
+			}
+		]
+	},
+	{
+		"id": "S9", "zona": 5, "nombre": "Sello de la Aduana",
+		"lecciones": ["L64", "L67", "L68", "L69", "L73"],
+		"pista": "En REST la acción la indica el método. fetch no se rechaza con un 404: comprueba response.ok. Un objeto se envía con JSON.stringify y Content-Type: application/json. CORS lo permite el servidor.",
+		"retos": [
+			{
+				"tipo": "completar", "lenguaje": "js",
+				"enunciado": "Completa el método REST para eliminar el producto 12.",
+				"codigo": "await fetch('/api/productos/12', {\n  method: '___'\n});",
+				"opciones": ["GET", "POST", "DELETE", "REMOVE"],
+				"correcta": 2,
+				"explicacion": "`DELETE` sobre la URL del recurso lo elimina. `REMOVE` no es un método HTTP."
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "js",
+				"enunciado": "El servidor recibe «[object Object]» en lugar de la reseña. ¿Qué línea tiene el error?",
+				"lineas": ["await fetch('/api/resenas', {", "  method: 'POST',", "  headers: { 'Content-Type': 'application/json' },", "  body: { estrellas: 5, texto: 'Muy abrigador' }", "});"],
+				"correcta": 3,
+				"corregida": "  body: JSON.stringify({ estrellas: 5, texto: 'Muy abrigador' })",
+				"explicacion": "El cuerpo debe ser texto: `JSON.stringify` convierte el objeto en JSON."
+			},
+			{
+				"tipo": "elegir", "lenguaje": "js",
+				"enunciado": "La consola muestra: «blocked by CORS policy: No 'Access-Control-Allow-Origin' header». ¿Cómo se soluciona correctamente?",
+				"opciones": ["Añadir mode: 'no-cors' a fetch", "Configurar el servidor de la API para que responda Access-Control-Allow-Origin con tu origen", "Cambiar el método a GET", "Enviar la petición con credentials: 'omit'"],
+				"correcta": 1,
+				"explicacion": "El permiso CORS lo da el servidor con sus cabeceras. `no-cors` solo produce una respuesta opaca que no se puede leer."
+			},
+			{
+				"tipo": "ordenar", "lenguaje": "js",
+				"enunciado": "Ordena el código para pedir el catálogo y detectar respuestas de error.",
+				"lineas": ["const response = await fetch('/api/productos');", "if (!response.ok) {", "  throw new Error(`HTTP ${response.status}`);", "}", "const productos = await response.json();"],
+				"explicacion": "Primero llega el `Response`; se comprueba `ok` (fetch no se rechaza con 4xx/5xx) y solo entonces se lee el cuerpo."
+			}
+		]
+	}
+]

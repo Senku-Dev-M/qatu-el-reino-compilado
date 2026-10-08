@@ -1,0 +1,140 @@
+[
+	{
+		"id": "z1_api",
+		"termino": "API RESTful",
+		"leccion": "L116",
+		"definicion": "Interfaz de programación basada en el protocolo HTTP y principios REST."
+	},
+	{
+		"id": "z1_endpoint",
+		"termino": "Endpoint",
+		"leccion": "L117",
+		"definicion": "URI específica donde un servidor web expone un recurso o servicio."
+	},
+	{
+		"id": "z1_status_code",
+		"termino": "Código de Estado HTTP",
+		"leccion": "L118",
+		"definicion": "Número de 3 dígitos que indica el resultado de una petición HTTP (2xx, 4xx, 5xx)."
+	},
+	{
+		"id": "tech_lead",
+		"termino": "Tech Lead",
+		"leccion": "L116",
+		"definicion": "Líder técnico responsable de guiar decisiones arquitectónicas y mentoría."
+	},
+	{
+		"id": "sdlc",
+		"termino": "SDLC",
+		"leccion": "L117",
+		"definicion": "Software Development Life Cycle: ciclo completo de vida del software."
+	},
+	{
+		"id": "poc",
+		"termino": "PoC (Proof of Concept)",
+		"leccion": "L117",
+		"definicion": "Prueba de concepto para verificar la viabilidad técnica de una idea."
+	},
+	{
+		"id": "c4_model",
+		"termino": "C4 Model",
+		"leccion": "L118",
+		"definicion": "Modelo visual para diagramar arquitecturas en 4 niveles de abstracción."
+	},
+	{
+		"id": "http",
+		"termino": "HTTP",
+		"leccion": "L119",
+		"definicion": "Protocolo de transferencia de hipertexto base de la web."
+	},
+	{
+		"id": "codigo_estado",
+		"termino": "Código de Estado HTTP",
+		"leccion": "L120",
+		"definicion": "Respuesta numérica estandarizada de 3 dígitos de un servidor."
+	},
+	{
+		"id": "xml",
+		"termino": "XML",
+		"leccion": "L121",
+		"definicion": "Extensible Markup Language para transporte de datos estructurados."
+	},
+	{
+		"id": "idempotencia",
+		"termino": "Idempotencia",
+		"leccion": "L123",
+		"definicion": "Propiedad donde múltiples ejecuciones idénticas producen el mismo efecto."
+	},
+	{
+		"id": "api_first",
+		"termino": "API-First",
+		"leccion": "L126",
+		"definicion": "Estrategia donde el contrato de la API se diseña antes de implementar el código."
+	},
+	{
+		"id": "openapi",
+		"termino": "OpenAPI (Swagger)",
+		"leccion": "L126",
+		"definicion": "Especificación estándar para describir contratos de APIs RESTful."
+	},
+	{
+		"id": "arquitectura_3_capas",
+		"termino": "Arquitectura de 3 Capas",
+		"leccion": "L128",
+		"definicion": "Separación en Presentación, Lógica de Negocio y Datos."
+	},
+	{
+		"id": "patron_repositorio",
+		"termino": "Patrón Repositorio",
+		"leccion": "L129",
+		"definicion": "Abstracción que encapsula el acceso y persistencia de datos."
+	},
+	{
+		"id": "inyeccion_dependencias",
+		"termino": "Inyección de Dependencias (DI)",
+		"leccion": "L130",
+		"definicion": "Patrón donde las dependencias se suministran desde el exterior."
+	},
+	{
+		"id": "rdbms",
+		"termino": "RDBMS",
+		"leccion": "L131",
+		"definicion": "Sistemas de gestión de bases de datos relacionales basadas en SQL."
+	},
+	{
+		"id": "nosql",
+		"termino": "NoSQL",
+		"leccion": "L131",
+		"definicion": "Bases de datos no relacionales para documentos, clave-valor o grafos."
+	},
+	{
+		"id": "sharding",
+		"termino": "Sharding",
+		"leccion": "L132",
+		"definicion": "Particionamiento horizontal de bases de datos entre múltiples nodos."
+	},
+	{
+		"id": "migracion_datos",
+		"termino": "Migración de Datos",
+		"leccion": "L133",
+		"definicion": "Evolución controlada y versionada del esquema de una base de datos."
+	},
+	{
+		"id": "etl",
+		"termino": "ETL (Extract, Transform, Load)",
+		"leccion": "L133",
+		"definicion": "Proceso de extracción, transformación y carga de datos masivos."
+	},
+	{
+		"id": "prueba_unitaria",
+		"termino": "Prueba Unitaria",
+		"leccion": "L136",
+		"definicion": "Prueba automatizada que valida una función aislada en milisegundos."
+	},
+	{
+		"id": "producto_minimo_viable",
+		"termino": "MVP (Producto Mínimo Viable)",
+		"leccion": "L117",
+		"definicion": "Versión de un producto con solo las funciones imprescindibles para que clientes reales lo usen y validar la propuesta de negocio. No confundir con el patrón Modelo-Vista-Presentador."
+	}
+]

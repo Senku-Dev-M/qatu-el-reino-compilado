@@ -1,0 +1,266 @@
+[
+	{
+		"id": "L01",
+		"zona": 3,
+		"sala": "z3_raiz",
+		"orden": 1,
+		"nivel": "inicial",
+		"titulo": "Qué pasa cuando abres una página web",
+		"resumen": "El navegador pide archivos a un servidor y los interpreta: HTML para la estructura, CSS para el aspecto y JavaScript para el comportamiento.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Cliente y servidor",
+				"texto": "Cuando escribes una dirección como `https://qatu.com` en la barra del [[navegador]], ocurren tres pasos:\n\n**1.** El navegador (el **cliente**) envía una [[petición HTTP|peticion_http]] a otra computadora llamada [[servidor]].\n**2.** El servidor responde enviando archivos de texto.\n**3.** El navegador lee esos archivos y dibuja la página en tu pantalla.\n\nToda la web funciona así: alguien pide, alguien responde."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Los tres lenguajes del frontend",
+				"texto": "Los archivos que recibe el navegador suelen ser de tres tipos, y cada uno tiene una tarea distinta:\n\n• [[HTML]]: define la **estructura y el contenido**: qué es un título, qué es un párrafo, dónde hay una imagen.\n• [[CSS]]: define la **presentación**: colores, tamaños, tipografías y posiciones.\n• [[JavaScript]]: define el **comportamiento**: qué pasa cuando haces clic, cómo cambia la página sin recargarla.\n\nEn este bosque aprenderás los tres, empezando por HTML."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Un archivo HTML real",
+				"texto": "Este es el contenido de un archivo llamado `index.html` tal como lo envía el servidor. A la derecha ves cómo lo dibuja el navegador. Todavía no importa entender cada símbolo: lo iremos viendo en las siguientes lecciones.",
+				"lenguaje": "html",
+				"codigo": "<h1>Mercado de Qatu</h1>\n<p>Bienvenido a la tienda.</p>",
+				"vista": {
+					"pestana": "index.html",
+					"bloques": [
+						{
+							"h1": "Mercado de Qatu"
+						},
+						{
+							"p": "Bienvenido a la tienda."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Quién hace qué?",
+				"pregunta": {
+					"enunciado": "Quieres que el título de tu página sea de color dorado. ¿Qué lenguaje se encarga de eso?",
+					"opciones": [
+						"HTML",
+						"CSS",
+						"JavaScript",
+						"El servidor"
+					],
+					"correcta": 1,
+					"explicacion": "El color es **presentación**, y la presentación es trabajo de CSS. HTML solo dice que ese texto es un título."
+				}
+			}
+		]
+	},
+	{
+		"id": "L02",
+		"zona": 3,
+		"sala": "z3_raiz",
+		"orden": 2,
+		"nivel": "inicial",
+		"titulo": "HTML: un lenguaje de marcado",
+		"resumen": "HTML marca las partes de un texto para decir qué es cada una. No tiene lógica: no calcula ni decide nada.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Marcar el contenido",
+				"texto": "HTML significa HyperText Markup Language. Es un [[lenguaje de marcado|lenguaje_de_marcado]]: sirve para **marcar** fragmentos de texto e indicar qué significa cada uno.\n\nImagina un texto sin formato: «Mercado de Qatu. Bienvenido a la tienda.» El navegador no sabe cuál es el título y cuál es el párrafo. Con HTML lo marcas explícitamente.\n\nHTML **no es un lenguaje de programación**: no tiene variables, condiciones (`if`) ni repeticiones (`for`). Solo describe estructura."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Archivos .html",
+				"texto": "Una página HTML es un archivo de texto plano con extensión `.html`. Puedes escribirlo con cualquier editor (por ejemplo VS Code) y abrirlo con doble clic en el navegador.\n\nEl texto que quieres mostrar se rodea con marcas escritas entre los símbolos `<` y `>`. En la siguiente lección verás exactamente cómo se forman.",
+				"lenguaje": "html",
+				"codigo": "<h1>Mercado de Qatu</h1>\n<p>Bienvenido a la tienda.</p>\n<p>Hoy hay descuentos.</p>",
+				"vista": {
+					"pestana": "index.html",
+					"bloques": [
+						{
+							"h1": "Mercado de Qatu"
+						},
+						{
+							"p": "Bienvenido a la tienda."
+						},
+						{
+							"p": "Hoy hay descuentos."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Confusiones frecuentes",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "Mercado de Qatu\nBienvenido a la tienda.",
+						"bien": "<h1>Mercado de Qatu</h1>\n<p>Bienvenido a la tienda.</p>",
+						"explicacion": "Sin marcas, el navegador muestra todo como un único texto seguido: no sabe qué es título y qué es párrafo."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Programación o marcado?",
+				"pregunta": {
+					"enunciado": "¿Por qué se dice que HTML no es un lenguaje de programación?",
+					"opciones": [
+						"Porque solo funciona en Internet",
+						"Porque describe estructura y no tiene lógica como condiciones o variables",
+						"Porque lo interpreta el servidor",
+						"Porque no se puede escribir en un editor de texto"
+					],
+					"correcta": 1,
+					"explicacion": "HTML describe **qué es** cada parte del contenido. La lógica (decidir, calcular, repetir) llega con JavaScript."
+				}
+			}
+		]
+	},
+	{
+		"id": "L03",
+		"zona": 3,
+		"sala": "z3_raiz",
+		"orden": 3,
+		"nivel": "inicial",
+		"titulo": "Etiquetas y elementos",
+		"resumen": "Una etiqueta es la marca entre < y >. Un elemento es la unidad completa: etiqueta de apertura, contenido y etiqueta de cierre.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Etiqueta",
+				"texto": "Una [[etiqueta]] es una palabra clave escrita entre `<` y `>` que le indica al navegador el tipo de contenido.\n\n• `<p>` es la etiqueta de **apertura** de un párrafo.\n• `</p>` es la etiqueta de **cierre**: lleva una barra `/` antes del nombre.\n\nCada etiqueta tiene un nombre definido por el estándar HTML: `p` (párrafo), `h1` (encabezado), `a` (enlace), etc. No puedes inventar nombres."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Elemento",
+				"texto": "Un [[elemento]] es la unidad completa formada por:\n\n**1.** la etiqueta de apertura,\n**2.** el [[contenido]] (el texto u otros elementos),\n**3.** la etiqueta de cierre.\n\nEn `<p>Hola</p>`: el elemento es todo; `<p>` y `</p>` son sus etiquetas; `Hola` es su contenido.\n\nEn la práctica se dice «la etiqueta p» y «el elemento p» casi como sinónimos, pero conviene conocer la diferencia.",
+				"lenguaje": "html",
+				"codigo": "<p>Hola</p>"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Lo que se ve y lo que no",
+				"texto": "Las etiquetas **no se muestran** en pantalla: el navegador las usa para saber cómo presentar el contenido. Aquí, `<h1>` hace que el texto sea un título grande y `<p>` lo convierte en párrafo.",
+				"lenguaje": "html",
+				"codigo": "<h1>Tienda</h1>\n<p>Abierta de 9 a 18 h.</p>",
+				"vista": {
+					"pestana": "Tienda",
+					"bloques": [
+						{
+							"h1": "Tienda"
+						},
+						{
+							"p": "Abierta de 9 a 18 h."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Olvidar el cierre",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<p>Abierta de 9 a 18 h.\n<p>Cerrado los domingos.",
+						"bien": "<p>Abierta de 9 a 18 h.</p>\n<p>Cerrado los domingos.</p>",
+						"explicacion": "Algunos navegadores corrigen el error y otros no. No confíes en eso: cierra siempre cada elemento para que la estructura sea predecible."
+					},
+					{
+						"mal": "<p>Hola<p>",
+						"bien": "<p>Hola</p>",
+						"explicacion": "La etiqueta de cierre necesita la barra: `</p>`. Sin ella, estás abriendo un segundo párrafo."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Identifica las partes",
+				"pregunta": {
+					"enunciado": "En el código <h1>Mercado</h1>, ¿qué es «Mercado»?",
+					"opciones": [
+						"La etiqueta de apertura",
+						"El contenido del elemento",
+						"Un atributo",
+						"La etiqueta de cierre"
+					],
+					"correcta": 1,
+					"explicacion": "`<h1>` abre, `</h1>` cierra y lo que queda en medio, «Mercado», es el **contenido**."
+				}
+			}
+		]
+	},
+	{
+		"id": "L04",
+		"zona": 3,
+		"sala": "z3_raiz",
+		"orden": 4,
+		"nivel": "inicial",
+		"titulo": "La estructura de un documento HTML",
+		"resumen": "Todo documento tiene la misma base: <!DOCTYPE html>, <html>, <head> con información para el navegador y <body> con lo que se muestra.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El esqueleto obligatorio",
+				"texto": "Una página HTML completa siempre sigue la misma estructura base:\n\n• [[<!DOCTYPE html>|doctype]]: primera línea. Indica que el documento usa HTML moderno (HTML5). No es una etiqueta con cierre.\n• `<html>`: el elemento raíz. Envuelve todo lo demás.\n• [[<head>|head]]: información **sobre** la página que no se dibuja: título de la pestaña, codificación, enlaces a CSS.\n• [[<body>|body]]: el contenido **visible**: textos, imágenes, botones."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Plantilla mínima",
+				"texto": "Esta es la plantilla que usarás en casi todos tus proyectos.\n\n• `<meta charset=\"UTF-8\">` le dice al navegador cómo leer caracteres especiales como **á**, **ñ** o **¿** ([[meta charset|meta_charset]]).\n• [[<title>|title]] es el texto que aparece en la **pestaña** del navegador, no dentro de la página.\n\nFíjate en la sangría: los elementos de dentro se escriben más a la derecha para que se lea la jerarquía.",
+				"lenguaje": "html",
+				"codigo": "<!DOCTYPE html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\">\n    <title>Mercado de Qatu</title>\n  </head>\n  <body>\n    <h1>Bienvenido</h1>\n    <p>Productos del reino.</p>\n  </body>\n</html>"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Head frente a body",
+				"texto": "Observa la vista previa: «Mercado de Qatu» aparece en la **pestaña** porque está en `<title>`, dentro de `<head>`. Solo lo que está dentro de `<body>` se dibuja en la página.",
+				"lenguaje": "html",
+				"codigo": "<head>\n  <title>Mercado de Qatu</title>\n</head>\n<body>\n  <h1>Bienvenido</h1>\n  <p>Productos del reino.</p>\n</body>",
+				"vista": {
+					"pestana": "Mercado de Qatu",
+					"bloques": [
+						{
+							"h1": "Bienvenido"
+						},
+						{
+							"p": "Productos del reino."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Contenido en el lugar equivocado",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<head>\n  <h1>Bienvenido</h1>\n</head>",
+						"bien": "<body>\n  <h1>Bienvenido</h1>\n</body>",
+						"explicacion": "El contenido visible va en `<body>`. `<head>` es solo para información sobre el documento."
+					},
+					{
+						"mal": "<title>Mercado</title>\n<!DOCTYPE html>",
+						"bien": "<!DOCTYPE html>\n<title>Mercado</title>",
+						"explicacion": "`<!DOCTYPE html>` debe ser siempre la primera línea del archivo."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Dónde va?",
+				"pregunta": {
+					"enunciado": "¿En qué elemento colocas el texto que quieres que aparezca en la pestaña del navegador?",
+					"opciones": [
+						"<body>",
+						"<h1>",
+						"<title>, dentro de <head>",
+						"<!DOCTYPE html>"
+					],
+					"correcta": 2,
+					"explicacion": "`<title>` va dentro de `<head>` y define el nombre de la pestaña. No se muestra dentro de la página."
+				}
+			}
+		]
+	}
+]

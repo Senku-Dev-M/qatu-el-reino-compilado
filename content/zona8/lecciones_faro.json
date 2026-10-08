@@ -1,0 +1,303 @@
+[
+	{
+		"id": "L176",
+		"zona": 8,
+		"sala": "z8_faro_swarm",
+		"orden": 176,
+		"nivel": "intermedio",
+		"titulo": "Docker Swarm frente a Kubernetes",
+		"resumen": "Comparativa entre la simplicidad de Docker Swarm y la potencia y ecosistema de Kubernetes.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Dos filosofías de orquestación",
+				"texto": "• [[swarm]] (Docker Swarm): integrado directamente en Docker Engine. Configuración ultrarrápida (`docker swarm init`), sintaxis idéntica a Compose y baja sobrecarga. Ideal para equipos pequeños y clústeres sencillos.\n• [[kubernetes]] (K8s): estándar absoluto de la industria. Ofrece extensibilidad masiva (CRDs, operadores), auto-scaling granular (HPA/VPA), mallas de servicio (Service Mesh) y soporte multi-cloud. Mayor complejidad pero escalabilidad ilimitada."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Un servicio en Swarm",
+				"lenguaje": "texto",
+				"texto": "Swarm reparte las réplicas entre los nodos. Su **routing mesh** balancea el puerto publicado desde cualquier nodo, y los servicios de una misma red overlay se descubren por nombre:",
+				"codigo": "$ docker swarm init\n$ docker network create -d overlay qatu-net\n$ docker service create --name api --replicas 3 \\\n    --network qatu-net --publish 8080:3000 qatu/api:1.4.0\n$ docker service ls\nID        NAME  MODE        REPLICAS  PORTS\nk3x9...   api   replicated  3/3       *:8080->3000/tcp\n\n# el mismo compose se despliega como stack\n$ docker stack deploy -c docker-compose.yml qatu"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Tabla comparativa",
+				"texto": "Criterios para elegir orquestador:",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"",
+									"Docker Swarm",
+									"Kubernetes"
+								],
+								"filas": [
+									[
+										"Puesta en marcha",
+										"un comando",
+										"compleja (o servicio gestionado)"
+									],
+									[
+										"Formato",
+										"docker-compose.yml",
+										"manifiestos YAML propios"
+									],
+									[
+										"Balanceo y descubrimiento",
+										"routing mesh + DNS",
+										"Services + Ingress"
+									],
+									[
+										"Tareas por lotes",
+										"limitado",
+										"Job y CronJob"
+									],
+									[
+										"Secretos",
+										"docker secret",
+										"Secret"
+									],
+									[
+										"Autoescalado",
+										"no nativo",
+										"HPA"
+									],
+									[
+										"Ecosistema",
+										"reducido",
+										"enorme"
+									]
+								],
+								"resaltar": 2
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Elegir orquestador por inercia",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Montar Kubernetes con 3 nodos propios para\nuna tienda con 2 servicios y un solo desarrollador.",
+						"bien": "Docker Compose o Swarm; o un Kubernetes\ngestionado si se prevé crecer.",
+						"explicacion": "La complejidad operativa de Kubernetes tiene un coste. Se adopta cuando sus capacidades se necesitan."
+					},
+					{
+						"mal": "Suponer que Swarm autoescala las réplicas\nsegún la carga, como el HPA de Kubernetes.",
+						"bien": "En Swarm se escala a mano o con herramientas\nexternas: docker service scale api=6",
+						"explicacion": "Swarm mantiene el número de réplicas declarado, pero no lo ajusta solo según CPU o peticiones."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Fortaleza de Swarm",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué mecanismo de Docker Swarm permite llegar a un servicio publicado desde cualquier nodo del clúster?",
+					"opciones": [
+						"El HPA",
+						"El routing mesh",
+						"El Ingress Controller",
+						"Los cgroups"
+					],
+					"correcta": 1,
+					"explicacion": "El routing mesh balancea el puerto publicado desde todos los nodos hacia las réplicas del servicio."
+				}
+			}
+		]
+	},
+	{
+		"id": "L177",
+		"zona": 8,
+		"sala": "z8_faro_swarm",
+		"orden": 177,
+		"nivel": "intermedio",
+		"titulo": "Diagramas de Despliegue en producción",
+		"resumen": "Modelado de nodos Master y Worker, redes superpuestas (Overlay) y almacenamiento compartido.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Topología de un clúster K8s",
+				"texto": "Un clúster en producción se estructura en:\n\n• **Control Plane (Master Nodes):** `kube-apiserver` (API central), `etcd` (almacén de estado distribuido), `kube-scheduler` (asignación de pods) y `kube-controller-manager`.\n• **Worker Nodes:** `kubelet` (agente de nodo), `kube-proxy` (reglas de red) y el runtime de contenedores (`containerd` / `CRI-O`).\n• **Overlay Network (CNI):** red virtual que permite a cualquier Pod comunicarse con cualquier otro Pod en cualquier nodo sin NAT (Calico, Flannel, Cilium)."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Diagrama de despliegue en PlantUML",
+				"lenguaje": "texto",
+				"texto": "Un **diagrama de despliegue** UML muestra dónde se ejecuta cada artefacto: los `node` son máquinas o entornos de ejecución, los `artifact` lo que se despliega en ellos y las flechas, las comunicaciones con su protocolo:",
+				"codigo": "@startuml\nnode \"Clúster Kubernetes\" {\n  node \"worker-1\" {\n    artifact \"qatu-web:8f3c\" as web\n  }\n  node \"worker-2\" {\n    artifact \"qatu-api:8f3c\" as api\n  }\n}\ndatabase \"PostgreSQL (gestionado)\" as db\ncloud \"Pasarela de pagos\" as pagos\nactor Comprador\nComprador --> web : HTTPS\nweb --> api : HTTP (ClusterIP)\napi --> db : TCP 5432\napi --> pagos : HTTPS\n@enduml"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Topología del clúster",
+				"texto": "La topología física del clúster: el plano de control decide y guarda el estado; los nodos worker ejecutan los Pods.",
+				"vista": {
+					"bloques": [
+						{
+							"arbol": {
+								"nombre": "Clúster",
+								"hijos": [
+									{
+										"nombre": "Plano de control",
+										"hijos": [
+											{
+												"nombre": "kube-apiserver"
+											},
+											{
+												"nombre": "etcd"
+											},
+											{
+												"nombre": "scheduler"
+											}
+										]
+									},
+									{
+										"nombre": "Nodo worker",
+										"hijos": [
+											{
+												"nombre": "kubelet"
+											},
+											{
+												"nombre": "kube-proxy"
+											},
+											{
+												"nombre": "containerd"
+											}
+										]
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Rol del Control Plane",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué componente del plano de control guarda el estado de todo el clúster de Kubernetes?",
+					"opciones": [
+						"kubelet",
+						"kube-proxy",
+						"etcd",
+						"containerd"
+					],
+					"correcta": 2,
+					"explicacion": "etcd es el almacén clave-valor distribuido del estado; kubelet, kube-proxy y containerd viven en los nodos worker."
+				}
+			}
+		]
+	},
+	{
+		"id": "L178",
+		"zona": 8,
+		"sala": "z8_faro_swarm",
+		"orden": 178,
+		"nivel": "intermedio",
+		"titulo": "Arquitectura de Despliegue de Qatu",
+		"resumen": "Integración completa de CI/CD y despliegue del marketplace Qatu en Kubernetes.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El pipeline productivo de Qatu",
+				"texto": "El flujo completo desde el código hasta la nube:\n\n1. Desarrollador hace `git push` a la rama `main` en GitLab.\n2. GitLab CI ejecuta pruebas unitarias y de integración en runners aislados.\n3. Docker construye la imagen multi-stage y la publica en GitLab Registry.\n4. El runner actualiza el manifiesto en el repositorio GitOps (ArgoCD).\n5. Kubernetes aplica el Rolling Update en el clúster de producción con cero tiempo de inactividad."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "El manifiesto que despliega GitOps",
+				"lenguaje": "texto",
+				"texto": "En GitOps, el pipeline no toca el clúster: actualiza la etiqueta de imagen en un repositorio de manifiestos. Argo CD detecta el commit y sincroniza el clúster con ese estado:",
+				"codigo": "# repositorio qatu-despliegue: produccion/api.yaml\nspec:\n  replicas: 3\n  template:\n    spec:\n      containers:\n        - name: api\n-         image: registry.gitlab.com/qatu/api:8f3c2a1\n+         image: registry.gitlab.com/qatu/api:b71d09e"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Del commit a producción",
+				"texto": "El recorrido completo de un cambio, del commit a producción:",
+				"vista": {
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Git",
+									"GitLab CI",
+									"Registro",
+									"Argo CD",
+									"Kubernetes"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "push a main"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "imagen :b71d09e"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "commit manifiesto"
+									},
+									{
+										"de": 3,
+										"a": 0,
+										"texto": "detecta cambio"
+									},
+									{
+										"de": 3,
+										"a": 4,
+										"texto": "sync (rolling update)"
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Atajos que rompen la trazabilidad",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "$ kubectl edit deploy/qatu-api\n# cambio manual \"urgente\" en producción",
+						"bien": "Commit en el repositorio de despliegue;\nArgo CD aplica el cambio.",
+						"explicacion": "Un cambio manual no queda registrado y Argo CD lo revertirá en la siguiente sincronización. Git es la fuente de verdad."
+					},
+					{
+						"mal": "Desplegar sin readiness probe:\nel rolling update retira los Pods viejos\nantes de que los nuevos acepten tráfico.",
+						"bien": "readinessProbe configurada:\nel tráfico solo llega a Pods listos.",
+						"explicacion": "El rolling update se basa en el estado ready. Sin la sonda, un Pod que aún arranca se da por disponible."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Flujo continuo",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "En un flujo GitOps con Argo CD, alguien cambia la imagen con kubectl edit directamente en producción. ¿Qué pasa?",
+					"opciones": [
+						"El cambio queda permanente",
+						"Argo CD lo revierte al sincronizar con lo que dice Git",
+						"Se borra el repositorio",
+						"El pipeline se ejecuta de nuevo"
+					],
+					"correcta": 1,
+					"explicacion": "En GitOps el repositorio es la fuente de verdad; el clúster se ajusta a él."
+				}
+			}
+		]
+	}
+]

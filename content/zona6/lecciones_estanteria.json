@@ -1,0 +1,189 @@
+[
+	{
+		"id": "L77",
+		"zona": 6,
+		"sala": "z6_estanteria",
+		"orden": 77,
+		"nivel": "inicial",
+		"titulo": "Qué es OData",
+		"resumen": "OData (Open Data Protocol) es un estándar de OASIS aprobado también como norma ISO/IEC para construir y consumir APIs REST. Define URLs, un documento de metadatos y opciones de consulta comunes como $filter, $orderby o $top.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Un estándar para consultar APIs",
+				"texto": "En la lección anterior viste que cada API inventa sus propios parámetros (`sort`, `order_by`, `precio_max`…). [[OData|odata]] (Open Data Protocol) propone **una forma estándar**:\n\n• Creado por Microsoft en 2007 y estandarizado por **OASIS**; la versión 4.0 se aprobó además como norma internacional **ISO/IEC 20802**.\n• Se apoya en HTTP y REST: recursos con URL, métodos GET, POST, PATCH y DELETE, y respuestas en JSON.\n• Define **opciones de consulta** con prefijo `$` que cualquier cliente OData entiende."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Principios de diseño y extensibilidad",
+				"texto": "• **Uniformidad**: todas las colecciones se consultan igual (`/Productos?$top=10` funciona como `/Pedidos?$top=10`).\n• **Autodescripción**: el [[documento de metadatos|documento_metadatos]] en `/$metadata` describe entidades, propiedades, tipos y relaciones, y las herramientas lo usan para generar clientes.\n• **Extensibilidad**: permite **anotaciones**, vocabularios y opciones de consulta propias sin romper a los clientes existentes.\n\nLo usan, por ejemplo, Microsoft Graph, SAP y Dynamics 365. En .NET, ASP.NET Core ofrece soporte con la biblioteca de OData."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Una consulta OData",
+				"lenguaje": "texto",
+				"codigo": "GET /odata/Productos?$filter=Categoria eq 'textil'&$orderby=Precio&$top=2",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "GET",
+								"url": "/odata/Productos?$filter=Categoria eq 'textil'&$orderby=Precio&$top=2",
+								"estado": "200 OK",
+								"respuesta": "{\n  \"@odata.context\": \"/odata/$metadata#Productos\",\n  \"value\": [\n    { \"Id\": 8, \"Nombre\": \"Gorro\", \"Precio\": 35 },\n    { \"Id\": 3, \"Nombre\": \"Chalina\", \"Precio\": 58 }\n  ]\n}"
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Qué aporta OData?",
+				"pregunta": {
+					"enunciado": "¿Cuál es la principal ventaja de que una API siga OData?",
+					"opciones": [
+						"Que no necesita HTTP",
+						"Que filtros, orden y paginación usan opciones estándar que cualquier cliente OData entiende",
+						"Que las respuestas son binarias y más rápidas",
+						"Que no requiere autenticación"
+					],
+					"correcta": 1,
+					"explicacion": "OData estandariza URLs, metadatos y opciones de consulta, de modo que clientes y herramientas funcionan con cualquier servicio compatible."
+				}
+			}
+		]
+	},
+	{
+		"id": "L78",
+		"zona": 6,
+		"sala": "z6_estanteria",
+		"orden": 78,
+		"nivel": "intermedio",
+		"titulo": "$filter: filtrar en OData",
+		"resumen": "$filter recibe una expresión con operadores de comparación (eq, ne, gt, ge, lt, le), lógicos (and, or, not) y funciones como contains o startswith.",
+		"paginas": [
+			{
+				"tipo": "sintaxis",
+				"titulo": "Operadores",
+				"texto": "[[$filter|filter_odata]] contiene una expresión que debe cumplirse. OData usa **palabras**, no símbolos:\n\n• `eq` igual · `ne` distinto\n• `gt` mayor · `ge` mayor o igual\n• `lt` menor · `le` menor o igual\n• `and`, `or`, `not` y paréntesis para agrupar\n\nLos textos van entre **comillas simples**; los números y `true`/`false`, sin comillas.",
+				"lenguaje": "texto",
+				"codigo": "$filter=Precio lt 100\n$filter=Categoria eq 'textil' and Stock gt 0\n$filter=(Precio ge 50 and Precio le 150) or EnOferta eq true"
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Funciones de texto",
+				"texto": "Para búsquedas dentro de cadenas se usan funciones:\n\n• `contains(Nombre, 'alpaca')`\n• `startswith(Nombre, 'Gorro')`\n• `endswith(Codigo, '-XL')`\n• `tolower(Nombre) eq 'manta'`\n\nEn una URL real, los espacios y las comillas se codifican (`%20`, `%27`); `URLSearchParams` lo hace por ti.",
+				"lenguaje": "js",
+				"codigo": "const params = new URLSearchParams({\n  $filter: \"contains(Nombre, 'alpaca') and Precio lt 200\"\n});\nawait fetch(`/odata/Productos?${params}`);"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores frecuentes",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "$filter=Precio < 100",
+						"bien": "$filter=Precio lt 100",
+						"explicacion": "OData no usa `<`, `>` ni `=` en las expresiones: usa `lt`, `gt` y `eq`."
+					},
+					{
+						"mal": "$filter=Categoria eq \"textil\"",
+						"bien": "$filter=Categoria eq 'textil'",
+						"explicacion": "Las cadenas literales van entre comillas simples."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Escribe el filtro",
+				"pregunta": {
+					"enunciado": "¿Qué $filter devuelve los productos con stock y precio de 50 o más?",
+					"opciones": [
+						"$filter=Stock > 0 && Precio >= 50",
+						"$filter=Stock gt 0 and Precio ge 50",
+						"$filter=Stock gt 0 or Precio gt 50",
+						"$filter=Stock eq 0 and Precio le 50"
+					],
+					"correcta": 1,
+					"explicacion": "`gt 0` exige stock, `ge 50` incluye el 50, y ambas condiciones se unen con `and`."
+				}
+			}
+		]
+	},
+	{
+		"id": "L79",
+		"zona": 6,
+		"sala": "z6_estanteria",
+		"orden": 79,
+		"nivel": "intermedio",
+		"titulo": "$orderby, $top, $skip, $select y $count",
+		"resumen": "$orderby ordena (asc o desc), $top limita el número de resultados y $skip los salta, lo que permite paginar. $select elige propiedades, $expand incluye relacionadas y $count=true añade el total.",
+		"paginas": [
+			{
+				"tipo": "sintaxis",
+				"titulo": "Ordenar y paginar",
+				"texto": "• [[$orderby|orderby_odata]]: propiedad y dirección `asc` (por defecto) o `desc`; varios criterios separados por comas.\n• [[$top y $skip|top_skip]]: `$top` devuelve como máximo N elementos y `$skip` salta los primeros N. Juntos forman la paginación offset/limit de OData.\n\nPágina `n` de tamaño `t`: `$top=t&$skip=(n-1)×t`. Es exactamente lo que hacen las estanterías de esta sala.",
+				"lenguaje": "texto",
+				"codigo": "$orderby=Valoracion desc,Precio asc\n\nPágina 1: $top=3&$skip=0\nPágina 2: $top=3&$skip=3\nPágina 3: $top=3&$skip=6"
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Elegir datos: $select, $expand y $count",
+				"texto": "• [[$select|select_expand]]: devuelve solo las propiedades indicadas, lo que reduce el tamaño de la respuesta.\n• `$expand`: incluye entidades relacionadas en la misma respuesta (por ejemplo, el vendedor de cada producto) y evita peticiones extra.\n• `$count=true`: añade `@odata.count` con el total de resultados que cumplen el filtro, útil para mostrar «página 2 de 9».",
+				"lenguaje": "texto",
+				"codigo": "GET /odata/Productos?$select=Nombre,Precio&$expand=Vendedor&$count=true&$top=20"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Todo junto",
+				"lenguaje": "texto",
+				"codigo": "GET /odata/Productos?$filter=Categoria eq 'textil'&$orderby=Precio&$select=Nombre,Precio&$top=3&$skip=3&$count=true",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Nombre",
+									"Precio"
+								],
+								"filas": [
+									[
+										"Poncho",
+										"150"
+									],
+									[
+										"Manta grande",
+										"180"
+									],
+									[
+										"Tapiz",
+										"210"
+									]
+								],
+								"resaltar": 1,
+								"pie": "@odata.count: 14 · página 2 de 5"
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "La página 4",
+				"pregunta": {
+					"enunciado": "Con 10 productos por página, ¿qué opciones devuelven la página 4?",
+					"opciones": [
+						"$top=4&$skip=10",
+						"$top=10&$skip=30",
+						"$top=10&$skip=40",
+						"$skip=4"
+					],
+					"correcta": 1,
+					"explicacion": "Se saltan las 3 primeras páginas (3 × 10 = 30) y se toman 10."
+				}
+			}
+		]
+	}
+]

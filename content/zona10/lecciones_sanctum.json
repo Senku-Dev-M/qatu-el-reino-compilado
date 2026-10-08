@@ -1,0 +1,499 @@
+[
+	{
+		"id": "L200",
+		"zona": 10,
+		"sala": "hub_sanctum",
+		"orden": 200,
+		"nivel": "intermedio",
+		"titulo": "La Demo en Vivo y Presentación a Stakeholders",
+		"resumen": "Estrategias de comunicación técnica y demostración de valor en incrementos de producto.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El Arte de la Demostración Técnica",
+				"texto": "La demo final es la presentación del proyecto Capstone terminado. Las recomendaciones del curso:\n\n• **Guion claro** y ensayado, con tiempos.\n• **Funcionalidades clave** y **casos de uso realistas**: un comprador que busca, compra y paga, no una lista de pantallas.\n• **Explicar la arquitectura**: cómo se conectan SPA, API, base de datos y despliegue, y por qué se eligió así.\n• **Preparar respuestas** a las preguntas frecuentes.\n• **Cerrar con una reflexión** sobre mejoras futuras."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Un guion de demo",
+				"lenguaje": "texto",
+				"texto": "Un guion escrito reparte el tiempo y evita improvisar. Cada bloque tiene un objetivo:",
+				"codigo": "DEMO QATU · 15 minutos\n\n00:00  Problema y usuarios de Qatu (1 min)\n01:00  Flujo real: Ana busca un poncho, lo compra y paga (5 min)\n06:00  Vendedor: publica un producto; la búsqueda lo muestra (2 min)\n08:00  Arquitectura: C4 de contenedores + pipeline CI/CD (3 min)\n11:00  Calidad: pruebas, cobertura y monitoreo en Grafana (2 min)\n13:00  Lecciones aprendidas y mejoras futuras (2 min)\n\nPlan B: vídeo grabado del flujo de compra y datos de staging\nprecargados si falla la conexión."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Preparar las contingencias",
+				"texto": "Una demo en vivo puede fallar por motivos ajenos al código. Se reducen riesgos antes de empezar:",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Riesgo",
+									"Preparación"
+								],
+								"filas": [
+									[
+										"La red del aula falla",
+										"vídeo grabado del flujo principal"
+									],
+									[
+										"Datos aleatorios o vacíos",
+										"datos de demo deterministas precargados"
+									],
+									[
+										"Un despliegue de última hora rompe algo",
+										"congelar la versión la víspera"
+									],
+									[
+										"Pregunta sobre seguridad",
+										"diagrama del flujo OIDC a mano"
+									]
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores típicos en la demo",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Recorrer todas las pantallas una a una\nexplicando cada botón.",
+						"bien": "Contar una historia de usuario real\nde principio a fin.",
+						"explicacion": "Quien evalúa necesita ver el valor del producto; los flujos completos lo muestran mejor que un inventario de pantallas."
+					},
+					{
+						"mal": "Desplegar una funcionalidad nueva\n10 minutos antes de presentar.",
+						"bien": "Versión congelada y probada la víspera;\nlo nuevo se menciona como mejora futura.",
+						"explicacion": "Un cambio sin probar justo antes de la demo es la causa más frecuente de fallos en vivo."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: La Demo en Vivo y Presentación a Stakeholders",
+				"pregunta": {
+					"enunciado": "Tienes 15 minutos de demo. ¿Qué enfoque recomienda el curso?",
+					"opciones": [
+						"Mostrar todas las pantallas una por una",
+						"Un guion con un flujo de usuario realista, la arquitectura y un cierre con mejoras futuras",
+						"Leer el código fuente en voz alta",
+						"Improvisar según las preguntas"
+					],
+					"correcta": 1,
+					"explicacion": "Guion claro, funcionalidades clave con casos realistas, explicación de la arquitectura y reflexión final."
+				}
+			}
+		]
+	},
+	{
+		"id": "L201",
+		"zona": 10,
+		"sala": "hub_sanctum",
+		"orden": 201,
+		"nivel": "intermedio",
+		"titulo": "Evaluación 360 y Feedback Continuo",
+		"resumen": "Cultura de feedback constructivo, competencias técnicas y habilidades interpersonales.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Dimensiones de la Evaluación 360",
+				"texto": "En la [[evaluación 360°|evaluacion_360]] cada integrante recibe valoraciones de sí mismo, de sus pares y de quien lidera. Se evalúan tanto competencias técnicas (calidad del código, resolución de bloqueos) como interpersonales (comunicación, colaboración, apoyo a otros)."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Feedback específico: el modelo SCI",
+				"texto": "El feedback útil es **específico** y **accionable**. Un modelo sencillo es **SCI**: describir la **Situación**, el **Comportamiento** observable y su **Impacto**, sin juicios sobre la persona."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Una rúbrica 360 del equipo Qatu",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Competencia",
+									"Autoevaluación",
+									"Pares",
+									"Tech Lead"
+								],
+								"filas": [
+									[
+										"Calidad del código",
+										"4",
+										"4",
+										"3"
+									],
+									[
+										"Comunicación de bloqueos",
+										"3",
+										"2",
+										"2"
+									],
+									[
+										"Revisiones de código",
+										"4",
+										"5",
+										"4"
+									],
+									[
+										"Apoyo a compañeros",
+										"3",
+										"4",
+										"4"
+									]
+								]
+							}
+						},
+						{
+							"nota": "La diferencia entre autoevaluación y pares en «comunicación de bloqueos» es el dato más útil para crecer."
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Feedback que no ayuda",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "\"Eres muy desordenado con el código.\"",
+						"bien": "\"En el PR del carrito (situación), los tests\nquedaron sin actualizar (comportamiento) y el\npipeline estuvo rojo medio día (impacto).\"",
+						"explicacion": "El modelo SCI describe hechos concretos y su efecto; un juicio general no dice qué cambiar."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Evaluación 360 y Feedback Continuo",
+				"pregunta": {
+					"enunciado": "¿Qué comentario sigue el modelo Situación-Comportamiento-Impacto?",
+					"opciones": [
+						"«Eres descuidado»",
+						"«En el PR del carrito dejaste los tests sin actualizar y el pipeline estuvo rojo medio día»",
+						"«Deberías mejorar en general»",
+						"«Todo bien, sigue así»"
+					],
+					"correcta": 1,
+					"explicacion": "Describe una situación concreta, un comportamiento observable y su efecto, sin juzgar a la persona."
+				}
+			}
+		]
+	},
+	{
+		"id": "L202",
+		"zona": 10,
+		"sala": "hub_sanctum",
+		"orden": 202,
+		"nivel": "intermedio",
+		"titulo": "Retrospectivas y Lecciones Aprendidas",
+		"resumen": "Metodología para la mejora continua del proceso y la arquitectura de software.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "La Directiva Primaria de la Retrospectiva",
+				"texto": "Una [[retrospectiva|retrospectiva]] cierra cada ciclo analizando **el proceso**, no culpando a personas. Por eso muchas empiezan leyendo la directiva primaria de Norm Kerth: todos hicieron el mejor trabajo posible con lo que sabían, sus habilidades, los recursos disponibles y la situación del momento."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Planes de Acción Concretos",
+				"texto": "Cada retrospectiva debe culminar en 2-3 acciones medibles asignadas para el siguiente ciclo."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Un formato de retrospectiva",
+				"lenguaje": "texto",
+				"codigo": "RETRO SPRINT 6 · Qatu\n\nQué funcionó\n  - pipeline con pruebas en cada merge request\n  - pairing en el flujo de pagos\nQué no funcionó\n  - la API cambió sin avisar y rompió el frontend 2 veces\nAcciones (responsable · fecha)\n  1. pruebas de contrato en el pipeline   · Luis · sprint 7\n  2. aviso en el canal al cambiar el OpenAPI · Ana · desde hoy"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Retrospectivas sin efecto",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Acción: \"mejorar la comunicación\".",
+						"bien": "Acción: \"avisar en el canal #api cada cambio\ndel contrato OpenAPI\" · responsable: Ana.",
+						"explicacion": "Una acción vaga no se puede cumplir ni comprobar. Debe ser concreta, con responsable y fecha."
+					},
+					{
+						"mal": "Repetir en cada retro los mismos problemas\nsin revisar las acciones anteriores.",
+						"bien": "Empezar cada retro revisando si las acciones\nde la anterior se cumplieron y funcionaron.",
+						"explicacion": "Sin seguimiento, la retrospectiva se convierte en una queja periódica en vez de una herramienta de mejora."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Retrospectivas y Lecciones Aprendidas",
+				"pregunta": {
+					"enunciado": "¿Cuál es una buena acción de retrospectiva?",
+					"opciones": [
+						"Mejorar la comunicación",
+						"Esforzarnos más el próximo sprint",
+						"Añadir pruebas de contrato al pipeline · responsable Luis · sprint 7",
+						"Evitar errores"
+					],
+					"correcta": 2,
+					"explicacion": "Una acción útil es concreta, verificable, con responsable y fecha."
+				}
+			}
+		]
+	},
+	{
+		"id": "L203",
+		"zona": 10,
+		"sala": "hub_sanctum",
+		"orden": 203,
+		"nivel": "intermedio",
+		"titulo": "Definition of Done (DoD) y Criterios de Calidad",
+		"resumen": "Estándares irrenunciables para calificar un incremento de software como listo para producción.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Lista de Verificación DoD",
+				"texto": "La [[Definition of Done|dod_done]] es la lista que **todo** incremento debe cumplir para considerarse terminado. Es común a todas las tareas del equipo:\n\n• Código revisado por otra persona (pull request aprobado).\n• Pruebas unitarias y de integración pasando en CI.\n• Cobertura por encima del umbral acordado.\n• Documentación de API y arquitectura actualizada.\n• Desplegado en staging sin vulnerabilidades críticas."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "La DoD dentro del pull request",
+				"texto": "Para que la DoD no se olvide, se lleva a una plantilla de merge request y, lo que se puede automatizar, al pipeline:",
+				"lenguaje": "texto",
+				"codigo": "## Definition of Done\n- [ ] Revisado y aprobado por otra persona\n- [ ] Pruebas nuevas para el comportamiento añadido\n- [ ] Pipeline en verde (unitarias, integración, SAST)\n- [ ] Cobertura >= 80 % en los archivos modificados\n- [ ] OpenAPI y README actualizados\n- [ ] Desplegado en staging y probado a mano el flujo afectado"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Un merge request que aún no está terminado",
+				"vista": {
+					"bloques": [
+						{
+							"panel": {
+								"titulo": "Resumen",
+								"pestanas": [
+									"Resumen",
+									"Commits",
+									"Pipelines"
+								],
+								"lineas": [
+									"!142 Cupones de descuento",
+									"✔ Aprobado por Luis",
+									"✔ Pipeline #1301 en verde",
+									"✕ Cobertura 71 % (umbral 80 %)",
+									"✕ OpenAPI sin el nuevo endpoint /cupones",
+									"Merge bloqueado: Definition of Done incompleta"
+								]
+							}
+						}
+					],
+					"pestana": "GitLab"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Confusiones con la DoD",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "\"Está terminado: funciona en mi máquina.\"",
+						"bien": "\"Está terminado: cumple la DoD y está\ndesplegado en staging.\"",
+						"explicacion": "Terminado significa cumplir los criterios comunes del equipo, no solo que el código se ejecute en un equipo."
+					},
+					{
+						"mal": "Poner en la DoD: \"el cupón descuenta\nun 10 % en compras de más de 50\".",
+						"bien": "Eso es un criterio de aceptación de la historia\ndel cupón; la DoD aplica a todas las historias.",
+						"explicacion": "Los criterios de aceptación son propios de cada historia; la DoD es la misma para todas."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Definition of Done (DoD) y Criterios de Calidad",
+				"pregunta": {
+					"enunciado": "«El cupón descuenta un 10% en compras de más de 50». ¿Qué es?",
+					"opciones": [
+						"Un punto de la Definition of Done",
+						"Un criterio de aceptación de esa historia",
+						"Una deuda técnica",
+						"Una métrica DORA"
+					],
+					"correcta": 1,
+					"explicacion": "La DoD es común a todo el trabajo del equipo; los criterios de aceptación son propios de cada historia."
+				}
+			}
+		]
+	},
+	{
+		"id": "L204",
+		"zona": 10,
+		"sala": "hub_sanctum",
+		"orden": 204,
+		"nivel": "intermedio",
+		"titulo": "Gestión de Deuda Técnica y Mantenimiento Evolutivo",
+		"resumen": "Estrategias para balancear la entrega de nuevas features con la refactorización continua.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El Cuadrante de Deuda Técnica de Martin Fowler",
+				"texto": "La [[deuda técnica|deuda_tec]] es el coste futuro de elegir hoy una solución más rápida o peor. Martin Fowler la clasifica en un cuadrante según dos preguntas: ¿fue **deliberada** o **inadvertida**?, ¿fue **prudente** o **imprudente**?"
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Regla del Boy Scout",
+				"texto": "Deja el código siempre en mejor estado del que lo encontraste al realizar cualquier cambio."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El cuadrante de la deuda técnica",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"",
+									"Deliberada",
+									"Inadvertida"
+								],
+								"filas": [
+									[
+										"Prudente",
+										"«Publicamos ya y refactorizamos en el sprint 7»",
+										"«Ahora sabemos cómo debimos diseñarlo»"
+									],
+									[
+										"Imprudente",
+										"«No hay tiempo para diseñar»",
+										"«¿Qué es una capa de servicios?»"
+									]
+								]
+							}
+						},
+						{
+							"nota": "Solo la deuda prudente y deliberada es una decisión de negocio razonable; se registra y se planifica su pago."
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Deuda que crece sin control",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "// TODO: arreglar esto\nconst total = precio * 1.18; // IVA fijo",
+						"bien": "// Deuda registrada: QATU-231 (impuesto por país)\nconst total = precio * (1 + impuestoDe(pais));",
+						"explicacion": "Un TODO sin ticket ni responsable nunca se paga. La deuda se registra en el backlog y se prioriza como cualquier trabajo."
+					},
+					{
+						"mal": "Reescribir el módulo de pagos entero\nen una rama de 3 semanas, sin pruebas.",
+						"bien": "Primero pruebas del comportamiento actual;\ndespués refactor en pasos pequeños.",
+						"explicacion": "Las pruebas permiten refactorizar sin cambiar el comportamiento. La regla del boy scout funciona con mejoras pequeñas y continuas."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Gestión de Deuda Técnica y Mantenimiento Evolutivo",
+				"pregunta": {
+					"enunciado": "El equipo publica deprisa sabiendo que el cálculo de impuestos es provisional, lo registra en el backlog y planifica corregirlo. ¿Qué tipo de deuda es?",
+					"opciones": [
+						"Imprudente e inadvertida",
+						"Prudente y deliberada",
+						"Imprudente y deliberada",
+						"No es deuda técnica"
+					],
+					"correcta": 1,
+					"explicacion": "Es una decisión consciente, con registro y plan de pago: deuda prudente y deliberada."
+				}
+			}
+		]
+	},
+	{
+		"id": "L205",
+		"zona": 10,
+		"sala": "hub_sanctum",
+		"orden": 205,
+		"nivel": "intermedio",
+		"titulo": "El Ingeniero de Software Full-Stack",
+		"resumen": "Síntesis del viaje: arquitectura, desarrollo, seguridad, infraestructura y calidad.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Visión Holística del Software",
+				"texto": "Un verdadero ingeniero de software domina el ciclo completo: desde el renderizado en el navegador y los patrones de arquitectura limpia, hasta los protocolos de red, la seguridad de datos y la orquestación distribuida en la nube."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Un pedido recorre todo el curso",
+				"texto": "Cuando Ana compra un poncho en Qatu, esa sola acción atraviesa lo aprendido en cada semana: la interfaz y el diseño responsivo que ve, la SPA y su patrón, la petición asíncrona a la API, la autenticación con tokens, las capas del backend y la base de datos, el contenedor en Kubernetes que la atiende y las pruebas y el monitoreo que garantizan que funcione."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Del clic a producción",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Qué ocurre",
+									"Semana"
+								],
+								"filas": [
+									[
+										"Ana ve la ficha y pulsa «Comprar» (HTML, CSS, DOM, responsive)",
+										"3 y 4"
+									],
+									[
+										"La SPA con MVVM actualiza el carrito",
+										"2"
+									],
+									[
+										"fetch envía el pedido a la API REST",
+										"5 y 6"
+									],
+									[
+										"El access token autoriza la petición",
+										"7"
+									],
+									[
+										"Controlador, servicio y repositorio guardan el pedido",
+										"1"
+									],
+									[
+										"Un Pod en Kubernetes atiende la petición",
+										"8"
+									],
+									[
+										"Pruebas y monitoreo vigilan que todo funcione",
+										"9"
+									]
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: El Ingeniero de Software Full-Stack",
+				"pregunta": {
+					"enunciado": "Cuando Ana pulsa «Comprar», ¿qué pieza comprueba que la petición a la API está autorizada?",
+					"opciones": [
+						"El diseño responsivo",
+						"El access token enviado en la cabecera Authorization",
+						"El Dockerfile",
+						"La pirámide de pruebas"
+					],
+					"correcta": 1,
+					"explicacion": "La API valida el access token de cada petición antes de ejecutar la acción."
+				}
+			}
+		]
+	}
+]

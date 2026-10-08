@@ -1,0 +1,111 @@
+[
+	{
+		"id": "L27",
+		"zona": 3,
+		"sala": "z3_motor",
+		"orden": 27,
+		"nivel": "intermedio",
+		"titulo": "Cómo ejecuta el navegador JavaScript",
+		"resumen": "Un motor de JavaScript (como V8 o SpiderMonkey) convierte el código en instrucciones de máquina. El entorno del navegador (runtime) le añade el DOM, los temporizadores y los eventos.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El motor",
+				"texto": "JavaScript se envía al navegador como **código fuente** (texto). Para ejecutarlo, cada navegador incluye un [[motor de JavaScript|motor_de_javascript]]:\n\n• **V8** en Chrome y Edge.\n• **SpiderMonkey** en Firefox.\n• **JavaScriptCore** en Safari.\n\nEl motor analiza el código y lo ejecuta. Los motores modernos usan compilación [[JIT|jit]] (just in time): traducen a código máquina las partes que más se usan mientras el programa corre, para que sea rápido."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Motor y runtime",
+				"texto": "El motor solo entiende el lenguaje JavaScript: variables, funciones, objetos. **No sabe nada de páginas web.**\n\nEl [[runtime]] (entorno de ejecución) del navegador es lo que añade las capacidades web: el objeto `document` y el DOM, `setTimeout`, los eventos y las APIs del navegador. Por eso el mismo lenguaje en otro entorno, como Node.js en un servidor, no tiene `document`."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Lo ves en la consola",
+				"lenguaje": "js",
+				"codigo": "console.log(typeof document);\n// En Node.js (servidor) el resultado sería 'undefined'",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"consola": [
+								"> typeof document",
+								"'object'"
+							]
+						},
+						{
+							"nota": "En el navegador, document existe porque lo aporta el runtime."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Quién aporta document?",
+				"pregunta": {
+					"enunciado": "¿Qué parte proporciona el objeto document a tu código?",
+					"opciones": [
+						"El motor de JavaScript por sí solo",
+						"El runtime del navegador",
+						"El archivo CSS",
+						"El servidor web"
+					],
+					"correcta": 1,
+					"explicacion": "El motor ejecuta el lenguaje; el runtime del navegador añade `document`, los eventos y las demás APIs web."
+				}
+			}
+		]
+	},
+	{
+		"id": "L28",
+		"zona": 3,
+		"sala": "z3_motor",
+		"orden": 28,
+		"nivel": "intermedio",
+		"titulo": "APIs del navegador",
+		"resumen": "El navegador ofrece interfaces (APIs) que JavaScript puede usar: DOM, Canvas y WebGL para gráficos, audio y vídeo, almacenamiento y más.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Qué es una API",
+				"texto": "Una [[API del navegador|api_del_navegador]] es un conjunto de objetos y funciones que el navegador pone a disposición de JavaScript para acceder a una capacidad concreta. Ya usaste una: el **DOM**.\n\nOtras muy comunes:\n\n• [[Canvas|canvas]]: dibujar gráficos 2D píxel a píxel.\n• [[WebGL|webgl]]: gráficos 3D acelerados por la tarjeta gráfica.\n• **Audio y vídeo** (`<audio>`, `<video>`, Web Audio): reproducir y manipular sonido e imagen.\n• **localStorage**: guardar datos pequeños en el navegador.\n• **Fetch**: pedir datos a un servidor (Semana 5)."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Dibujar con Canvas",
+				"texto": "`<canvas>` crea una superficie de dibujo. Desde JavaScript obtienes su **contexto 2D** y llamas a sus métodos. Muchos juegos web se construyen así.",
+				"lenguaje": "js",
+				"codigo": "const lienzo = document.querySelector('canvas');\nconst ctx = lienzo.getContext('2d');\n\nctx.fillStyle = '#c0392b';\nctx.fillRect(20, 20, 120, 60);",
+				"vista": {
+					"pestana": "Canvas",
+					"bloques": [
+						{
+							"texto": {
+								"valor": " ",
+								"fondo": "#c0392b",
+								"padding": 26
+							}
+						},
+						{
+							"nota": "Rectángulo rojo de 120 × 60 píxeles dibujado en el canvas."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige la API",
+				"pregunta": {
+					"enunciado": "Quieres guardar la puntuación máxima de un jugador en su navegador para que siga ahí mañana. ¿Qué API usarías?",
+					"opciones": [
+						"Canvas",
+						"WebGL",
+						"localStorage",
+						"El DOM"
+					],
+					"correcta": 2,
+					"explicacion": "`localStorage` guarda pares clave-valor en el navegador y persisten al cerrar la pestaña."
+				}
+			}
+		]
+	}
+]

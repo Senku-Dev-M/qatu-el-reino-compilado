@@ -1,0 +1,15 @@
+[
+	{
+		"id": "z10",
+		"zona": 10,
+		"semana": 10,
+		"nombre": "Sanctum del Capstone Final",
+		"tema": "Evaluación 360, retrospectiva, entrega continua y Demo en Vivo del producto",
+		"salas": [
+			"hub_sanctum"
+		],
+		"habilidad": "capstone_mastery",
+		"jefe": "demo_final",
+		"fragmentos": []
+	}
+]

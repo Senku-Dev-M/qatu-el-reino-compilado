@@ -1,0 +1,72 @@
+[
+	{
+		"id": "cursor", "zona": 0, "orden": 0, "nombre": "Cursor", "estilo": "corte",
+		"dano": 1, "alcance": 1.0, "cadencia": 1.0, "color": [2.5, 2.6, 2.8],
+		"especial": "Equilibrado: corte rápido de alcance medio.",
+		"descripcion": "La aguja-puntero con la que empieza todo aprendiz de Qatu.",
+		"leccion": "El cursor marca la posición donde actúa la entrada del usuario: un clic se entrega al elemento que está bajo el puntero y el navegador lo convierte en un evento."
+	},
+	{
+		"id": "lanza_rest", "zona": 1, "orden": 1, "nombre": "Lanza REST", "estilo": "estocada",
+		"dano": 1, "alcance": 1.7, "cadencia": 1.05, "color": [2.6, 1.3, 0.4],
+		"especial": "Endpoint: golpear con la punta (lejos del cuerpo) hace el doble de daño.",
+		"descripcion": "Una lanza larga y recta: llega lejos, pero solo en una línea.",
+		"leccion": "En REST cada recurso tiene una URI (por ejemplo /api/productos/42) y el método HTTP indica la operación: GET consulta, POST crea, PUT reemplaza y DELETE elimina. Apuntar al endpoint exacto es lo que hace efectiva la petición."
+	},
+	{
+		"id": "mazo_mvc", "zona": 2, "orden": 2, "nombre": "Mazo MVC", "estilo": "pesado",
+		"dano": 2, "alcance": 1.15, "cadencia": 1.6, "color": [0.5, 2.0, 2.6],
+		"especial": "Capas: en el suelo, el golpe lanza una onda que recorre el suelo hacia delante.",
+		"descripcion": "Lento y pesado. Cada golpe atraviesa las tres capas.",
+		"leccion": "MVC separa la aplicación en Modelo (datos y reglas de negocio), Vista (lo que se muestra) y Controlador (recibe la entrada y coordina a los otros dos). Una petición entra por el controlador, actualiza el modelo y termina en la vista."
+	},
+	{
+		"id": "latigo_dom", "zona": 3, "orden": 3, "nombre": "Látigo querySelector", "estilo": "latigo",
+		"dano": 1, "alcance": 2.0, "cadencia": 1.2, "color": [0.6, 2.4, 1.4],
+		"especial": "Selector: el alcance más largo; alcanza a todo lo que haya en la línea.",
+		"descripcion": "Un látigo de nodos enlazados que llega a lo que otras armas no alcanzan.",
+		"leccion": "document.querySelector(selector) devuelve el primer elemento que coincide con un selector CSS y querySelectorAll devuelve todos los que coinciden, en orden de documento, como una NodeList estática."
+	},
+	{
+		"id": "dagas_flex", "zona": 4, "orden": 4, "nombre": "Dagas Flex", "estilo": "doble",
+		"dano": 1, "alcance": 0.85, "cadencia": 0.55, "color": [2.6, 1.6, 0.6],
+		"especial": "Gap: el arma más rápida; ideal para golpear sin parar a corta distancia.",
+		"descripcion": "Dos dagas cortas que se reparten el espacio como los ítems de un contenedor flex.",
+		"leccion": "En un contenedor con display: flex los hijos se colocan a lo largo del eje principal; justify-content reparte el espacio libre en ese eje, align-items los alinea en el eje cruzado y gap fija la separación entre ellos."
+	},
+	{
+		"id": "arco_promesa", "zona": 5, "orden": 5, "nombre": "Arco de Promesas", "estilo": "distancia",
+		"dano": 1, "alcance": 1.0, "cadencia": 1.25, "color": [0.6, 1.8, 2.6],
+		"especial": "resolve: el ataque horizontal dispara una flecha que llega lejos. Arriba y abajo sigue siendo cuerpo a cuerpo.",
+		"descripcion": "Dispara ahora y el impacto llega después.",
+		"leccion": "Una Promise representa un valor que estará disponible más adelante: empieza pendiente (pending) y termina cumplida (fulfilled) o rechazada (rejected). then() y catch() registran qué hacer en cada caso, y await pausa una función async hasta que la promesa se resuelve."
+	},
+	{
+		"id": "guadana_paginada", "zona": 6, "orden": 6, "nombre": "Guadaña Paginada", "estilo": "barrido",
+		"dano": 2, "alcance": 1.25, "cadencia": 1.5, "color": [1.8, 1.4, 2.6],
+		"especial": "Dos páginas: el barrido golpea a la vez delante y detrás.",
+		"descripcion": "Un arco amplio que recorre la página anterior y la siguiente.",
+		"leccion": "La paginación divide una colección en páginas de tamaño fijo. Con desplazamiento se piden los elementos con limit y offset (o $top y $skip en OData); con cursor, cada respuesta incluye un enlace a la página siguiente."
+	},
+	{
+		"id": "hoja_jwt", "zona": 7, "orden": 7, "nombre": "Hoja JWT", "estilo": "firma",
+		"dano": 1, "alcance": 1.05, "cadencia": 0.9, "color": [2.4, 2.2, 0.8],
+		"especial": "Firma: el tercer golpe seguido (en 1,5 s) está firmado y hace 3 de daño.",
+		"descripcion": "Tres partes separadas por puntos; solo la tercera, la firma, hace que valga.",
+		"leccion": "Un JWT tiene tres partes en Base64URL separadas por puntos: cabecera (algoritmo), carga útil (claims como sub o exp) y firma. El servidor recalcula la firma con su clave: si no coincide, el token fue alterado y se rechaza."
+	},
+	{
+		"id": "ancla_k8s", "zona": 8, "orden": 8, "nombre": "Ancla del Clúster", "estilo": "ancla",
+		"dano": 3, "alcance": 1.2, "cadencia": 2.0, "color": [0.4, 1.6, 2.8],
+		"especial": "Estado deseado: el golpe más fuerte y el que más empuja, pero muy lento.",
+		"descripcion": "Un ancla enorme que fija el barco a su estado deseado.",
+		"leccion": "Kubernetes es declarativo: describes el estado deseado (por ejemplo, un Deployment con replicas: 3) y los controladores comparan continuamente ese estado con el real, creando o eliminando Pods hasta que coinciden."
+	},
+	{
+		"id": "bisturi_qa", "zona": 9, "orden": 9, "nombre": "Bisturí de Pruebas", "estilo": "bisturi",
+		"dano": 1, "alcance": 0.95, "cadencia": 0.75, "color": [0.6, 2.6, 1.2],
+		"especial": "Cobertura: cada golpe carga un 50 % más de energía para el Hotfix.",
+		"descripcion": "Preciso y rápido: disecciona el código para encontrar el fallo.",
+		"leccion": "Una prueba unitaria ejecuta una unidad de código aislada con entradas conocidas y comprueba con aserciones que el resultado es el esperado. La cobertura mide qué parte del código ejecutan las pruebas, pero no garantiza que las aserciones sean correctas."
+	}
+]

@@ -1,0 +1,208 @@
+[
+	{
+		"id": "L110",
+		"zona": 7,
+		"sala": "z7_torre",
+		"orden": 110,
+		"nivel": "intermedio",
+		"titulo": "Qué es IAM",
+		"resumen": "IAM es la gestión de identidades y accesos: quién existe, qué puede hacer y cómo se comprueba. Incluye el directorio de usuarios, el proveedor de identidad, las políticas de acceso, el ciclo de vida de las cuentas y la auditoría.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Más que una pantalla de login",
+				"texto": "[[IAM|iam]] (Identity and Access Management) es el conjunto de procesos y sistemas que responden a tres preguntas en toda la organización:\n\n• **Quién existe**: el directorio de identidades (personas, servicios, dispositivos).\n• **Qué puede hacer cada uno**: roles, permisos y políticas.\n• **Cómo se comprueba**: autenticación, MFA y emisión de tokens.\n\nImporta porque centraliza decisiones que, repartidas por cada aplicación, acaban siendo incoherentes: una persona que cambia de puesto o se va de la empresa debe perder accesos **en todas** las aplicaciones a la vez."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Piezas y flujo",
+				"texto": "1. El **directorio** guarda las identidades y sus atributos.\n2. El **proveedor de identidad** autentica y emite tokens.\n3. Las **políticas** (RBAC o ABAC) definen los permisos.\n4. Las **aplicaciones** validan el token y aplican la política.\n5. La **auditoría** registra accesos y cambios.\n\nAlrededor está el [[ciclo de vida|aprovisionamiento]] de la identidad: alta (aprovisionamiento) cuando alguien entra, cambios cuando cambia de rol y baja inmediata cuando se va."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El recorrido de una petición",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Usuario",
+									"Aplicación",
+									"IdP",
+									"API"
+								],
+								"ancho": 640,
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "quiere entrar"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "redirige a autenticarse"
+									},
+									{
+										"de": 2,
+										"a": 2,
+										"texto": "valida credenciales y MFA"
+									},
+									{
+										"de": 2,
+										"a": 1,
+										"texto": "ID token + access token"
+									},
+									{
+										"de": 1,
+										"a": 3,
+										"texto": "Bearer access token"
+									},
+									{
+										"de": 3,
+										"a": 3,
+										"texto": "valida y aplica la política"
+									},
+									{
+										"de": 3,
+										"a": 1,
+										"texto": "200 OK"
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Por qué centralizar",
+				"pregunta": {
+					"enunciado": "Una persona deja la empresa. ¿Qué ventaja da tener IAM centralizado?",
+					"opciones": [
+						"Que sus datos se borran automáticamente de la base de datos",
+						"Que al desactivar su identidad pierde el acceso a todas las aplicaciones a la vez",
+						"Que sus tokens siguen siendo válidos",
+						"Que no hace falta auditar los accesos"
+					],
+					"correcta": 1,
+					"explicacion": "El ciclo de vida se gestiona en un único sitio; sin IAM habría que recordar y revocar cuenta por cuenta."
+				}
+			}
+		]
+	},
+	{
+		"id": "L111",
+		"zona": 7,
+		"sala": "z7_torre",
+		"orden": 111,
+		"nivel": "intermedio",
+		"titulo": "IdP, SSO e identity brokering",
+		"resumen": "El proveedor de identidad autentica y emite tokens. Con SSO, una sesión en el IdP abre varias aplicaciones sin volver a escribir credenciales. Con identity brokering, un IdP intermedio delega la autenticación en otros proveedores.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El proveedor de identidad",
+				"texto": "El [[IdP|idp]] es el servicio que **autentica** a las personas y emite los tokens que las aplicaciones aceptan. Las aplicaciones dejan de guardar contraseñas: solo confían en el IdP y validan sus firmas.\n\nEsto concentra en un punto las medidas serias: MFA, detección de accesos raros, políticas de contraseña, registro de auditoría."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Single Sign-On",
+				"texto": "[[SSO|sso]] (Single Sign-On) significa autenticarse **una vez** y acceder a varias aplicaciones. Funciona porque el IdP mantiene su propia sesión: cuando la segunda aplicación te envía a `/authorize`, el IdP te reconoce y devuelve el código sin pedirte nada.\n\nEn esta torre pasa igual: un solo token de `admin` abre los dos arcos.\n\nSu contrapartida es el **cierre de sesión único** (single logout), que hay que diseñar con cuidado: cerrar sesión en una aplicación debería cerrar también la del IdP si eso es lo que espera el usuario."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Identity brokering",
+				"texto": "En el [[identity brokering|identity_brokering]], un IdP actúa de **intermediario**: tus aplicaciones confían solo en él, y él delega la autenticación en otros proveedores (el directorio corporativo, Google, un IdP de un socio).\n\nVentajas: añadir un proveedor nuevo no obliga a tocar las aplicaciones, y las reglas de permisos siguen centralizadas. Keycloak, por ejemplo, se usa con frecuencia como bróker."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Identifica el concepto",
+				"pregunta": {
+					"enunciado": "Tus tres aplicaciones confían en un IdP propio, que a su vez permite entrar con la cuenta de Google. ¿Cómo se llama ese papel del IdP?",
+					"opciones": [
+						"Single Sign-On",
+						"Identity brokering",
+						"Client Credentials",
+						"Rate limiting"
+					],
+					"correcta": 1,
+					"explicacion": "El IdP intermedia y delega la autenticación en otros proveedores: identity brokering (que además habilita SSO entre tus aplicaciones)."
+				}
+			}
+		]
+	},
+	{
+		"id": "L112",
+		"zona": 7,
+		"sala": "z7_torre",
+		"orden": 112,
+		"nivel": "intermedio",
+		"titulo": "Social login y proveedores IAM",
+		"resumen": "El social login usa una cuenta de Google, GitHub o similar como identidad mediante OIDC. En el mercado hay soluciones autogestionadas como Keycloak y servicios gestionados como Auth0, Okta, Entra ID o Cognito.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Entrar con una cuenta que ya existe",
+				"texto": "El [[social login|social_login]] permite registrarse y entrar con una cuenta de Google, Microsoft, Apple, GitHub o Facebook. Por debajo es OIDC (o OAuth 2.0): tu aplicación es la Relying Party y el proveedor social es el IdP.\n\n**Ventajas**: menos fricción, sin contraseñas que guardar y con el MFA del proveedor.\n**Cuidados**: dependes de un tercero, recibes solo los datos que el usuario consienta, el correo puede cambiar (usa `sub` como identificador estable) y conviene permitir vincular varias identidades a la misma cuenta."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Qué hay en el mercado",
+				"texto": "• **Autogestionados**: **Keycloak** (open source, muy usado, con brokering y SSO), Authentik, Ory. Control total, pero tú lo operas.\n• **Gestionados**: **Auth0**, **Okta**, **Microsoft Entra ID** (antes Azure AD), **AWS Cognito**, **Firebase Authentication**, Google Identity Platform. Menos mantenimiento, coste por usuario activo y cierta dependencia del proveedor.\n\nCasi todos hablan OIDC y OAuth 2.0, así que la aplicación cambia poco al migrar: el estándar es lo que te protege."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El botón, por dentro",
+				"lenguaje": "texto",
+				"codigo": "GET https://idp.qatu.com/authorize\n  ?response_type=code&client_id=tienda-web\n  &scope=openid%20email%20profile\n  &kc_idp_hint=google          ← el bróker delega en Google\n  &redirect_uri=https://qatu.com/callback&state=a91f2c",
+				"vista": {
+					"pestana": "Entrar en Qatu",
+					"bloques": [
+						{
+							"h2": "Inicia sesión"
+						},
+						{
+							"boton": "Continuar con Google"
+						},
+						{
+							"boton": "Continuar con GitHub"
+						},
+						{
+							"separador": true
+						},
+						{
+							"campo": {
+								"etiqueta": "Correo",
+								"tipo": "email",
+								"placeholder": "tu@correo.com"
+							}
+						},
+						{
+							"campo": {
+								"tipo": "submit",
+								"valor": "Entrar"
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Identificador estable",
+				"pregunta": {
+					"enunciado": "Con social login, ¿qué claim conviene usar como identificador del usuario en tu base de datos?",
+					"opciones": [
+						"El correo (email)",
+						"El sub del proveedor",
+						"El nombre completo",
+						"El access token"
+					],
+					"correcta": 1,
+					"explicacion": "`sub` es estable dentro de ese proveedor; el correo puede cambiar o reutilizarse."
+				}
+			}
+		]
+	}
+]

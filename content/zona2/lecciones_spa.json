@@ -1,0 +1,259 @@
+[
+	{
+		"id": "L143",
+		"zona": 2,
+		"sala": "z2_galeria_spa",
+		"orden": 143,
+		"nivel": "inicial",
+		"titulo": "Single Page Applications (SPA)",
+		"resumen": "Aplicaciones que cargan un único documento HTML y modifican el DOM mediante JavaScript sin recargas.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "La revolución SPA",
+				"texto": "Una [[spa]] rompe con el ciclo de recarga tradicional. El navegador descarga una página `index.html` básica junto con un paquete de JavaScript. A partir de ese momento, toda la navegación y cambios de vista se gestionan en el cliente manipulando el DOM y solicitando datos en formato JSON a APIs REST."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Estructura HTML mínima de una SPA",
+				"texto": "El HTML que envía el servidor es casi vacío: un contenedor raíz y el script. Todo lo que ve el usuario lo genera JavaScript después.",
+				"lenguaje": "html",
+				"codigo": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <title>Qatu</title>\n    <script type=\"module\" src=\"/assets/app.js\"></script>\n  </head>\n  <body>\n    <div id=\"app\"></div>\n  </body>\n</html>"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Un enrutador mínimo",
+				"texto": "Un enrutador mínimo: intercepta el clic, cambia la URL con `history.pushState` **sin recargar** y pinta la vista que corresponde.",
+				"lenguaje": "js",
+				"codigo": "document.addEventListener('click', (e) => {\n  const enlace = e.target.closest('a[data-ruta]');\n  if (!enlace) return;\n  e.preventDefault();                       // evita la recarga\n  history.pushState({}, '', enlace.href);  // cambia la URL\n  pintar(location.pathname);\n});\n\nwindow.addEventListener('popstate', () => pintar(location.pathname));",
+				"vista": {
+					"bloques": [
+						{
+							"h2": "Poncho de alpaca"
+						},
+						{
+							"p": "$25.00 · Vendedor: Ana"
+						},
+						{
+							"boton": "Añadir al carrito"
+						}
+					],
+					"pestana": "qatu.com/productos/42"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores típicos de una SPA",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "<a href=\"/productos/42\">Poncho</a>\n// sin interceptar el clic",
+						"bien": "<a href=\"/productos/42\" data-ruta>Poncho</a>\n// el enrutador hace preventDefault y pushState",
+						"explicacion": "Si el enrutador no intercepta el enlace, el navegador hace una navegación normal y la SPA se recarga entera.",
+						"lenguaje": "html"
+					},
+					{
+						"mal": "Recargar https://qatu.com/productos/42\n-> 404: el servidor no tiene ese archivo",
+						"bien": "Configurar el servidor web:\ncualquier ruta desconocida -> /index.html\n(la SPA decide qué pintar)",
+						"explicacion": "Las rutas de una SPA existen en el cliente. Al recargar o compartir un enlace, el servidor debe devolver `index.html` para esas rutas.",
+						"lenguaje": "texto"
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comportamiento SPA",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Un usuario recarga https://qatu.com/productos/42 en una SPA y obtiene 404. ¿Qué falta?",
+					"opciones": [
+						"Añadir otra etiqueta <script>",
+						"Configurar el servidor para devolver index.html en las rutas de la SPA",
+						"Usar formularios POST",
+						"Cambiar el nombre del div raíz"
+					],
+					"correcta": 1,
+					"explicacion": "Las rutas de la SPA existen solo en el cliente; el servidor debe entregar la aplicación para que el enrutador decida qué pintar."
+				}
+			}
+		]
+	},
+	{
+		"id": "L144",
+		"zona": 2,
+		"sala": "z2_galeria_spa",
+		"orden": 144,
+		"nivel": "intermedio",
+		"titulo": "CSR frente a SSR",
+		"resumen": "Client-Side Rendering procesa la vista en el navegador; Server-Side Rendering genera el HTML inicial en el servidor.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Modelos de renderizado",
+				"texto": "• [[csr]] (Client-Side Rendering): el navegador descarga JavaScript y construye el HTML localmente. Ventaja: interacciones ultrasensibles tras la carga inicial. Desafío: tiempo inicial más lento (FCP) y dificultades con motores de búsqueda antiguos.\n• [[ssr]] (Server-Side Rendering): el servidor renderiza el HTML inicial con los datos ya embebidos antes de enviarlo al cliente. Luego se ejecuta el proceso de **hidratación** para volverlo interactivo. Ventaja: SEO óptimo y visualización inicial instantánea."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Lo que llega al navegador",
+				"lenguaje": "html",
+				"texto": "La diferencia se ve en la primera respuesta del servidor. Con **CSR** llega un contenedor vacío; con **SSR** llega el contenido ya escrito, y después el mismo JavaScript lo hidrata:",
+				"codigo": "<!-- CSR: el buscador y el usuario ven un div vacío hasta que carga el JS -->\n<div id=\"root\"></div>\n<script src=\"/app.js\"></script>\n\n<!-- SSR: el contenido ya está en el HTML -->\n<div id=\"root\">\n  <h1>Poncho de alpaca</h1>\n  <p>$25.00</p>\n  <button>Añadir al carrito</button>   <!-- aún no responde al clic -->\n</div>\n<script src=\"/app.js\"></script>        <!-- hidrata: conecta los eventos -->"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Tabla comparativa",
+				"texto": "Criterios para elegir entre CSR y SSR:",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Criterio",
+									"CSR",
+									"SSR"
+								],
+								"filas": [
+									[
+										"Primer contenido visible",
+										"tarda (espera al JS)",
+										"inmediato"
+									],
+									[
+										"SEO y vista previa en redes",
+										"limitado",
+										"óptimo"
+									],
+									[
+										"Coste en servidor",
+										"bajo (archivos estáticos)",
+										"renderiza por petición"
+									],
+									[
+										"Navegación posterior",
+										"instantánea",
+										"instantánea tras hidratar"
+									],
+									[
+										"Ejemplos",
+										"Vite + React/Vue",
+										"Next.js, Nuxt, Angular SSR"
+									]
+								],
+								"resaltar": 2
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores de hidratación",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "function Oferta() {\n  return <p>Quedan {Math.floor(Math.random() * 10)} unidades</p>;\n}",
+						"bien": "function Oferta({ stock }) {\n  return <p>Quedan {stock} unidades</p>; // mismo dato en servidor y cliente\n}",
+						"explicacion": "Si el HTML del servidor y el primer render del cliente no coinciden, la hidratación falla o reemplaza el contenido. El render debe ser determinista."
+					},
+					{
+						"mal": "const ancho = window.innerWidth; // se ejecuta también en el servidor",
+						"bien": "useEffect(() => {\n  setAncho(window.innerWidth); // solo en el navegador\n}, []);",
+						"explicacion": "En el servidor no existen `window` ni `document`. El código que depende del navegador se ejecuta después de montar el componente."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Proceso de hidratación",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Tras SSR el botón «Añadir al carrito» se ve, pero no responde durante un segundo. ¿Por qué?",
+					"opciones": [
+						"El servidor envió mal el CSS",
+						"Todavía no terminó la hidratación que conecta los eventos",
+						"El navegador no admite botones en SSR",
+						"El DNS aún no se resolvió"
+					],
+					"correcta": 1,
+					"explicacion": "El HTML del servidor es estático hasta que el JavaScript se carga e hidrata los componentes."
+				}
+			}
+		]
+	},
+	{
+		"id": "L145",
+		"zona": 2,
+		"sala": "z2_galeria_spa",
+		"orden": 145,
+		"nivel": "intermedio",
+		"titulo": "Manejo de estado y placeholders",
+		"resumen": "Gestión del estado global en frontend y uso de esqueletos visuales (skeletons) durante la carga asíncrona.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Estado en el cliente",
+				"texto": "En una SPA, el estado vive en la memoria del navegador:\n\n• **Estado Local:** variables de un componente (ej. si un menú desplegable está abierto).\n• **Estado Global:** datos compartidos por toda la aplicación (ej. usuario autenticado, carrito de compras de Qatu).\n• **Placeholders / Skeletons:** siluetas animadas que muestran la estructura de la página mientras los datos viajan por la red, mejorando la percepción de velocidad."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Render condicional con skeleton",
+				"texto": "Componente de React: mientras `cargando` es verdadero muestra el esqueleto con la misma forma que tendrán las tarjetas; cuando llegan los datos, las tarjetas reales.",
+				"lenguaje": "js",
+				"codigo": "function Catalogo() {\n  const [productos, setProductos] = useState([]);\n  const [cargando, setCargando] = useState(true);\n\n  useEffect(() => {\n    fetch('/api/productos')\n      .then((r) => r.json())\n      .then(setProductos)\n      .finally(() => setCargando(false));\n  }, []);\n\n  if (cargando) return <TarjetasEsqueleto cantidad={3} />;\n  return productos.map((p) => <Tarjeta key={p.id} producto={p} />);\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Percepción visual",
+				"texto": "El esqueleto ocupa el mismo espacio que el contenido final: cuando llegan los datos, la página no salta y el usuario ya sabe qué va a ver.",
+				"vista": {
+					"bloques": [
+						{
+							"esqueleto": {
+								"tarjetas": 3,
+								"lineas": 2
+							}
+						},
+						{
+							"nota": "Esqueleto mientras dura la petición"
+						}
+					],
+					"pestana": "qatu.com/catalogo"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Estado mal ubicado",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "// estado global\nconst store = { menuUsuarioAbierto: false, carrito: [] };",
+						"bien": "// global: lo comparte toda la app\nconst store = { carrito: [] };\n// local: solo le importa al menú\nconst [abierto, setAbierto] = useState(false);",
+						"explicacion": "El estado global es para lo que comparten muchas pantallas (usuario, carrito). Subir estado local al global complica y ralentiza las actualizaciones."
+					},
+					{
+						"mal": "const [items, setItems] = useState([]);\nconst [total, setTotal] = useState(0); // hay que acordarse de actualizarlo",
+						"bien": "const [items, setItems] = useState([]);\nconst total = items.reduce((s, i) => s + i.precio * i.cantidad, 0);",
+						"explicacion": "Un dato que se puede **calcular** a partir de otro no se guarda en el estado: si no, tarde o temprano se desincroniza."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Utilidad de skeletons",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué dato NO debería guardarse como estado propio porque se puede calcular a partir de otro?",
+					"opciones": [
+						"La lista de productos del carrito",
+						"El usuario autenticado",
+						"El total del carrito",
+						"Si el menú está abierto"
+					],
+					"correcta": 2,
+					"explicacion": "El total se deriva de los ítems; guardarlo aparte termina desincronizándose."
+				}
+			}
+		]
+	}
+]

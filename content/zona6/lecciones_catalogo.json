@@ -1,0 +1,74 @@
+[
+	{
+		"id": "L80", "zona": 6, "sala": "z6_catalogo", "orden": 80, "nivel": "intermedio",
+		"titulo": "JSON:API: formato y propósito",
+		"resumen": "JSON:API es una especificación para APIs en JSON con el tipo de medio application/vnd.api+json. Estructura cada recurso con type, id, attributes y relationships, y busca reducir peticiones (include) y datos transferidos (fields).",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Una convención para no discutir formatos",
+				"texto": "Cada equipo suele decidir cómo se ven sus respuestas JSON: dónde van los datos, cómo se representan las relaciones, cómo se paginan. [[JSON:API|json_api]] es una **especificación** que fija esas decisiones para que clientes y servidores las compartan.\n\nSus dos objetivos principales:\n\n• **Minimizar el número de peticiones**: traer recursos relacionados en la misma respuesta.\n• **Minimizar los datos transferidos**: pedir solo los campos que se van a usar.\n\nUsa su propio tipo de medio: `application/vnd.api+json`, tanto en `Content-Type` como en `Accept`."
+			},
+			{
+				"tipo": "resultado", "titulo": "Estructura de un documento",
+				"texto": "El nivel superior tiene `data` (o `errors`), y opcionalmente `included`, `meta` y `links`. Cada recurso tiene `type` e `id`, sus datos en `attributes` y sus vínculos en `relationships`.",
+				"vista": {"sin_navegador": true, "bloques": [{"peticion": {"metodo": "GET", "url": "/api/productos/12", "cabeceras": ["Accept: application/vnd.api+json"], "estado": "200 OK", "respuesta_cabeceras": ["Content-Type: application/vnd.api+json"], "respuesta": "{\n  \"data\": {\n    \"type\": \"productos\", \"id\": \"12\",\n    \"attributes\": { \"nombre\": \"Poncho\", \"precio\": 150 },\n    \"relationships\": {\n      \"vendedor\": { \"data\": { \"type\": \"vendedores\", \"id\": \"4\" } }\n    }\n  }\n}"}}]}
+			},
+			{
+				"tipo": "sintaxis", "titulo": "include y fields",
+				"texto": "• `include=vendedor` crea un [[documento compuesto|documento_compuesto]]: los recursos relacionados llegan en `included`, **una sola vez** aunque varios productos compartan el mismo vendedor. Evita una petición por cada vendedor.\n• `fields[productos]=nombre,precio` usa [[sparse fieldsets|sparse_fieldsets]]: el servidor devuelve solo esos atributos para ese tipo.",
+				"lenguaje": "texto",
+				"codigo": "GET /api/productos?include=vendedor&fields[productos]=nombre,precio&fields[vendedores]=nombre\nAccept: application/vnd.api+json"
+			},
+			{
+				"tipo": "comprueba", "titulo": "Menos peticiones",
+				"pregunta": {
+					"enunciado": "Una pantalla muestra 20 pedidos con el nombre de su cliente. ¿Qué parámetro de JSON:API evita hacer 20 peticiones extra para los clientes?",
+					"opciones": ["fields[pedidos]=cliente", "include=cliente", "sort=cliente", "page[size]=20"],
+					"correcta": 1,
+					"explicacion": "`include` trae los clientes relacionados en `included` dentro de la misma respuesta."
+				}
+			}
+		]
+	},
+	{
+		"id": "L81", "zona": 6, "sala": "z6_catalogo", "orden": 81, "nivel": "intermedio",
+		"titulo": "Filtrar, ordenar y paginar en JSON:API",
+		"resumen": "JSON:API define sort (con - para descendente) y reserva las familias de parámetros filter y page sin imponer una estrategia concreta. La respuesta paginada incluye enlaces first, prev, next y last.",
+		"paginas": [
+			{
+				"tipo": "sintaxis", "titulo": "Ordenar con sort",
+				"texto": "El parámetro [[sort|sort_jsonapi]] recibe campos separados por comas. El orden es **ascendente** por defecto; un **signo menos** lo hace descendente. El primer campo tiene prioridad.",
+				"lenguaje": "texto",
+				"codigo": "GET /api/productos?sort=precio            (más barato primero)\nGET /api/productos?sort=-valoracion,precio (mejor valorados; a igual valoración, más baratos)"
+			},
+			{
+				"tipo": "concepto", "titulo": "filter y page: familias reservadas",
+				"texto": "La especificación **reserva** los parámetros `filter` y [[page|page_jsonapi]], pero **no obliga** a una estrategia: cada API documenta la suya. Las más comunes:\n\n• Filtro: `filter[categoria]=textil`, `filter[precio][lt]=100`\n• Paginación por número: `page[number]=2&page[size]=20`\n• Por desplazamiento: `page[offset]=20&page[limit]=20`\n• Por cursor: `page[cursor]=eyJpZCI6NDB9`\n\nLa respuesta incluye en `links` los enlaces `first`, `prev`, `next` y `last`, así el cliente no construye las URLs a mano."
+			},
+			{
+				"tipo": "resultado", "titulo": "Una respuesta paginada",
+				"vista": {"sin_navegador": true, "bloques": [{"peticion": {"metodo": "GET", "url": "/api/productos?filter[categoria]=textil&sort=precio&page[number]=2&page[size]=3", "estado": "200 OK", "respuesta": "{\n  \"data\": [ …3 productos… ],\n  \"meta\": { \"total\": 14 },\n  \"links\": {\n    \"first\": \"…page[number]=1&page[size]=3\",\n    \"prev\":  \"…page[number]=1&page[size]=3\",\n    \"next\":  \"…page[number]=3&page[size]=3\",\n    \"last\":  \"…page[number]=5&page[size]=3\"\n  }\n}"}}, {"paginacion": {"estilo": "anterior_siguiente", "actual": 2, "total": 5}}]}
+			},
+			{
+				"tipo": "errores", "titulo": "Errores frecuentes",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "const siguiente = `/api/productos?page[number]=${pagina + 1}`;",
+						"bien": "const siguiente = documento.links.next; // null en la última página",
+						"explicacion": "Construir la URL a mano pierde filtros y orden y no detecta el final. Usa los enlaces que devuelve el servidor."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba", "titulo": "Traduce la petición",
+				"pregunta": {
+					"enunciado": "¿Qué pide ?sort=-fecha&page[number]=3&page[size]=10?",
+					"opciones": ["Los 10 elementos más antiguos", "La tercera página de 10 elementos, del más reciente al más antiguo", "Los elementos 3 a 10 ordenados por fecha ascendente", "Diez páginas empezando en la tercera"],
+					"correcta": 1,
+					"explicacion": "`-fecha` ordena de forma descendente (más recientes primero) y `page[number]=3` con `page[size]=10` pide los elementos 21 a 30."
+				}
+			}
+		]
+	}
+]

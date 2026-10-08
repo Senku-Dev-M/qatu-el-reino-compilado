@@ -1,0 +1,237 @@
+[
+	{
+		"id": "L161",
+		"zona": 8,
+		"sala": "z8_darsena_docker",
+		"orden": 161,
+		"nivel": "inicial",
+		"titulo": "Anatomía de un Dockerfile",
+		"resumen": "Instrucciones fundamentales para definir el entorno y empaquetar una aplicación en una imagen Docker.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Instrucciones clave",
+				"texto": "Un [[dockerfile]] contiene sentencias secuenciales:\n\n• **FROM:** define la imagen base (ej. `node:20-alpine`, `mcr.microsoft.com/dotnet/aspnet:8.0`).\n• **WORKDIR:** establece el directorio de trabajo dentro del contenedor.\n• **COPY:** copia archivos desde el host hacia el contenedor.\n• **RUN:** ejecuta comandos durante la fase de construcción (ej. `npm install`, `dotnet build`).\n• **EXPOSE:** documenta el puerto de red en el que escucha la aplicación.\n• **CMD / ENTRYPOINT:** define el comando por defecto que se ejecuta al arrancar el contenedor."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Dockerfile para la API de Qatu",
+				"texto": "Cada instrucción tiene un propósito. Los comentarios van en su propia línea: `#` al final de una instrucción no es un comentario. `CMD` en forma de lista hace que la aplicación reciba directamente las señales de parada:",
+				"lenguaje": "texto",
+				"codigo": "# imagen base\nFROM node:20-alpine\nWORKDIR /app\n# dependencias primero, para aprovechar la caché\nCOPY package*.json ./\nRUN npm ci --omit=dev\n# después, el código de la aplicación\nCOPY . .\nENV NODE_ENV=production\n# no ejecutar como root\nUSER node\nEXPOSE 3000\nCMD [\"node\", \"server.js\"]"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Contenedor listo",
+				"texto": "Con el Dockerfile y un `.dockerignore` se construye la imagen. Cada paso del build corresponde a una instrucción:",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ docker build -t qatu/api:1.4.0 .",
+								" => [1/5] FROM node:20-alpine",
+								" => [2/5] WORKDIR /app",
+								" => [3/5] COPY package*.json ./",
+								" => [4/5] RUN npm ci --omit=dev",
+								" => [5/5] COPY . .",
+								" => naming to docker.io/qatu/api:1.4.0"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Dockerfiles problemáticos",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "FROM node:latest\nCOPY . .",
+						"bien": "FROM node:20-alpine\nCOPY . .\n# y un .dockerignore con:\n# node_modules  .git  .env",
+						"explicacion": "`latest` cambia sin avisar y rompe builds reproducibles. Sin `.dockerignore`, se copian secretos (`.env`) y carpetas enormes a la imagen."
+					},
+					{
+						"mal": "ENV DB_PASSWORD=alpaca123",
+						"bien": "# la contraseña se inyecta al ejecutar\n$ docker run -e DB_PASSWORD=... qatu/api",
+						"explicacion": "Lo que se escribe en el Dockerfile queda guardado en las capas de la imagen y cualquiera con acceso al registro puede leerlo."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Instrucción base",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué instrucción del Dockerfile se ejecuta al construir la imagen y no al arrancar el contenedor?",
+					"opciones": [
+						"CMD",
+						"ENTRYPOINT",
+						"RUN",
+						"EXPOSE"
+					],
+					"correcta": 2,
+					"explicacion": "RUN ejecuta comandos durante el build y guarda el resultado en una capa; CMD y ENTRYPOINT definen el proceso al arrancar."
+				}
+			}
+		]
+	},
+	{
+		"id": "L162",
+		"zona": 8,
+		"sala": "z8_darsena_docker",
+		"orden": 162,
+		"nivel": "intermedio",
+		"titulo": "Capas inmutables y caché de compilación",
+		"resumen": "Cada instrucción genera una capa de sólo lectura; ordenar adecuadamente el Dockerfile maximiza la reutilización de caché.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Cómo funcionan las capas",
+				"texto": "Docker construye imágenes como una pila de capas inmutables (Union File System):\n\n• Si una instrucción no cambia, Docker reutiliza la capa de la caché (**Using cache**).\n• En cuanto una instrucción cambia (ej. modificaste un archivo fuente), esa capa y todas las siguientes deben reconstruirse.\n• **Regla de Oro:** copia primero los archivos de dependencias (`package.json`, `csproj`) y ejecuta la instalación antes de copiar el código fuente que cambia con frecuencia."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Aceleración de builds",
+				"texto": "Tras cambiar solo `server.js`, las capas anteriores a `COPY . .` se reutilizan: `npm ci` no se vuelve a ejecutar.",
+				"lenguaje": "texto",
+				"codigo": "$ docker build -t qatu/api:1.4.1 .\n => CACHED [2/5] WORKDIR /app\n => CACHED [3/5] COPY package*.json ./\n => CACHED [4/5] RUN npm ci --omit=dev\n => [5/5] COPY . .                         0.3s",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Build",
+									"Orden de capas",
+									"Tiempo"
+								],
+								"filas": [
+									[
+										"tras cambiar server.js",
+										"código antes de npm ci",
+										"2 min 04 s"
+									],
+									[
+										"tras cambiar server.js",
+										"dependencias antes del código",
+										"3 s"
+									]
+								],
+								"resaltar": 2
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Orden ineficiente de capas",
+				"texto": "",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "COPY . .\nRUN npm ci",
+						"bien": "COPY package*.json ./\nRUN npm ci\nCOPY . .",
+						"explicacion": "Cualquier cambio en el código invalida la capa de `COPY . .` y **todas** las siguientes, así que `npm ci` se repite en cada build."
+					},
+					{
+						"mal": "RUN apt-get update\nRUN apt-get install -y curl",
+						"bien": "RUN apt-get update \\\n && apt-get install -y curl \\\n && rm -rf /var/lib/apt/lists/*",
+						"explicacion": "En capas separadas, `update` puede quedar cacheado y viejo mientras `install` cambia. Juntos en un `RUN` se actualizan a la vez y se limpia la caché de paquetes."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Optimización de caché",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Solo cambiaste server.js y el build vuelve a ejecutar npm ci entero. ¿Qué orden de instrucciones lo causa?",
+					"opciones": [
+						"COPY package*.json ./ antes de RUN npm ci",
+						"COPY . . antes de RUN npm ci",
+						"FROM antes de WORKDIR",
+						"EXPOSE antes de CMD"
+					],
+					"correcta": 1,
+					"explicacion": "Al copiar todo el código antes de instalar, cualquier cambio invalida la capa de instalación y las siguientes."
+				}
+			}
+		]
+	},
+	{
+		"id": "L163",
+		"zona": 8,
+		"sala": "z8_darsena_docker",
+		"orden": 163,
+		"nivel": "intermedio",
+		"titulo": "Multi-Stage Builds en Docker",
+		"resumen": "Técnica avanzada para separar la etapa de compilación de la imagen final de producción, reduciendo drásticamente el tamaño.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "¿Por qué Multi-Stage?",
+				"texto": "Para compilar una aplicación se necesitan SDKs pesados, compiladores y herramientas de desarrollo (700 MB+). Sin embargo, para ejecutarla en producción solo se necesita el binario final y un runtime mínimo (50 MB).\n\nLos **Multi-Stage Builds** permiten usar múltiples instrucciones `FROM` en un único Dockerfile y copiar únicamente los artefactos compilados a la imagen final limpia."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Dockerfile Multi-Stage para .NET",
+				"texto": "La primera etapa (`build`) usa el SDK completo para compilar. La segunda parte de una imagen de runtime mínima y solo copia el resultado con `COPY --from`:",
+				"lenguaje": "texto",
+				"codigo": "# Etapa 1: compilar\nFROM mcr.microsoft.com/dotnet/sdk:8.0 AS build\nWORKDIR /src\nCOPY Qatu.Api.csproj .\nRUN dotnet restore\nCOPY . .\nRUN dotnet publish -c Release -o /app\n\n# Etapa 2: ejecutar\nFROM mcr.microsoft.com/dotnet/aspnet:8.0\nWORKDIR /app\nCOPY --from=build /app .\nENTRYPOINT [\"dotnet\", \"Qatu.Api.dll\"]"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Reducción masiva de imagen",
+				"texto": "La imagen final pasa de 850 MB a 221 MB: el SDK, el código fuente y los archivos intermedios se quedan en la etapa `build` y no viajan a producción, lo que además reduce la superficie de ataque.",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ docker images qatu/api",
+								"REPOSITORY  TAG           SIZE",
+								"qatu/api    una-etapa     850MB",
+								"qatu/api    multi-stage   221MB"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Multi-stage mal aprovechado",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build\n...\nFROM mcr.microsoft.com/dotnet/sdk:8.0\nCOPY --from=build /app .",
+						"bien": "FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build\n...\nFROM mcr.microsoft.com/dotnet/aspnet:8.0\nCOPY --from=build /app .",
+						"explicacion": "Si la etapa final vuelve a partir del SDK, la imagen sigue siendo enorme. La etapa final usa solo el runtime."
+					},
+					{
+						"mal": "COPY --from=build /src .",
+						"bien": "COPY --from=build /app .",
+						"explicacion": "Copiar la carpeta del código fuente lleva a producción archivos innecesarios. Solo se copia la salida publicada."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Beneficio de Multi-Stage",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "En un multi-stage build de .NET, ¿de qué imagen debe partir la etapa final?",
+					"opciones": [
+						"Del SDK completo, para poder recompilar",
+						"Del runtime ASP.NET, con solo lo necesario para ejecutar",
+						"De la etapa build directamente",
+						"De ubuntu:latest"
+					],
+					"correcta": 1,
+					"explicacion": "El SDK se usa para compilar en la primera etapa; la imagen final solo necesita el runtime y los binarios publicados."
+				}
+			}
+		]
+	}
+]

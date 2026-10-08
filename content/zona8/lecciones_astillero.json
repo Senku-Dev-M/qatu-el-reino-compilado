@@ -1,0 +1,236 @@
+[
+	{
+		"id": "L164",
+		"zona": 8,
+		"sala": "z8_astillero_compose",
+		"orden": 164,
+		"nivel": "inicial",
+		"titulo": "Gestión multicontenedor con Docker Compose",
+		"resumen": "Orquestación local de múltiples servicios interconectados mediante un archivo declarativo YAML.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "¿Por qué Docker Compose?",
+				"texto": "Una aplicación real rara vez corre en un solo contenedor. El marketplace Qatu requiere al menos:\n\n• Contenedor 1: Frontend SPA (Nginx).\n• Contenedor 2: Backend API REST (.NET / Node).\n• Contenedor 3: Base de datos (PostgreSQL / MongoDB).\n\n[[docker_compose]] permite definir todos estos servicios, sus variables de entorno, redes y volúmenes en un único archivo `docker-compose.yml`."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Estructura de docker-compose.yml",
+				"texto": "El ejemplo del temario: frontend, backend y una base de datos con un **volumen persistente**. `depends_on` con `service_healthy` espera a que PostgreSQL esté listo:",
+				"lenguaje": "texto",
+				"codigo": "services:\n  web:\n    build: ./web\n    ports: [\"80:80\"]\n    depends_on: [api]\n  api:\n    build: ./api\n    environment:\n      DATABASE_URL: postgres://qatu:${DB_PASSWORD}@db:5432/qatu\n    depends_on:\n      db: { condition: service_healthy }\n  db:\n    image: postgres:16\n    environment:\n      POSTGRES_USER: qatu\n      POSTGRES_PASSWORD: ${DB_PASSWORD}\n    volumes: [pgdata:/var/lib/postgresql/data]\n    healthcheck:\n      test: [\"CMD\", \"pg_isready\", \"-U\", \"qatu\"]\nvolumes:\n  pgdata:"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Arranque en un solo paso",
+				"texto": "Un comando levanta todo en el orden correcto. El mismo archivo sirve en desarrollo, en pruebas de integración del pipeline y en staging, cambiando solo las variables.",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ docker compose up -d",
+								" ✔ Network qatu_default  Created",
+								" ✔ Volume qatu_pgdata    Created",
+								" ✔ Container qatu-db-1   Healthy",
+								" ✔ Container qatu-api-1  Started",
+								" ✔ Container qatu-web-1  Started",
+								"$ docker compose ps",
+								"NAME        SERVICE  STATUS             PORTS",
+								"qatu-web-1  web      Up                 0.0.0.0:80->80/tcp",
+								"qatu-api-1  api      Up",
+								"qatu-db-1   db       Up (healthy)"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores al escribir el compose",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "api:\n  depends_on: [db]\n# la API arranca y falla: la BD aún no acepta conexiones",
+						"bien": "api:\n  depends_on:\n    db: { condition: service_healthy }",
+						"explicacion": "`depends_on` simple solo espera a que el contenedor **arranque**, no a que el servicio esté listo. Se combina con un `healthcheck`."
+					},
+					{
+						"mal": "environment:\n  POSTGRES_PASSWORD: alpaca123   # en el repositorio",
+						"bien": "environment:\n  POSTGRES_PASSWORD: ${DB_PASSWORD}\n# el valor vive en un .env fuera de Git",
+						"explicacion": "El archivo compose se versiona. Las contraseñas se leen de variables de entorno o de un `.env` excluido del repositorio."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Propósito de Docker Compose",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "La API arranca antes de que PostgreSQL acepte conexiones y falla. ¿Qué configuración de Compose lo resuelve?",
+					"opciones": [
+						"depends_on: [db]",
+						"depends_on con condition: service_healthy y un healthcheck en db",
+						"restart: never",
+						"Publicar el puerto 5432"
+					],
+					"correcta": 1,
+					"explicacion": "depends_on simple espera a que el contenedor arranque, no a que el servicio esté listo."
+				}
+			}
+		]
+	},
+	{
+		"id": "L165",
+		"zona": 8,
+		"sala": "z8_astillero_compose",
+		"orden": 165,
+		"nivel": "intermedio",
+		"titulo": "Redes y resolución DNS interna",
+		"resumen": "Cómo los contenedores se comunican entre sí utilizando nombres de servicio como dominios DNS automáticos.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Redes virtuales en Docker",
+				"texto": "Por defecto, Docker Compose crea una red tipo **bridge** dedicada para la aplicación:\n\n• Los contenedores conectados a la misma red pueden comunicarse entre sí sin exponer sus puertos al host exterior.\n• Docker incluye un servidor DNS interno embebido: cada contenedor puede alcanzar a otro simplemente usando su **nombre de servicio** (ej. la API se conecta a `http://database:5432` sin preocuparse por IPs dinámicas)."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Nombres de servicio como direcciones",
+				"lenguaje": "texto",
+				"texto": "La API usa `db` como nombre de host. Solo el servicio `web` publica un puerto hacia fuera; `api` y `db` quedan accesibles únicamente dentro de la red interna:",
+				"codigo": "services:\n  web:\n    ports: [\"80:80\"]          # único puerto publicado\n  api:\n    environment:\n      DATABASE_URL: postgres://qatu:...@db:5432/qatu\n  db:\n    image: postgres:16        # sin \"ports\": invisible desde fuera"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Aislamiento de seguridad",
+				"texto": "Desde dentro de la red, `db` resuelve a la IP del contenedor. Desde el anfitrión, la base de datos no es accesible:",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ docker compose exec api getent hosts db",
+								"172.20.0.2      db",
+								"$ docker compose exec api nc -z db 5432 && echo abierto",
+								"abierto",
+								"$ nc -z localhost 5432 || echo cerrado   # desde el anfitrión",
+								"cerrado"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores de red entre contenedores",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "DATABASE_URL: postgres://qatu:...@localhost:5432/qatu",
+						"bien": "DATABASE_URL: postgres://qatu:...@db:5432/qatu",
+						"explicacion": "Dentro de un contenedor, `localhost` es **ese mismo contenedor**, no el anfitrión ni la base de datos."
+					},
+					{
+						"mal": "db:\n  ports: [\"5432:5432\"]   # en producción",
+						"bien": "db:\n  # sin ports: solo la API la alcanza por la red interna",
+						"explicacion": "Publicar el puerto de la base de datos la expone a cualquiera que llegue al servidor. Solo se publica lo que debe recibir tráfico externo."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Resolución de nombres",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Dentro del contenedor de la API, ¿qué host hay que usar para conectarse al servicio db de Compose?",
+					"opciones": [
+						"localhost",
+						"db",
+						"127.0.0.1",
+						"La IP pública del servidor"
+					],
+					"correcta": 1,
+					"explicacion": "El DNS interno de Docker resuelve los nombres de servicio; localhost sería el propio contenedor de la API."
+				}
+			}
+		]
+	},
+	{
+		"id": "L166",
+		"zona": 8,
+		"sala": "z8_astillero_compose",
+		"orden": 166,
+		"nivel": "intermedio",
+		"titulo": "Volúmenes y persistencia de datos",
+		"resumen": "Los contenedores son efímeros por naturaleza; los volúmenes garantizan que los datos sobrevivan a reinicios y eliminaciones.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Naturaleza efímera de los contenedores",
+				"texto": "Si un contenedor de PostgreSQL se elimina, todo lo escrito en su capa de escritura se pierde: los contenedores son **efímeros** por diseño.\n\nPara que los datos sobrevivan se usan dos mecanismos:\n• **Volúmenes con nombre:** Docker los gestiona en su propio almacenamiento (`pgdata:/var/lib/postgresql/data`). Sobreviven a la eliminación del contenedor y son la opción para bases de datos.\n• **Bind mounts:** enlazan una carpeta concreta del anfitrión (`./src:/app/src`). Útiles en desarrollo para ver los cambios de código sin reconstruir la imagen."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Comprobar que los datos sobreviven",
+				"lenguaje": "texto",
+				"texto": "Se elimina el contenedor de la base de datos y se crea otro con el mismo volumen:",
+				"codigo": "$ docker compose exec db psql -U qatu -c \"INSERT INTO productos(nombre) VALUES ('Poncho')\"\n$ docker compose rm -sf db        # elimina el contenedor\n$ docker compose up -d db         # crea uno nuevo con el volumen pgdata\n$ docker compose exec db psql -U qatu -c \"SELECT nombre FROM productos\""
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Persistencia verificada",
+				"texto": "Se puede destruir el contenedor de la BD y recrearlo: los productos y pedidos de Qatu permanecen intactos en el volumen.",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"  nombre",
+								"---------",
+								" Poncho",
+								"(1 fila)"
+							]
+						},
+						{
+							"nota": "Con `docker compose down -v` sí se borraría el volumen, y con él los datos."
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Perder datos sin darse cuenta",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "db:\n  image: postgres:16\n  # sin volumes",
+						"bien": "db:\n  image: postgres:16\n  volumes: [pgdata:/var/lib/postgresql/data]",
+						"explicacion": "Sin volumen, basta con recrear el contenedor (por ejemplo, al actualizar la imagen) para perder la base de datos."
+					},
+					{
+						"mal": "$ docker compose down -v   # \"para limpiar\"",
+						"bien": "$ docker compose down      # conserva los volúmenes",
+						"explicacion": "`-v` elimina también los volúmenes con nombre. Solo se usa cuando de verdad se quiere empezar desde cero."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Uso de Volúmenes",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué comando elimina los contenedores Y los datos guardados en los volúmenes con nombre?",
+					"opciones": [
+						"docker compose stop",
+						"docker compose down",
+						"docker compose down -v",
+						"docker compose restart"
+					],
+					"correcta": 2,
+					"explicacion": "La opción -v elimina también los volúmenes; sin ella, los datos se conservan."
+				}
+			}
+		]
+	}
+]

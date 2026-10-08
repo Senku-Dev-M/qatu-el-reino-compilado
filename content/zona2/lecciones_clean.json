@@ -1,0 +1,243 @@
+[
+	{
+		"id": "L152",
+		"zona": 2,
+		"sala": "z2_aguja_clean",
+		"orden": 152,
+		"nivel": "intermedio",
+		"titulo": "Principios de Clean Architecture",
+		"resumen": "La Arquitectura Limpia organiza el sistema en círculos concéntricos protegiendo el núcleo de negocio de detalles externos.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "La visión de Robert C. Martin",
+				"texto": "[[clean_architecture]] busca crear sistemas con las siguientes características:\n\n• **Independiente de Frameworks:** el framework es una herramienta externa, no la estructura del negocio.\n• **Testable:** la lógica de negocio se prueba sin levantar bases de datos, navegadores ni servidores web.\n• **Independiente de la UI:** la interfaz puede cambiar de web a móvil o consola sin alterar las reglas de negocio.\n• **Independiente de la Base de Datos:** PostgreSQL, MongoDB o memoria son intercambiables."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Los círculos concéntricos",
+				"texto": "Desde el centro hacia fuera. Cuanto más al centro, más estable y más cerca del negocio; cuanto más fuera, más detalle técnico que puede cambiar:",
+				"vista": {
+					"bloques": [
+						{
+							"arbol": {
+								"nombre": "Frameworks y drivers (Express, PostgreSQL, React)",
+								"hijos": [
+									{
+										"nombre": "Adaptadores (controladores, repositorios, presentadores)",
+										"hijos": [
+											{
+												"nombre": "Casos de uso (RegistrarCompra)",
+												"hijos": [
+													{
+														"nombre": "Entidades (Pedido, Producto)"
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Carpetas que reflejan las capas",
+				"lenguaje": "texto",
+				"texto": "Una estructura de proyecto hace visible la arquitectura. Las carpetas internas no importan nada de las externas:",
+				"codigo": "src/\n  dominio/            entidades y reglas puras\n    pedido.ts\n  aplicacion/         casos de uso + interfaces que necesitan\n    registrar-compra.ts\n    pedido-repositorio.ts   (interface)\n  adaptadores/        traducen entre la web/BD y los casos de uso\n    http/pedidos.controller.ts\n    persistencia/pedido-repositorio-pg.ts\n  infraestructura/    configuración de frameworks y drivers\n    servidor.ts"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Detalles técnicos en el núcleo",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "@Entity('pedidos')\nexport class Pedido {\n  @PrimaryGeneratedColumn() id: number;\n}",
+						"bien": "export class Pedido {\n  constructor(readonly id: string, private lineas: Linea[]) {}\n  total() { return this.lineas.reduce(...); }\n}",
+						"explicacion": "Los decoradores del ORM atan la entidad a una librería de base de datos. El mapeo se hace en el adaptador de persistencia."
+					},
+					{
+						"mal": "class RegistrarCompra {\n  async ejecutar(req: Request, res: Response) { ... }\n}",
+						"bien": "class RegistrarCompra {\n  async ejecutar(datos: { usuarioId: string; productoId: string }) { ... }\n}",
+						"explicacion": "Si el caso de uso recibe `Request` de Express, solo puede usarse desde HTTP. Recibe datos simples; el controlador hace la traducción."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Objetivo de Clean Architecture",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué elemento pertenece al círculo más interno de Clean Architecture?",
+					"opciones": [
+						"El controlador HTTP de Express",
+						"La entidad Pedido con sus reglas",
+						"El driver de PostgreSQL",
+						"El componente React del carrito"
+					],
+					"correcta": 1,
+					"explicacion": "En el centro están las entidades del dominio; frameworks, drivers y UI son detalles externos."
+				}
+			}
+		]
+	},
+	{
+		"id": "L153",
+		"zona": 2,
+		"sala": "z2_aguja_clean",
+		"orden": 153,
+		"nivel": "intermedio",
+		"titulo": "Las 4 Capas de Clean Architecture",
+		"resumen": "Dominio (Entidades), Aplicación (Casos de Uso), Adaptadores (Interface Adapters) e Infraestructura (Frameworks).",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Estructura de capas",
+				"texto": "**1. Dominio (Entities):** objetos de negocio con reglas y validaciones empresariales puras (ej. regla de cálculo de comisión de vendedor en Qatu).\n**2. Aplicación (Use Cases):** flujos específicos de la aplicación (ej. `RegistrarCompraUseCase`, `AprobarVendedorUseCase`).\n**3. Adaptadores (Interface Adapters):** convierten datos entre el formato de los casos de uso y la web (DTOs, ViewModels, Controllers, Repositorios).\n**4. Infraestructura (Frameworks & Drivers):** herramientas concretas (Express, ASP.NET Core, PostgreSQL, MongoDB, UI)."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Caso de uso en Qatu",
+				"texto": "El caso de uso depende de **interfaces** que él mismo define. No sabe qué base de datos hay detrás:",
+				"lenguaje": "js",
+				"codigo": "export interface ProductoRepositorio { buscar(id: string): Promise<Producto | null>; }\nexport interface PedidoRepositorio { guardar(p: Pedido): Promise<void>; }\n\nexport class RegistrarCompra {\n  constructor(private productos: ProductoRepositorio,\n              private pedidos: PedidoRepositorio) {}\n\n  async ejecutar(entrada: { usuarioId: string; productoId: string; cantidad: number }) {\n    const producto = await this.productos.buscar(entrada.productoId);\n    if (!producto) throw new Error('Producto inexistente');\n    const pedido = Pedido.crear(entrada.usuarioId, producto, entrada.cantidad);\n    await this.pedidos.guardar(pedido);\n    return pedido.resumen();\n  }\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Independencia demostrada",
+				"texto": "Dos adaptadores distintos usan el mismo caso de uso sin cambiarlo: un controlador HTTP y un comando de terminal.",
+				"lenguaje": "js",
+				"codigo": "// adaptadores/http\napp.post('/api/compras', async (req, res) => {\n  res.status(201).json(await registrarCompra.ejecutar(req.body));\n});\n\n// adaptadores/cli\nconst [productoId, cantidad] = process.argv.slice(2);\nconsole.log(await registrarCompra.ejecutar({ usuarioId: 'admin', productoId, cantidad: +cantidad }));"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Capas mezcladas",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "import { Pool } from 'pg';\nexport class RegistrarCompra {\n  private db = new Pool();\n}",
+						"bien": "export class RegistrarCompra {\n  constructor(private pedidos: PedidoRepositorio) {}\n}",
+						"explicacion": "El caso de uso crea su propia conexión a PostgreSQL: ya no se puede probar sin base de datos ni cambiar de motor."
+					},
+					{
+						"mal": "export class Pedido {\n  async guardar() { await db.query('INSERT ...'); }\n}",
+						"bien": "export class Pedido {\n  agregar(linea: Linea) { /* reglas del pedido */ }\n}",
+						"explicacion": "Una entidad del dominio contiene reglas de negocio, no persistencia. Guardar es tarea del repositorio."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Capa de casos de uso",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué debería recibir el caso de uso RegistrarCompra para poder usarse desde HTTP y desde un comando de terminal?",
+					"opciones": [
+						"El objeto Request de Express",
+						"Datos simples como usuarioId, productoId y cantidad",
+						"Una conexión abierta a PostgreSQL",
+						"El HTML del formulario"
+					],
+					"correcta": 1,
+					"explicacion": "Con datos simples, cada adaptador traduce su entrada al formato del caso de uso sin que este cambie."
+				}
+			}
+		]
+	},
+	{
+		"id": "L154",
+		"zona": 2,
+		"sala": "z2_aguja_clean",
+		"orden": 154,
+		"nivel": "intermedio",
+		"titulo": "La Regla de Dependencia",
+		"resumen": "Las dependencias en el código fuente solo pueden apuntar hacia adentro, hacia el dominio de mayor nivel de abstracción.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "La Regla de Oro",
+				"texto": "La **Regla de Dependencia** establece que **nada** en un círculo interno puede saber nada de lo que hay en un círculo externo:\n\n• El Dominio no sabe que existe una base de datos ni una API HTTP.\n• Los Casos de Uso no conocen si los consume una SPA en React o un controlador .NET.\n• Para que el Caso de Uso guarde datos, define una **interfaz** (`IProductoRepository`); la capa externa de infraestructura la implementa mediante Inversión de Dependencias (DIP)."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Invertir la dependencia",
+				"lenguaje": "js",
+				"texto": "La interfaz vive en la capa **interna** y la implementación en la **externa**. Así el `import` apunta hacia dentro, aunque en ejecución el caso de uso termine llamando a PostgreSQL:",
+				"codigo": "// aplicacion/pedido-repositorio.ts  (capa interna)\nexport interface PedidoRepositorio {\n  guardar(pedido: Pedido): Promise<void>;\n}\n\n// adaptadores/persistencia/pedido-repositorio-pg.ts  (capa externa)\nimport { PedidoRepositorio } from '../../aplicacion/pedido-repositorio';\nexport class PedidoRepositorioPg implements PedidoRepositorio {\n  async guardar(pedido: Pedido) { await this.pool.query('INSERT ...'); }\n}\n\n// infraestructura/servidor.ts  (se conecta todo)\nconst caso = new RegistrarCompra(new PedidoRepositorioPg(pool));"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Inversión de dependencias",
+				"texto": "El **flujo de control** va hacia fuera (el caso de uso acaba guardando en la base de datos), pero la **dependencia de código** apunta hacia dentro. Qué puede importar cada capa:",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Capa",
+									"Puede importar de"
+								],
+								"filas": [
+									[
+										"Dominio",
+										"nada"
+									],
+									[
+										"Aplicación",
+										"Dominio"
+									],
+									[
+										"Adaptadores",
+										"Aplicación y Dominio"
+									],
+									[
+										"Infraestructura",
+										"todas (es quien conecta)"
+									]
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Imports que apuntan hacia fuera",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "// dominio/producto.ts\nimport { PrismaClient } from '@prisma/client';",
+						"bien": "// dominio/producto.ts\n// sin imports de librerías externas",
+						"explicacion": "El dominio es el círculo más interno: no puede conocer ninguna librería de persistencia."
+					},
+					{
+						"mal": "// aplicacion/registrar-compra.ts\nimport { PedidoRepositorioPg } from '../adaptadores/persistencia/pedido-repositorio-pg';",
+						"bien": "// aplicacion/registrar-compra.ts\nimport { PedidoRepositorio } from './pedido-repositorio';",
+						"explicacion": "El caso de uso depende de la interfaz, no de la implementación concreta. La implementación se inyecta desde fuera."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Violación de la Regla de Dependencia",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Dónde se declara la interfaz PedidoRepositorio según la Regla de Dependencia?",
+					"opciones": [
+						"En la capa de infraestructura, junto a PostgreSQL",
+						"En la capa de aplicación, que es quien la necesita",
+						"En el controlador HTTP",
+						"En el archivo de configuración del servidor"
+					],
+					"correcta": 1,
+					"explicacion": "La capa interna define la interfaz y la externa la implementa: así el import apunta hacia dentro."
+				}
+			}
+		]
+	}
+]

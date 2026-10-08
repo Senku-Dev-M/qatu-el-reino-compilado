@@ -1,0 +1,81 @@
+[
+	{
+		"id": "z2_torre_base",
+		"nombre": "Base de las Torres",
+		"intro": [
+			"Bienvenido a las Torres de Arquitectura. Analizaremos cómo viaja una URL en el navegador y los fundamentos de la arquitectura cliente/servidor."
+		],
+		"recordatorio": "El cliente solicita recursos mediante HTTP y el navegador ejecuta el ciclo de resolución DNS, conexión TCP y renderizado.",
+		"cierre": [
+			"Comprendes el flujo de navegación web. Sube a la sala del flujo."
+		]
+	},
+	{
+		"id": "z2_sala_flujo",
+		"nombre": "Sala del Flujo y MPA",
+		"intro": [
+			"Aquí estudiamos las aplicaciones de múltiples páginas (MPA), sus beneficios en SEO y sus desafíos de experiencia de usuario."
+		],
+		"recordatorio": "Una MPA recarga toda la página en cada navegación; el servidor genera el HTML completo en cada petición.",
+		"cierre": [
+			"Has analizado el modelo tradicional MPA. Continúa hacia la galería SPA."
+		]
+	},
+	{
+		"id": "z2_galeria_spa",
+		"nombre": "Galería de las SPAs",
+		"intro": [
+			"Las aplicaciones de página única (Single Page Applications): renderizado en cliente (CSR) frente a renderizado en servidor (SSR)."
+		],
+		"recordatorio": "Una SPA carga un único HTML y actualiza dinámicamente el DOM mediante JavaScript y llamadas a APIs.",
+		"cierre": [
+			"Dominas los modelos SPA, SSR y CSR. El santuario del vínculo está cerca."
+		]
+	},
+	{
+		"id": "z2_santuario_binding",
+		"nombre": "Santuario del Data Binding",
+		"intro": [
+			"Aquí adquieres la habilidad Data Binding. Estudiaremos cómo se sincroniza automáticamente el estado del modelo con los elementos visuales.",
+			"Recoge el Data Binding junto a la entrada. Cruza el foso, acércate al nodo del modelo y pulsa {binding}: la plataforma enlazada sube hasta la cornisa del cofre."
+		],
+		"recordatorio": "Recoge el Data Binding junto a la entrada. Cruza el foso, acércate al nodo del modelo y pulsa {binding}: la plataforma enlazada sube hasta la cornisa del cofre.",
+		"cierre": [
+			"Has obtenido el Data Binding. Avanza a la terraza de patrones."
+		]
+	},
+	{
+		"id": "z2_terraza_mv",
+		"nombre": "Terraza de los Patrones MV*",
+		"intro": [
+			"La gran familia de patrones de presentación: MVC (Modelo-Vista-Controlador), MVP (Presentador) y MVVM (ViewModel)."
+		],
+		"recordatorio": "En MVC el controlador maneja inputs; en MVP el presentador orquesta la vista pasiva; en MVVM el data binding sincroniza la vista con el ViewModel.",
+		"cierre": [
+			"Has superado el Sello de los Patrones. Sube a la aguja de Clean Architecture."
+		]
+	},
+	{
+		"id": "z2_aguja_clean",
+		"nombre": "Aguja de Clean Architecture",
+		"intro": [
+			"La Arquitectura Limpia de Robert C. Martin: capas de Dominio, Casos de Uso, Adaptadores e Infraestructura.",
+			"La compuerta de salida es una vista enlazada: sube a la plataforma central y pulsa {binding} junto al nodo del modelo para abrirla."
+		],
+		"recordatorio": "La compuerta de salida es una vista enlazada: sube a la plataforma central y pulsa {binding} junto al nodo del modelo para abrirla. La Regla de Dependencia dicta que las dependencias de código solo pueden apuntar hacia adentro, protegiendo el núcleo de negocio.",
+		"cierre": [
+			"Has superado el Sello de la Arquitectura Limpia. El mirador final te aguarda."
+		]
+	},
+	{
+		"id": "z2_mirador_frameworks",
+		"nombre": "Mirador de los Frameworks",
+		"intro": [
+			"Criterios de ingeniería para seleccionar un framework frontend: madurez, licencias, comunidad, rendimiento y adecuación al equipo."
+		],
+		"recordatorio": "No elijas por moda: evalúa el ecosistema, la curva de aprendizaje y los requisitos no funcionales del proyecto.",
+		"cierre": [
+			"Has completado el Sello de Selección. La Cámara de Espagueti está desbloqueada."
+		]
+	}
+]

@@ -1,0 +1,259 @@
+[
+	{
+		"id": "L85",
+		"zona": 6,
+		"sala": "z6_sotano",
+		"orden": 85,
+		"nivel": "intermedio",
+		"titulo": "Rendimiento de una API y logging asíncrono",
+		"resumen": "El rendimiento se mide con la latencia y el throughput. Paginar reduce el trabajo por petición. Escribir registros de forma síncrona bloquea cada petición; el logging asíncrono los encola y un proceso aparte los escribe.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Qué medimos",
+				"texto": "Dos métricas resumen el rendimiento de una API:\n\n• **Latencia**: cuánto tarda en responder una petición (por ejemplo, 120 ms).\n• **Throughput**: cuántas peticiones atiende por segundo.\n\nMejorarlas no consiste solo en «un servidor más grande». Esta sala y la siguiente repasan técnicas concretas del temario: **paginación**, **logging asíncrono**, **caché**, **compresión** y **connection pooling**. La paginación ya la conoces: cada petición lee, serializa y envía menos datos, así que responde antes y consume menos memoria."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "El coste de escribir logs",
+				"texto": "Los **logs** (registros) guardan qué ocurrió: peticiones, errores, tiempos. Escribirlos en un archivo, una base de datos o un servicio remoto es una operación de entrada/salida **lenta**.\n\nCon logging **síncrono**, la petición espera a que el registro se escriba antes de responder: si el disco o el servicio de logs va lento, **toda la API va lenta**.\n\nCon [[logging asíncrono|logging_asincrono]], la petición deja el mensaje en una **cola en memoria** y continúa; un hilo o proceso en segundo plano los escribe por lotes."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Síncrono frente a asíncrono",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"nota": "Logging síncrono: la respuesta espera a la escritura"
+						},
+						{
+							"secuencia": {
+								"actores": [
+									"Cliente",
+									"API",
+									"Archivo de logs"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "GET /productos"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "escribir log (40 ms)"
+									},
+									{
+										"de": 2,
+										"a": 1,
+										"texto": "escrito"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "200 OK"
+									}
+								]
+							}
+						},
+						{
+							"nota": "Logging asíncrono: la respuesta no espera"
+						},
+						{
+							"secuencia": {
+								"actores": [
+									"Cliente",
+									"API",
+									"Cola",
+									"Escritor"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "GET /productos"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "encolar"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "200 OK"
+									},
+									{
+										"de": 3,
+										"a": 3,
+										"texto": "escribe por lotes"
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Precauciones",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Cola ilimitada en memoria y ningún vaciado al cerrar la aplicación",
+						"bien": "Cola con tamaño máximo, política ante saturación y vaciado (flush) al apagar",
+						"explicacion": "Si la cola crece sin límite puede agotar la memoria, y si el proceso termina sin vaciarla se pierden los últimos registros, que suelen ser los del error."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Qué mejora?",
+				"pregunta": {
+					"enunciado": "Cada petición escribe un log en un servicio remoto que tarda 80 ms. ¿Qué logra el logging asíncrono?",
+					"opciones": [
+						"Que el log ocupe menos espacio",
+						"Que la respuesta no espere esos 80 ms, porque el registro se escribe en segundo plano",
+						"Que no haga falta guardar logs",
+						"Que las peticiones se ejecuten en orden aleatorio"
+					],
+					"correcta": 1,
+					"explicacion": "La petición solo encola el mensaje y responde; la escritura lenta ocurre aparte."
+				}
+			}
+		]
+	},
+	{
+		"id": "L86",
+		"zona": 6,
+		"sala": "z6_sotano",
+		"orden": 86,
+		"nivel": "intermedio",
+		"titulo": "Compresión de payload con gzip",
+		"resumen": "El cliente anuncia con Accept-Encoding qué compresiones admite y el servidor responde con Content-Encoding: gzip (o br). El JSON y el texto se reducen mucho; las imágenes ya comprimidas no. Comprimir cuesta CPU.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Enviar menos bytes",
+				"texto": "El **payload** es el cuerpo de la respuesta. Un JSON con 500 productos repite una y otra vez las mismas claves (`\"nombre\"`, `\"precio\"`…), así que se comprime muy bien.\n\nCon [[compresión gzip|compresion_gzip]], el servidor comprime el cuerpo antes de enviarlo y el navegador lo descomprime automáticamente al recibirlo. En texto y JSON es común reducir el tamaño entre un **70 % y un 90 %**. Brotli (`br`) suele comprimir todavía más."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "La negociación con cabeceras",
+				"texto": "El navegador indica lo que acepta con `Accept-Encoding`; el servidor elige un algoritmo y lo declara en [[Content-Encoding|content_encoding]]. `fetch` y el navegador descomprimen solos: tu código recibe el JSON normal.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "GET",
+								"url": "/api/productos?limit=500",
+								"cabeceras": [
+									"Accept-Encoding: gzip, deflate, br"
+								],
+								"estado": "200 OK",
+								"respuesta_cabeceras": [
+									"Content-Type: application/json",
+									"Content-Encoding: gzip",
+									"Content-Length: 41 822   (sin comprimir: 312 540)",
+									"Vary: Accept-Encoding"
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Activarla en el servidor",
+				"texto": "Normalmente se activa en el servidor web o en un middleware (lo verás en el Pasillo de los Middlewares). Ejemplo en Express con el paquete `compression`:",
+				"lenguaje": "js",
+				"codigo": "import express from 'express';\nimport compression from 'compression';\n\nconst app = express();\napp.use(compression({ threshold: 1024 }));  // solo respuestas > 1 KB"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Cuándo no comprimir",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Comprimir con gzip imágenes JPEG, vídeos o archivos ZIP",
+						"bien": "Comprimir texto: HTML, CSS, JavaScript, JSON, SVG",
+						"explicacion": "Los formatos ya comprimidos apenas se reducen y la compresión solo gasta CPU. En respuestas muy pequeñas tampoco compensa: por eso se usa un umbral mínimo."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Lee las cabeceras",
+				"pregunta": {
+					"enunciado": "¿Qué cabecera de la respuesta indica que el cuerpo viene comprimido con gzip?",
+					"opciones": [
+						"Accept-Encoding: gzip",
+						"Content-Encoding: gzip",
+						"Content-Type: application/gzip",
+						"Transfer: compressed"
+					],
+					"correcta": 1,
+					"explicacion": "`Content-Encoding` describe la codificación aplicada al cuerpo; `Accept-Encoding` la envía el cliente para decir qué admite."
+				}
+			}
+		]
+	},
+	{
+		"id": "L87",
+		"zona": 6,
+		"sala": "z6_sotano",
+		"orden": 87,
+		"nivel": "intermedio",
+		"titulo": "Connection pooling",
+		"resumen": "Abrir una conexión a la base de datos es costoso. Un pool mantiene un conjunto de conexiones abiertas que las peticiones toman y devuelven. Se configura con un tamaño máximo, tiempos de espera y de inactividad.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El coste de conectarse",
+				"texto": "Abrir una conexión a una base de datos implica establecer la conexión TCP, a menudo negociar TLS, autenticarse y reservar recursos en el servidor. Puede tardar decenas de milisegundos, más que la propia consulta.\n\nSi cada petición abre y cierra su conexión, la API pierde ese tiempo **en cada petición**, y con mucho tráfico puede superar el número máximo de conexiones que acepta la base de datos."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Un pool de conexiones",
+				"texto": "Con [[connection pooling|connection_pooling]], la aplicación mantiene un **pool**: un conjunto de conexiones ya abiertas.\n\n1. La petición **toma** una conexión libre del pool.\n2. Ejecuta sus consultas.\n3. La **devuelve** al pool (no la cierra).\n\nSi todas están ocupadas, la petición espera hasta que se libere una o hasta agotar un tiempo máximo. Parámetros típicos: tamaño **mínimo** y **máximo**, **tiempo de espera** para obtener conexión y **tiempo de inactividad** tras el que se cierran las sobrantes."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Un pool en Node.js",
+				"lenguaje": "js",
+				"codigo": "import pg from 'pg';\n\nconst pool = new pg.Pool({\n  max: 10,                        // conexiones como máximo\n  idleTimeoutMillis: 30000,       // cerrar las inactivas\n  connectionTimeoutMillis: 2000   // espera máxima por una conexión\n});\n\napp.get('/api/productos', async (req, res) => {\n  const { rows } = await pool.query('SELECT id, nombre FROM productos LIMIT 20');\n  res.json(rows);\n});",
+				"texto": "`pool.query` toma una conexión, ejecuta la consulta y la devuelve automáticamente. El mismo principio se usa en HTTP con keep-alive, que reutiliza conexiones TCP."
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores frecuentes",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "const cliente = await pool.connect();\nconst r = await cliente.query(sql);\nres.json(r.rows);  // nunca se libera",
+						"bien": "const cliente = await pool.connect();\ntry {\n  res.json((await cliente.query(sql)).rows);\n} finally {\n  cliente.release();\n}",
+						"explicacion": "Si una conexión tomada manualmente no se devuelve (por ejemplo, tras un error), el pool se agota y las peticiones siguientes quedan esperando."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Qué ahorra?",
+				"pregunta": {
+					"enunciado": "¿Qué evita principalmente un pool de conexiones?",
+					"opciones": [
+						"Escribir consultas SQL",
+						"Abrir y cerrar una conexión nueva en cada petición",
+						"Validar los datos de entrada",
+						"Paginar los resultados"
+					],
+					"correcta": 1,
+					"explicacion": "El pool reutiliza conexiones ya abiertas, eliminando el coste de establecerlas en cada petición."
+				}
+			}
+		]
+	}
+]

@@ -1,0 +1,30 @@
+[
+	{
+		"id": "santuario_flex",
+		"speaker": "",
+		"lineas": [
+			"Sobre el pedestal descansa un marco dorado con una sola línea grabada: display: flex;",
+			"Al tocarlo, las losas del cañón vibran. Ahora puedes cambiar cómo se reparten.",
+			"Acércate a un contenedor flex y pulsa {flex} para probar otro valor."
+		]
+	},
+	{
+		"id": "mentora_victoria_z4",
+		"speaker": "La Mentora",
+		"lineas": [
+			"Otro farol encendido. Derrotaste al Guardián del Parcial.",
+			"Ahora sabes colocar cualquier cosa en una página: Flexbox para una dimensión, Grid para dos y media queries para adaptarlo todo.",
+			"Quedan siete regiones. Descansa; el próximo portal despertará pronto."
+		]
+	},
+	{
+		"id": "final_z4",
+		"speaker": "",
+		"lineas": [
+			"Los Cañones Flexibles recuperan su forma.",
+			"Cada losa vuelve a su eje y cada terraza encaja en su rejilla, en cualquier tamaño de pantalla.",
+			"Qatu todavía no compila. Siete regiones esperan.",
+			"El portal de la Semana 5 te espera en la plaza: los Ríos Asíncronos."
+		]
+	}
+]

@@ -1,0 +1,12 @@
+[
+	{
+		"id": "gap", "zona": 4, "nombre": "Gap", "coste": 1,
+		"efecto": "Los bugs retroceden un 60 % más al recibir tus golpes.",
+		"leccion": "Referencia: gap separa los elementos de un contenedor flex o grid sin añadir espacio en los bordes. Este amuleto hace lo mismo con los bugs: más espacio entre tú y ellos."
+	},
+	{
+		"id": "media_query", "zona": 4, "nombre": "Media Query", "coste": 2,
+		"efecto": "Con 2 máscaras o menos, cada golpe da el doble de Energía de Compilación.",
+		"leccion": "Referencia: una media query aplica reglas solo cuando se cumple una condición, como @media (max-width: 480px). Este amuleto también es condicional: se activa cuando tu salud es baja."
+	}
+]

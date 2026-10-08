@@ -1,0 +1,115 @@
+[
+	{
+		"id": "L74", "zona": 6, "sala": "z6_vestibulo", "orden": 74, "nivel": "inicial",
+		"titulo": "Por qué filtrar, ordenar y paginar",
+		"resumen": "Devolver todos los registros en una sola respuesta es lento y costoso. Filtrar elige qué registros, ordenar decide en qué orden y paginar divide el resultado en partes. Son desafíos comunes de cualquier API.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "El problema de devolverlo todo",
+				"texto": "Imagina que la tienda de Qatu tiene 50 000 productos y el frontend llama a `GET /api/productos`. Si la API los devuelve todos:\n\n• La **base de datos** lee y serializa 50 000 filas en cada petición.\n• La **respuesta** pesa varios megabytes y tarda en viajar.\n• El **navegador** necesita memoria para analizar el JSON y dibujar miles de elementos.\n• El **usuario** solo mira 20 productos.\n\nPor eso casi todas las APIs ofrecen tres operaciones sobre las colecciones: filtrar, ordenar y paginar."
+			},
+			{
+				"tipo": "concepto", "titulo": "Las tres operaciones",
+				"texto": "• [[Filtrar|filtrado]]: devolver solo los registros que cumplen una condición («categoría textil», «precio menor que 100»).\n• [[Ordenar|ordenamiento]]: indicar el criterio y la dirección («por precio, de menor a mayor»).\n• [[Paginar|paginacion]]: dividir el resultado en bloques de tamaño fijo y devolver solo uno («los 20 primeros», «la página 3»).\n\nEl orden en que se aplican importa: primero se **filtra**, después se **ordena** y por último se **pagina**. Paginar antes de ordenar mostraría una página de datos desordenados."
+			},
+			{
+				"tipo": "resultado", "titulo": "Del catálogo completo a una página",
+				"texto": "Textiles con precio menor que 150, ordenados por precio ascendente, primera página de 3 elementos:",
+				"vista": {"pestana": "Tienda Qatu", "bloques": [{"tabla": {"columnas": ["Producto", "Categoría", "Precio"], "filas": [["Gorro de alpaca", "textil", "35"], ["Chalina", "textil", "58"], ["Manta", "textil", "120"]], "resaltar": 2, "pie": "Mostrando 1–3 de 14 resultados"}}, {"paginacion": {"estilo": "numeros", "actual": 1, "total": 5}}]}
+			},
+			{
+				"tipo": "comprueba", "titulo": "El orden correcto",
+				"pregunta": {
+					"enunciado": "¿En qué orden debe aplicar la API las operaciones para devolver «la segunda página de los textiles más baratos»?",
+					"opciones": ["Paginar, filtrar y ordenar", "Filtrar, ordenar y paginar", "Ordenar, paginar y filtrar", "El orden no importa"],
+					"correcta": 1,
+					"explicacion": "Se reduce el conjunto (filtro), se ordena ese conjunto y solo al final se corta la página pedida."
+				}
+			}
+		]
+	},
+	{
+		"id": "L75", "zona": 6, "sala": "z6_vestibulo", "orden": 75, "nivel": "inicial",
+		"titulo": "Filtrar y ordenar con parámetros de consulta",
+		"resumen": "En una API REST, filtros y orden se expresan con parámetros de consulta en la URL de un GET. Conviene usar nombres coherentes, validar cada valor en el servidor y documentar qué campos se permiten.",
+		"paginas": [
+			{
+				"tipo": "sintaxis", "titulo": "Parámetros en la URL",
+				"texto": "Como leer una colección no modifica datos, se usa `GET` y las condiciones van como [[parámetros de consulta|parametro_de_consulta]] en la query string. No existe una única norma; estas convenciones son muy habituales:\n\n• Filtro por igualdad: `?categoria=textil`\n• Rangos: `?precio_min=50&precio_max=150`\n• Búsqueda de texto: `?q=alpaca`\n• Orden: `?sort=precio` (ascendente) y `?sort=-precio` (descendente, con un signo menos)\n• Varios criterios: `?sort=-valoracion,precio`",
+				"lenguaje": "texto",
+				"codigo": "GET /api/productos?categoria=textil&precio_max=150&sort=precio"
+			},
+			{
+				"tipo": "sintaxis", "titulo": "Construir la URL desde el frontend",
+				"texto": "`URLSearchParams` crea la query string y codifica los caracteres especiales (espacios, tildes, `&`) para que no rompan la URL.",
+				"lenguaje": "js",
+				"codigo": "const params = new URLSearchParams({\n  categoria: 'textil',\n  precio_max: 150,\n  sort: 'precio'\n});\n\nconst response = await fetch(`/api/productos?${params}`);\nconst productos = await response.json();"
+			},
+			{
+				"tipo": "errores", "titulo": "Errores frecuentes",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "// Servidor\nconst sql = `SELECT * FROM productos ORDER BY ${req.query.sort}`;",
+						"bien": "const permitidos = ['precio', 'nombre', 'valoracion'];\nif (!permitidos.includes(campo)) return res.status(400).end();",
+						"explicacion": "Insertar el parámetro directamente en SQL permite inyección. Valida el campo contra una lista permitida y usa consultas parametrizadas."
+					},
+					{
+						"mal": "fetch('/api/productos?q=gorro rojo&cat=textil&ropa')",
+						"bien": "const p = new URLSearchParams({ q: 'gorro rojo', cat: 'textil&ropa' });\nfetch(`/api/productos?${p}`);",
+						"explicacion": "Sin codificar, el espacio y el `&` dentro de un valor rompen la query string."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba", "titulo": "Lee la URL",
+				"pregunta": {
+					"enunciado": "¿Qué pide GET /api/productos?categoria=ceramica&sort=-precio?",
+					"opciones": ["Cerámicas del más barato al más caro", "Cerámicas del más caro al más barato", "Todos los productos menos la cerámica", "La página -precio del catálogo"],
+					"correcta": 1,
+					"explicacion": "El filtro elige la categoría y el signo menos en `sort` indica orden descendente."
+				}
+			}
+		]
+	},
+	{
+		"id": "L76", "zona": 6, "sala": "z6_vestibulo", "orden": 76, "nivel": "intermedio",
+		"titulo": "Paginación: offset/limit y por cursor",
+		"resumen": "Offset/limit salta un número de registros y devuelve un bloque; permite ir a cualquier página, pero es lento con desplazamientos grandes y puede repetir o saltar elementos si los datos cambian. La paginación por cursor continúa desde el último elemento visto.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Offset y limit",
+				"texto": "La paginación por [[offset y limit|offset_limit]] usa dos números: cuántos registros **saltar** y cuántos **devolver**. La página `n` con tamaño `t` empieza en `offset = (n - 1) × t`.\n\n• Página 1 de 20: `?offset=0&limit=20`\n• Página 3 de 20: `?offset=40&limit=20`\n\nEn SQL equivale a `LIMIT 20 OFFSET 40`. Es sencilla y permite saltar a cualquier página, pero la base de datos debe **recorrer y descartar** todos los registros saltados: la página 5000 es mucho más lenta que la primera."
+			},
+			{
+				"tipo": "concepto", "titulo": "Paginación por cursor",
+				"texto": "En la [[paginación por cursor|paginacion_por_cursor]] la respuesta incluye un **cursor**: un valor opaco que identifica el último elemento devuelto. La siguiente petición pide «los que vienen después de este».\n\n• **Ventajas**: rendimiento constante aunque avances mucho (usa un índice, `WHERE id > 1840`) y resultados estables si se insertan o borran registros mientras navegas.\n• **Desventajas**: no permite saltar directamente a la página 37 y el orden debe basarse en una columna única o una combinación única.\n\nEs la opción habitual en feeds y scroll infinito."
+			},
+			{
+				"tipo": "resultado", "titulo": "Respuesta con metadatos de paginación",
+				"texto": "Una buena respuesta paginada devuelve, junto a los datos, información para seguir navegando: total, página actual o cursor y enlaces.",
+				"vista": {"sin_navegador": true, "bloques": [{"peticion": {"metodo": "GET", "url": "/api/productos?limit=20&cursor=eyJpZCI6MTg0MH0", "estado": "200 OK", "respuesta": "{\n  \"data\": [ … 20 productos … ],\n  \"meta\": { \"limit\": 20, \"total\": 5213 },\n  \"links\": {\n    \"next\": \"/api/productos?limit=20&cursor=eyJpZCI6MTg2MH0\"\n  }\n}"}}]}
+			},
+			{
+				"tipo": "errores", "titulo": "Un problema de offset",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "1. Lees la página 1 (productos 1–20)\n2. Se publica un producto nuevo al principio\n3. Pides la página 2 (offset=20)\n→ El producto 20 aparece otra vez",
+						"bien": "Página 2 con cursor: «después del id del último producto visto»\n→ No hay duplicados aunque se inserten productos",
+						"explicacion": "Con offset, las inserciones o borrados desplazan las posiciones entre peticiones; el cursor está anclado a un elemento concreto."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba", "titulo": "Calcula el offset",
+				"pregunta": {
+					"enunciado": "Con 25 productos por página, ¿qué offset corresponde a la página 4?",
+					"opciones": ["25", "75", "100", "4"],
+					"correcta": 1,
+					"explicacion": "offset = (4 − 1) × 25 = 75: se saltan las tres primeras páginas."
+				}
+			}
+		]
+	}
+]

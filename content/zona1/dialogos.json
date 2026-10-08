@@ -1,0 +1,39 @@
+[
+	{
+		"id": "santuario_rest",
+		"speaker": "mentora",
+		"lineas": [
+			"Has llegado al Altar del Despacho, en el corazón de las Ruinas.",
+			"Aquí reside el REST Dash: el impulso de una petición HTTP.",
+			"Pulsa {dash} para proyectarte a través de abismos de datos y activar terminales de método.",
+			"Úsalo para cruzar hacia los antiguos servidores de Qatu."
+		]
+	},
+	{
+		"id": "final_z1",
+		"speaker": "mentora",
+		"lineas": [
+			"¡El Monolito ha sido desacoplado!",
+			"Los cimientos del backend ahora son modulares y limpios.",
+			"El primer farol del Hub ha despertado con la luz de la arquitectura estructurada.",
+			"Regresa a la Plaza de Qatu para continuar tu travesía hacia las Torres de Arquitectura."
+		]
+	},
+	{
+		"id": "mentora_victoria_z1",
+		"speaker": "mentora",
+		"lineas": [
+			"Excelente trabajo en las Ruinas del Backend.",
+			"Has dominado el ciclo de vida de las APIs, la arquitectura en 3 capas y la migración de datos.",
+			"Ahora estás listo para elevarte hacia las capas de presentación."
+		]
+	},
+	{
+		"id": "santuario_rest_dash",
+		"speaker": "",
+		"lineas": [
+			"Bajo la meseta late un terminal antiguo: aún espera peticiones.",
+			"Al tocarlo sientes el impulso de una petición HTTP recorriéndote."
+		]
+	}
+]

@@ -1,0 +1,340 @@
+[
+	{
+		"id": "L42",
+		"zona": 4,
+		"sala": "z4_atalaya",
+		"orden": 42,
+		"nivel": "inicial",
+		"titulo": "Qué es el diseño responsivo",
+		"resumen": "Un diseño responsivo adapta el mismo HTML a cualquier tamaño de pantalla. Necesita la etiqueta meta viewport y reglas CSS flexibles.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Una página, muchas pantallas",
+				"texto": "El [[diseño responsivo|diseno_responsivo]] (responsive web design) consiste en que **la misma página** se adapte al tamaño de la pantalla: móvil, tableta o escritorio, sin mantener versiones separadas del sitio.\n\nSe basa en tres ideas: **layouts fluidos** (medidas relativas como `%` o `fr`), **imágenes flexibles** y **media queries** para cambiar el diseño según el ancho."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Un poco de historia",
+				"texto": "• **1991**: la primera página web era solo texto; se adaptaba sola a la ventana.\n• **Años 2000**: se popularizaron los diseños de **ancho fijo** (por ejemplo, 960 px), pensados para monitores de escritorio.\n• **2007**: con el iPhone llega la navegación móvil masiva. Muchos sitios crean versiones separadas, como `m.sitio.com`.\n• **2010**: Ethan Marcotte publica el artículo Responsive Web Design y da nombre a la técnica.\n• **2012 en adelante**: las media queries y los frameworks responsivos se generalizan y el diseño responsivo pasa a ser la norma."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "La etiqueta viewport",
+				"texto": "Sin esta etiqueta en el `<head>`, los navegadores móviles simulan una pantalla de escritorio (unos 980 px) y reducen la página: todo se ve diminuto y las media queries no se activan como esperas. El [[viewport]] es el área visible de la página en el dispositivo.",
+				"lenguaje": "html",
+				"codigo": "<meta name=\"viewport\"\n      content=\"width=device-width, initial-scale=1\">"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "La misma página en dos pantallas",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"responsive": {
+								"items": [
+									"Manta",
+									"Poncho",
+									"Gorro"
+								],
+								"anchos": [
+									{
+										"etiqueta": "Móvil · 375 px",
+										"columnas": 1,
+										"ancho": 150
+									},
+									{
+										"etiqueta": "Escritorio · 1200 px",
+										"columnas": 3,
+										"ancho": 400
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "La etiqueta clave",
+				"pregunta": {
+					"enunciado": "Tu página responsiva se ve diminuta en el móvil, como una página de escritorio reducida. ¿Qué es lo más probable?",
+					"opciones": [
+						"Falta la etiqueta <meta name=\"viewport\">",
+						"El CSS usa Flexbox",
+						"Falta el atributo alt",
+						"El título es demasiado largo"
+					],
+					"correcta": 0,
+					"explicacion": "Sin `meta viewport` el navegador móvil usa un ancho virtual de escritorio y escala la página hacia abajo."
+				}
+			}
+		]
+	},
+	{
+		"id": "L43",
+		"zona": 4,
+		"sala": "z4_atalaya",
+		"orden": 43,
+		"nivel": "intermedio",
+		"titulo": "Media queries",
+		"resumen": "@media aplica reglas CSS solo cuando se cumple una condición, como un ancho mínimo. Con mobile first se escribe primero el móvil y se amplía con min-width.",
+		"paginas": [
+			{
+				"tipo": "sintaxis",
+				"titulo": "Reglas condicionales",
+				"texto": "Una [[media query|media_query]] aplica un bloque de reglas **solo si** se cumple una condición sobre el dispositivo:\n\n• `min-width: 768px`: la ventana mide **al menos** 768 px.\n• `max-width: 767px`: la ventana mide **como máximo** 767 px.\n• `orientation: landscape`: la pantalla está en horizontal.\n\nLas condiciones se combinan con `and`. El ancho a partir del cual cambia el diseño se llama [[punto de quiebre|punto_de_quiebre]] (breakpoint).",
+				"lenguaje": "css",
+				"codigo": ".productos {\n  display: grid;\n  grid-template-columns: 1fr;\n}\n\n@media (min-width: 768px) {\n  .productos {\n    grid-template-columns: repeat(3, 1fr);\n  }\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Mobile first",
+				"texto": "Con el enfoque [[mobile first|mobile_first]] las reglas base son para móvil (una columna) y las media queries con `min-width` **añaden** cambios para pantallas mayores. Así el CSS más simple lo recibe el dispositivo más limitado.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"responsive": {
+								"items": [
+									"1",
+									"2",
+									"3",
+									"4",
+									"5",
+									"6"
+								],
+								"anchos": [
+									{
+										"etiqueta": "Menos de 768 px",
+										"columnas": 1,
+										"ancho": 130
+									},
+									{
+										"etiqueta": "768 px o más",
+										"columnas": 3,
+										"ancho": 380
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores frecuentes",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": "@media (min-width: 768px) {\n  .menu { display: flex; }\n}\n.menu { display: block; }",
+						"bien": ".menu { display: block; }\n@media (min-width: 768px) {\n  .menu { display: flex; }\n}",
+						"explicacion": "Con la misma especificidad, gana la regla escrita **después**. Si la regla base va al final, anula la media query. Escribe primero la base y después las media queries."
+					},
+					{
+						"mal": "@media min-width: 768px {\n  .menu { display: flex; }\n}",
+						"bien": "@media (min-width: 768px) {\n  .menu { display: flex; }\n}",
+						"explicacion": "La condición va entre paréntesis."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Cuándo se aplica?",
+				"pregunta": {
+					"enunciado": "¿Cuándo se aplican las reglas de @media (min-width: 1024px)?",
+					"opciones": [
+						"Solo en pantallas menores de 1024 px",
+						"En pantallas de 1024 px o más",
+						"Solo en tabletas",
+						"Siempre"
+					],
+					"correcta": 1,
+					"explicacion": "`min-width` significa «ancho mínimo»: la condición es verdadera cuando la ventana mide 1024 px o más."
+				}
+			}
+		]
+	},
+	{
+		"id": "L44",
+		"zona": 4,
+		"sala": "z4_atalaya",
+		"orden": 44,
+		"nivel": "intermedio",
+		"titulo": "Macro layouts: la estructura de la página",
+		"resumen": "Un macro layout es la organización general de la página (cabecera, menú, contenido, pie). Se suele construir con Grid y se reorganiza con media queries.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "La visión general",
+				"texto": "Un [[macro layout|macro_layout]] define la **estructura de toda la página**: dónde van la cabecera, la navegación, el contenido principal y el pie.\n\nComo organiza filas y columnas a la vez, **Grid** es la herramienta natural. Con media queries puedes cambiar `grid-template-areas` para reorganizar la página completa sin tocar el HTML."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Reorganizar con áreas",
+				"texto": "En móvil todo va en una columna. A partir de 768 px, el menú pasa a una columna lateral.",
+				"lenguaje": "css",
+				"codigo": ".pagina {\n  display: grid;\n  grid-template-areas:\n    \"cabecera\"\n    \"menu\"\n    \"contenido\"\n    \"pie\";\n}\n\n@media (min-width: 768px) {\n  .pagina {\n    grid-template-columns: 200px 1fr;\n    grid-template-areas:\n      \"cabecera cabecera\"\n      \"menu     contenido\"\n      \"pie      pie\";\n  }\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Móvil y escritorio",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"nota": "Móvil (una columna):"
+						},
+						{
+							"grid": {
+								"ancho": 220,
+								"columnas": "1fr",
+								"gap": 6,
+								"fila_alto": 34,
+								"areas": [
+									[
+										"cabecera"
+									],
+									[
+										"menu"
+									],
+									[
+										"contenido"
+									],
+									[
+										"pie"
+									]
+								]
+							}
+						},
+						{
+							"nota": "Escritorio (768 px o más):"
+						},
+						{
+							"grid": {
+								"ancho": 480,
+								"columnas": "140px 1fr",
+								"gap": 6,
+								"fila_alto": 40,
+								"areas": [
+									[
+										"cabecera",
+										"cabecera"
+									],
+									[
+										"menu",
+										"contenido"
+									],
+									[
+										"pie",
+										"pie"
+									]
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Herramienta adecuada",
+				"pregunta": {
+					"enunciado": "¿Qué combinación es más adecuada para reorganizar toda la estructura de la página en pantallas grandes?",
+					"opciones": [
+						"float y clear",
+						"Grid con grid-template-areas dentro de una media query",
+						"Un <table> para cada pantalla",
+						"Cambiar el HTML con JavaScript"
+					],
+					"correcta": 1,
+					"explicacion": "Redefinir `grid-template-areas` en una media query reorganiza la página completa solo con CSS."
+				}
+			}
+		]
+	},
+	{
+		"id": "L45",
+		"zona": 4,
+		"sala": "z4_atalaya",
+		"orden": 45,
+		"nivel": "intermedio",
+		"titulo": "Micro layouts, tipografía e imágenes responsivas",
+		"resumen": "Los micro layouts adaptan cada componente por sí mismo (auto-fit y minmax, flex-wrap). La tipografía usa rem y clamp(); las imágenes, max-width: 100%.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Componentes que se adaptan solos",
+				"texto": "Un [[micro layout|micro_layout]] es el layout **interno de un componente**: una lista de tarjetas, una barra de botones, un formulario.\n\nLa idea es que el componente se adapte al espacio que tiene **sin media queries**, usando Flexbox con `flex-wrap` o Grid con `auto-fit` y [[minmax()|minmax]]. Así funciona igual en una columna estrecha que en una ancha."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "auto-fit y minmax",
+				"texto": "`repeat(auto-fit, minmax(160px, 1fr))` crea tantas columnas como quepan, con un mínimo de 160 px cada una; si sobra espacio, se reparte entre ellas. Al estrecharse el contenedor, las tarjetas pasan a la fila siguiente.",
+				"lenguaje": "css",
+				"codigo": ".tarjetas {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));\n  gap: 12px;\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"responsive": {
+								"items": [
+									"A",
+									"B",
+									"C",
+									"D"
+								],
+								"anchos": [
+									{
+										"etiqueta": "Contenedor de 360 px",
+										"columnas": 2,
+										"ancho": 200
+									},
+									{
+										"etiqueta": "Contenedor de 760 px",
+										"columnas": 4,
+										"ancho": 400
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Tipografía e imágenes",
+				"texto": "• [[rem]]: unidad relativa al tamaño de letra de la raíz (normalmente 16 px). Respeta el tamaño que el usuario configuró en su navegador.\n• `clamp(mínimo, preferido, máximo)`: tamaño que crece con la pantalla pero dentro de límites.\n• `max-width: 100%` y `height: auto` en imágenes: nunca son más anchas que su contenedor y mantienen la proporción.",
+				"lenguaje": "css",
+				"codigo": "h1 {\n  font-size: clamp(1.5rem, 4vw, 3rem);\n}\n\nimg {\n  max-width: 100%;\n  height: auto;\n}"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Imágenes que desbordan",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": "img {\n  width: 1200px;\n}",
+						"bien": "img {\n  max-width: 100%;\n  height: auto;\n}",
+						"explicacion": "Un ancho fijo en píxeles hace que la imagen se salga de la pantalla en móviles y aparezca scroll horizontal."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Sin media queries",
+				"pregunta": {
+					"enunciado": "¿Qué declaración crea una rejilla de tarjetas que cambia el número de columnas según el espacio, sin media queries?",
+					"opciones": [
+						"grid-template-columns: 300px 300px 300px;",
+						"grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));",
+						"display: inline-block;",
+						"float: left;"
+					],
+					"correcta": 1,
+					"explicacion": "`auto-fit` con `minmax` calcula cuántas columnas de al menos 200 px caben y reparte el sobrante."
+				}
+			}
+		]
+	}
+]

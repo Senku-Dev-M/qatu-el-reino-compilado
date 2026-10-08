@@ -1,0 +1,11 @@
+[
+	{
+		"id": "z4", "zona": 4, "semana": 4,
+		"nombre": "Cañones Flexibles",
+		"tema": "Layout con CSS, Flexbox, Grid, diseño responsivo y frameworks CSS",
+		"salas": ["z4_mirador", "z4_desfiladero", "z4_caravana", "z4_terrazas", "z4_atalaya", "z4_taller"],
+		"habilidad": "flex",
+		"jefe": "guardian_parcial",
+		"fragmentos": ["z4_caravana:fragmento", "z4_taller:fragmento"]
+	}
+]

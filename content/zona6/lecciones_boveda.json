@@ -1,0 +1,245 @@
+[
+	{
+		"id": "L88",
+		"zona": 6,
+		"sala": "z6_boveda",
+		"orden": 88,
+		"nivel": "intermedio",
+		"titulo": "La caché y sus estrategias",
+		"resumen": "Una caché guarda copias de resultados costosos para servirlos rápido. Cada entrada tiene un TTL. Estrategias: cache-aside, read-through, write-through, write-behind y refresh-ahead.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Guardar una copia cerca",
+				"texto": "Una [[caché|cache]] es un almacenamiento rápido (normalmente en memoria) con **copias** de datos que son costosos de obtener: una consulta pesada, una llamada a otro servicio, una página generada.\n\n• **Acierto** (cache hit): el dato está en la caché y se devuelve en microsegundos.\n• **Fallo** (cache miss): no está, así que se obtiene de la fuente y se guarda.\n\nCada entrada tiene un [[TTL|ttl]] (time to live): pasado ese tiempo **caduca** y se vuelve a pedir a la fuente. Así funciona tu habilidad Caché: guardas una posición con un TTL y vuelves a ella antes de que caduque."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Cache-aside",
+				"texto": "En [[cache-aside|cache_aside]] (carga perezosa), la **aplicación** gestiona la caché: la consulta primero; si falla, lee la base de datos y guarda el resultado. Es la estrategia más común.",
+				"lenguaje": "js",
+				"codigo": "async function obtenerProducto(id) {\n  const clave = `producto:${id}`;\n  const enCache = await redis.get(clave);\n  if (enCache) return JSON.parse(enCache);            // acierto\n\n  const producto = await db.productos.findById(id);   // fallo\n  await redis.set(clave, JSON.stringify(producto), { EX: 300 }); // TTL 5 min\n  return producto;\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"API",
+									"Caché",
+									"Base de datos"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "get producto:12"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "fallo",
+										"error": true
+									},
+									{
+										"de": 0,
+										"a": 2,
+										"texto": "SELECT … WHERE id = 12"
+									},
+									{
+										"de": 2,
+										"a": 0,
+										"texto": "producto"
+									},
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "set (TTL 300 s)"
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Otras estrategias",
+				"texto": "• **Read-through**: la aplicación solo habla con la caché; es la **caché** quien carga el dato de la base de datos cuando falta.\n• **Write-through**: al escribir, se actualiza la caché y la base de datos a la vez (de forma síncrona). Datos siempre frescos, escrituras más lentas.\n• **Write-behind** (write-back): se escribe en la caché y la base de datos se actualiza **después**, en segundo plano. Escrituras rápidas, con riesgo de perder datos si falla antes de persistir.\n• **Refresh-ahead**: la caché renueva las entradas muy usadas **antes** de que caduquen.\n\nCuando la memoria se llena, una **política de expulsión** decide qué borrar; la más común es **LRU** (la usada hace más tiempo)."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Identifica la estrategia",
+				"pregunta": {
+					"enunciado": "El código busca en Redis; si no encuentra el dato, lo lee de la base de datos y lo guarda en Redis. ¿Qué estrategia es?",
+					"opciones": [
+						"Write-behind",
+						"Cache-aside",
+						"Write-through",
+						"Sin caché"
+					],
+					"correcta": 1,
+					"explicacion": "La aplicación consulta la caché y, ante un fallo, carga y guarda el dato ella misma: cache-aside."
+				}
+			}
+		]
+	},
+	{
+		"id": "L89",
+		"zona": 6,
+		"sala": "z6_boveda",
+		"orden": 89,
+		"nivel": "intermedio",
+		"titulo": "Dónde vive la caché",
+		"resumen": "Se puede cachear en la aplicación cliente (caché HTTP con Cache-Control y ETag), en una CDN, en el balanceador de carga, en la infraestructura de mensajería, dentro de cada servicio, en una caché distribuida como Redis o en un motor de búsqueda de texto completo.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Capas de caché",
+				"texto": "Una petición atraviesa varias capas y en cada una puede haber caché:\n\n• **Aplicación cliente**: la caché HTTP del navegador o datos guardados en memoria o `localStorage`.\n• [[CDN|cdn]] (Content Delivery Network): servidores repartidos por el mundo que guardan copias cerca del usuario.\n• **Balanceador de carga** o proxy inverso: puede cachear respuestas completas.\n• **Infraestructura de mensajería**: colas y streams que retienen mensajes ya calculados.\n• **Servicios**: caché en memoria dentro de cada instancia de la API.\n• **Caché distribuida**: Redis o Memcached, compartida por todas las instancias.\n• **Búsqueda de texto completo**: Elasticsearch indexa una copia de los datos para búsquedas rápidas."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Caché HTTP: Cache-Control",
+				"texto": "El servidor decide cómo se cachean sus respuestas con la cabecera [[Cache-Control|cache_control]]:\n\n• `max-age=600`: la respuesta es válida 600 segundos.\n• `public`: pueden guardarla cachés compartidas (CDN, proxies).\n• `private`: solo el navegador del usuario.\n• `no-cache`: se puede guardar, pero hay que **revalidar** antes de usarla.\n• `no-store`: no se guarda en ningún sitio (datos sensibles).",
+				"lenguaje": "texto",
+				"codigo": "Cache-Control: public, max-age=600     → catálogo de productos\nCache-Control: private, max-age=60     → carrito del usuario\nCache-Control: no-store                → datos de pago"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Revalidar con ETag",
+				"texto": "Un [[ETag|etag]] es un identificador de la versión de un recurso. El navegador lo reenvía en `If-None-Match`; si no ha cambiado, el servidor responde **304 Not Modified** sin cuerpo y el navegador usa su copia.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "GET",
+								"url": "/api/productos/12",
+								"cabeceras": [
+									"If-None-Match: \"v7-a91f\""
+								],
+								"estado": "304 Not Modified",
+								"respuesta_cabeceras": [
+									"ETag: \"v7-a91f\"",
+									"Cache-Control: no-cache"
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige la cabecera",
+				"pregunta": {
+					"enunciado": "Una respuesta contiene el historial de compras de un usuario. ¿Qué Cache-Control evita que una CDN o un proxy compartido la guarde?",
+					"opciones": [
+						"public, max-age=3600",
+						"private (o no-store si no debe guardarse en ningún sitio)",
+						"max-age=0, public",
+						"No hace falta ninguna cabecera"
+					],
+					"correcta": 1,
+					"explicacion": "`private` limita la caché al navegador del usuario; `no-store` impide guardarla incluso ahí."
+				}
+			}
+		]
+	},
+	{
+		"id": "L90",
+		"zona": 6,
+		"sala": "z6_boveda",
+		"orden": 90,
+		"nivel": "intermedio",
+		"titulo": "Invalidación y riesgos de la caché",
+		"resumen": "Cachear obliga a decidir cuándo una copia deja de ser válida (invalidación) y a tolerar cierta inconsistencia. Riesgos: datos obsoletos, avalanchas al caducar, envenenamiento de caché y almacenamiento de información sensible.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Invalidar: el problema difícil",
+				"texto": "Una caché siempre puede devolver datos **obsoletos**: la base de datos cambió y la copia no. La [[invalidación de caché|invalidacion_de_cache]] es el proceso de eliminar o actualizar esas copias. Opciones:\n\n• **Por tiempo** (TTL): simple; acepta datos viejos durante ese tiempo.\n• **Por evento**: al modificar un producto se borra `producto:12` de la caché.\n• **Por versión**: la clave incluye una versión (`catalogo:v42`); al cambiar, se usa la nueva.\n\nEn sistemas **distribuidos** con varias instancias o regiones, sincronizar las invalidaciones es aún más complejo: durante un tiempo, cada instancia puede ver una versión distinta."
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Riesgos habituales",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Mil entradas muy usadas con el mismo TTL caducan a la vez\n→ miles de peticiones golpean la base de datos",
+						"bien": "TTL con variación aleatoria, bloqueo para que solo una petición recargue\no refresh-ahead",
+						"explicacion": "Es la avalancha o cache stampede: el fallo simultáneo de muchas entradas satura la fuente."
+					},
+					{
+						"mal": "Cache-Control: public en /api/mi-perfil",
+						"bien": "Cache-Control: private, no-store en respuestas con datos personales",
+						"explicacion": "Una caché compartida podría servir los datos de un usuario a otro."
+					}
+				]
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Envenenamiento de caché",
+				"texto": "En un [[envenenamiento de caché|cache_poisoning]] (cache poisoning), un atacante consigue que una caché compartida guarde una respuesta **manipulada** y la sirva a otros usuarios. Suele aprovechar cabeceras que modifican la respuesta pero **no forman parte de la clave** de la caché (por ejemplo, un `X-Forwarded-Host` que cambia las URLs generadas).\n\nDefensas: incluir en la clave todo lo que cambie la respuesta (cabecera `Vary`), no reflejar cabeceras de entrada sin validar y no cachear respuestas de error ni personalizadas en cachés públicas."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Diagnostica",
+				"pregunta": {
+					"enunciado": "Tras editar el precio de un producto, la tienda sigue mostrando el precio antiguo durante 10 minutos. ¿Qué lo soluciona mejor?",
+					"opciones": [
+						"Aumentar el TTL a una hora",
+						"Invalidar la entrada de ese producto en la caché al guardar el cambio",
+						"Desactivar la compresión gzip",
+						"Paginar la lista de productos"
+					],
+					"correcta": 1,
+					"explicacion": "La invalidación por evento borra la copia obsoleta en el momento del cambio, en lugar de esperar a que caduque el TTL."
+				}
+			}
+		]
+	},
+	{
+		"id": "L91",
+		"zona": 6,
+		"sala": "z6_boveda",
+		"orden": 91,
+		"nivel": "intermedio",
+		"titulo": "El patrón Flyweight",
+		"resumen": "Flyweight es un patrón estructural que reduce memoria compartiendo el estado repetido (intrínseco) entre muchos objetos, mientras cada uno guarda solo lo propio (extrínseco). Una fábrica con caché entrega la instancia compartida.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Compartir lo que se repite",
+				"texto": "Imagina 100 000 productos en memoria, cada uno con una copia completa de su categoría (nombre, descripción, icono, reglas de envío). Solo hay 12 categorías distintas, pero existen 100 000 copias.\n\nEl patrón [[Flyweight|flyweight]] (peso ligero), uno de los patrones de diseño del libro de la «Banda de los Cuatro», separa:\n\n• **Estado intrínseco**: lo que se repite y no cambia (la categoría). Se guarda **una vez** y se comparte.\n• **Estado extrínseco**: lo propio de cada objeto (id, precio, stock). Lo guarda cada producto o se pasa al usarlo."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Una fábrica que reutiliza",
+				"texto": "La fábrica mantiene un mapa de instancias ya creadas: si la categoría existe, devuelve **la misma**. Los objetos compartidos deben ser **inmutables**, porque un cambio afectaría a todos los que los usan.",
+				"lenguaje": "js",
+				"codigo": "const categorias = new Map();\n\nfunction obtenerCategoria(datos) {\n  if (!categorias.has(datos.id)) {\n    categorias.set(datos.id, Object.freeze({ ...datos }));\n  }\n  return categorias.get(datos.id);\n}\n\nconst productos = filas.map((f) => ({\n  id: f.id,\n  precio: f.precio,\n  categoria: obtenerCategoria(f.categoria)  // compartida\n}));"
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Flyweight en las APIs",
+				"texto": "La misma idea aparece al diseñar respuestas y servicios:\n\n• El `included` de JSON:API envía cada recurso relacionado **una sola vez** y los demás lo referencian por `type` e `id`.\n• Una API puede devolver catálogos repetidos (monedas, países, categorías) por separado y referenciarlos por id.\n• La **fábrica** de Flyweight es, en la práctica, una **caché** de objetos compartidos; combinada con una caché distribuida, varias instancias comparten también esos datos.\n\nFlyweight compensa cuando hay **muchos** objetos con **mucho** estado repetido; con pocos objetos solo añade complejidad."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Estado intrínseco",
+				"pregunta": {
+					"enunciado": "En una lista de pedidos, ¿qué dato es buen candidato a estado intrínseco compartido?",
+					"opciones": [
+						"El id de cada pedido",
+						"La cantidad comprada",
+						"Los datos del método de envío, iguales para miles de pedidos",
+						"La fecha de cada pedido"
+					],
+					"correcta": 2,
+					"explicacion": "El método de envío se repite en muchos pedidos y no cambia por pedido; id, cantidad y fecha son propios de cada uno."
+				}
+			}
+		]
+	}
+]

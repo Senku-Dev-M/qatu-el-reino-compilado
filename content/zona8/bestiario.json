@@ -1,0 +1,42 @@
+[
+	{
+		"id": "fuga_memoria",
+		"zona": 8,
+		"nombre": "Fuga de Memoria",
+		"descripcion": "Nube tóxica que crece de tamaño si no se destruye rápidamente.",
+		"leccion": "Las fugas de memoria ocurren cuando objetos en desuso no se liberan, consumiendo los recursos del contenedor hasta provocar OOMKilled.",
+		"derrotas_requeridas": 3
+	},
+	{
+		"id": "pod_zombi",
+		"zona": 8,
+		"nombre": "Pod Zombi",
+		"descripcion": "Proceso residual que sigue consumiendo CPU a pesar de haber terminado su ejecución.",
+		"leccion": "Un proceso zombi mantiene su entrada en la tabla de procesos esperando a que el proceso padre lea su código de salida.",
+		"derrotas_requeridas": 3
+	},
+	{
+		"id": "imagen_obsoleta",
+		"zona": 8,
+		"nombre": "Imagen Pesada sin Limpiar",
+		"descripcion": "Gigante acorazado con capas redundantes que ralentiza el muelle.",
+		"leccion": "Las imágenes Docker multi-stage build separan la compilación del runtime final, produciendo imágenes ultraligeras y seguras.",
+		"derrotas_requeridas": 2
+	},
+	{
+		"id": "daemon_desbocado",
+		"zona": 8,
+		"nombre": "Daemon Desbocado",
+		"descripcion": "Demonio volador que ejecuta tareas en segundo plano sin control de límites.",
+		"leccion": "En Kubernetes, los límites de recursos (requests y limits) evitan que un solo contenedor monopolice los recursos del nodo.",
+		"derrotas_requeridas": 4
+	},
+	{
+		"id": "kubernetes",
+		"zona": 8,
+		"nombre": "Kubernetes, el Timonel",
+		"descripcion": "El gran orquestador de las dársenas. Controla réplicas, auto-scaling y balanceo de carga en todo el puerto.",
+		"leccion": "Kubernetes orquesta el ciclo de vida de los contenedores garantizando alta disponibilidad, escalabilidad y recuperación automática ante fallos.",
+		"derrotas_requeridas": 1
+	}
+]

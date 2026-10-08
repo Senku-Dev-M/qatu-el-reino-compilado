@@ -1,0 +1,9 @@
+[
+	{
+		"id": "cache", "zona": 6, "nombre": "Caché",
+		"descripcion": "Guarda tu posición con un tiempo de vida de 6 segundos. Vuelve a pulsar antes de que caduque para regresar a ella al instante.",
+		"leccion": "Una caché guarda una copia de un dato costoso para servirlo rápido. Cada entrada tiene un TTL (time to live): mientras no caduque, se sirve la copia (cache hit); después hay que volver a la fuente. Lo estudias en la Bóveda de la Caché.",
+		"control": "cache",
+		"instruccion": "Pulsa [%s] en el suelo para guardar tu posición y otra vez para volver a ella"
+	}
+]

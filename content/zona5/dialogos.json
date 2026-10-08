@@ -1,0 +1,30 @@
+[
+	{
+		"id": "santuario_promesa",
+		"speaker": "",
+		"lineas": [
+			"En el pedestal brota un manantial que todavía no ha decidido su forma.",
+			"Al tocarlo, sientes que el agua te hace una promesa: estará ahí… pero no enseguida.",
+			"Acércate a una fuente y pulsa {promesa}. Espera a que se cumpla."
+		]
+	},
+	{
+		"id": "mentora_victoria_z5",
+		"speaker": "La Mentora",
+		"lineas": [
+			"El remolino se calmó. Venciste a Callback Hell.",
+			"Ahora tus páginas pueden recibir datos, protegerlos y pedirlos al servidor sin congelarse: formularios, fetch, promesas y async/await.",
+			"Otro farol de Qatu brilla. Quedan seis regiones."
+		]
+	},
+	{
+		"id": "final_z5",
+		"speaker": "",
+		"lineas": [
+			"Los Ríos Asíncronos vuelven a fluir.",
+			"Cada petición llega a su destino, cada promesa se cumple o avisa de su error, y ningún callback se hunde en otro.",
+			"Qatu todavía no compila. Seis regiones esperan.",
+			"El portal de la Semana 6 te espera en la plaza: el Archivo Paginado."
+		]
+	}
+]

@@ -1,0 +1,31 @@
+[
+	{
+		"id": "santuario_binding",
+		"speaker": "mentora",
+		"lineas": [
+			"Bienvenido al Santuario del Vínculo, en las alturas de las Torres.",
+			"Aquí despierta la habilidad Data Binding: la sincronización bidireccional entre Modelo y Vista.",
+			"Pulsa {binding} para vincularte a un nodo y activar plataformas gemelas reactivas.",
+			"Úsalo para ascender hacia la Cúspide de la Arquitectura Limpia."
+		]
+	},
+	{
+		"id": "final_z2",
+		"speaker": "mentora",
+		"lineas": [
+			"¡Espagueti ha sido desacoplado y estructurado!",
+			"Las capas de presentación y dominio ahora respiran en armonía.",
+			"El segundo farol de la Plaza de Qatu brilla con luz pura de Clean Architecture.",
+			"El Reino Compilado avanza hacia su restauración total."
+		]
+	},
+	{
+		"id": "mentora_victoria_z2",
+		"speaker": "mentora",
+		"lineas": [
+			"Has conquistado las Torres de Arquitectura.",
+			"Comprendes los matices entre MPA, SPA, SSR, CSR y los patrones MV*.",
+			"Tu visión como ingeniero de software es cada vez más sólida."
+		]
+	}
+]

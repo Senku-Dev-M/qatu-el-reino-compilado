@@ -1,0 +1,20 @@
+[
+	{
+		"id": "intro_z10",
+		"speaker": "El Manual",
+		"lineas": [
+			"Has llegado al Sanctum Central de Qatu.",
+			"Nueve semanas de arquitectura, desarrollo full-stack, seguridad y orquestación te han traído hasta aquí.",
+			"Frente a ti se encuentra el Tribunal de la Demo en Vivo. ¡Demuestra tu maestría!"
+		]
+	},
+	{
+		"id": "victoria_final",
+		"speaker": "El Manual",
+		"lineas": [
+			"¡La Demo en Vivo ha sido un rotundo éxito sin un solo fallo en producción!",
+			"El marketplace Qatu brilla restaurado en su plenitud gracias a tu rigor arquitectónico.",
+			"¡Felicidades, Ingeniero de Software Full-Stack Graduado!"
+		]
+	}
+]

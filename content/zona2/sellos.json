@@ -1,0 +1,223 @@
+[
+	{
+		"id": "S19",
+		"zona": 2,
+		"nombre": "Sello de la Web y SPAs",
+		"lecciones": [
+			"L137",
+			"L138",
+			"L140",
+			"L143"
+		],
+		"pista": "El cliente maneja presentación e interacción; las SPAs actualizan el DOM con JavaScript sin recargas completas de página.",
+		"retos": [
+			{
+				"tipo": "elegir",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué ventaja clave aporta una Single Page Application (SPA) en la experiencia de usuario frente a una MPA tradicional?",
+				"opciones": [
+					"Que no necesita conexión a internet",
+					"Transiciones fluidas e instantáneas sin recargas completas del navegador",
+					"Que no utiliza CSS",
+					"Que funciona sin servidor"
+				],
+				"correcta": 1,
+				"explicacion": "Al actualizar dinámicamente el DOM con JavaScript, las SPAs eliminan el parpadeo de recarga de página."
+			},
+			{
+				"tipo": "completar",
+				"lenguaje": "texto",
+				"enunciado": "Completa el término del proceso donde el servidor pre-renderiza el HTML completo antes de enviarlo al cliente.",
+				"codigo": "El renderizado del lado del servidor se conoce comúnmente por sus siglas ___ (Server-Side Rendering).",
+				"opciones": [
+					"SSR",
+					"CSR",
+					"DNS",
+					"SQL"
+				],
+				"correcta": 0,
+				"explicacion": "SSR (Server-Side Rendering) genera el HTML en el servidor para entrega y SEO óptimo."
+			},
+			{
+				"tipo": "encontrar_error",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué afirmación sobre renderizado web contiene un error conceptual?",
+				"lineas": [
+					"CSR delega la construcción del DOM al motor de JavaScript del navegador.",
+					"SSR entrega HTML completo desde el servidor y luego se hidrata en el cliente.",
+					"En una MPA, cada navegación se procesa sin realizar peticiones HTTP al servidor.",
+					"El Critical Rendering Path incluye cálculo de Layout y fase de Paint."
+				],
+				"correcta": 2,
+				"corregida": "En una MPA, cada navegación solicita un nuevo documento HTML completo al servidor.",
+				"explicacion": "En una MPA cada cambio de página requiere obligatoriamente una nueva petición HTTP y recarga del documento."
+			},
+			{
+				"tipo": "ordenar",
+				"lenguaje": "texto",
+				"enunciado": "Ordena las etapas del Critical Rendering Path:",
+				"lineas": [
+					"Construir los árboles DOM (HTML) y CSSOM (CSS)",
+					"Combinarlos en el render tree con los nodos visibles",
+					"Layout: calcular posición y tamaño de cada caja",
+					"Paint: dibujar los píxeles de cada capa",
+					"Composite: combinar las capas en pantalla"
+				],
+				"orden_correcto": [
+					0,
+					1,
+					2,
+					3,
+					4
+				],
+				"explicacion": "DOM y CSSOM se construyen a partir del documento y se combinan antes de calcular geometría, pintar y componer."
+			}
+		]
+	},
+	{
+		"id": "S20",
+		"zona": 2,
+		"nombre": "Sello de los Patrones MV*",
+		"lecciones": [
+			"L146",
+			"L149",
+			"L150",
+			"L151"
+		],
+		"pista": "MVC procesa inputs con el Controller; MVP usa Vista pasiva y Presentador desacoplado; MVVM utiliza Data Binding con el ViewModel.",
+		"retos": [
+			{
+				"tipo": "elegir",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué patrón arquitectónico utiliza Data Binding bidireccional para sincronizar automáticamente el ViewModel con la Vista?",
+				"opciones": [
+					"MVC",
+					"MVP",
+					"MVVM",
+					"Singleton"
+				],
+				"correcta": 2,
+				"explicacion": "MVVM (Model-View-ViewModel) se caracteriza por el uso de data binding reactivo entre la vista y el ViewModel."
+			},
+			{
+				"tipo": "completar",
+				"lenguaje": "texto",
+				"enunciado": "En el patrón MVP, el componente que orquesta la lógica de presentación y manipula la vista pasiva a través de interfaces es el ___.",
+				"codigo": "public class Productos___ {\n  private readonly IProductosView _vista;\n}",
+				"opciones": [
+					"Presenter",
+					"Controller",
+					"ViewModel",
+					"Database"
+				],
+				"correcta": 0,
+				"explicacion": "El Presenter (Presentador) es el mediador en el patrón MVP."
+			},
+			{
+				"tipo": "encontrar_error",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué responsabilidad está mal asignada en una arquitectura MVVM?",
+				"lineas": [
+					"El Modelo contiene las entidades y lógica de dominio.",
+					"El ViewModel expone propiedades observables y comandos sin referencias a elementos visuales del DOM.",
+					"La Vista contiene consultas SQL directas a la base de datos de producción.",
+					"El Data Binding actualiza la vista cuando cambian las propiedades del ViewModel."
+				],
+				"correcta": 2,
+				"corregida": "La Vista se limita a renderizar la UI y enlazar eventos al ViewModel sin acceso a datos.",
+				"explicacion": "La Vista nunca debe interactuar directamente con la base de datos ni contener lógica de persistencia."
+			},
+			{
+				"tipo": "ordenar",
+				"lenguaje": "texto",
+				"enunciado": "Ordena cronológicamente la aparición histórica de los patrones de interfaz:",
+				"lineas": [
+					"MVC (Trygve Reenskaug, Smalltalk-80, 1979)",
+					"MVP (Taligent / IBM, 1996)",
+					"MVVM (John Gossman, Microsoft WPF, 2005)",
+					"Signals Reactivas Modernas (Solid / Angular Signals, 2020s)"
+				],
+				"orden_correcto": [
+					0,
+					1,
+					2,
+					3
+				],
+				"explicacion": "Evolución histórica de patrones: MVC (1979) -> MVP (1996) -> MVVM (2005) -> Signals (2020s)."
+			}
+		]
+	},
+	{
+		"id": "S21",
+		"zona": 2,
+		"nombre": "Sello de Clean Architecture",
+		"lecciones": [
+			"L152",
+			"L153",
+			"L154",
+			"L155"
+		],
+		"pista": "La Regla de Dependencia dicta que las dependencias de código solo pueden apuntar hacia adentro, protegiendo las entidades del dominio.",
+		"retos": [
+			{
+				"tipo": "elegir",
+				"lenguaje": "texto",
+				"enunciado": "En Clean Architecture, ¿hacia dónde deben apuntar estrictamente todas las dependencias del código fuente?",
+				"opciones": [
+					"Hacia los frameworks exteriores",
+					"Hacia el interior, hacia los casos de uso y entidades de dominio de mayor abstracción",
+					"Hacia el archivo index.html",
+					"En círculos sin dirección"
+				],
+				"correcta": 1,
+				"explicacion": "La Regla de Dependencia exige que las dependencias apunten hacia las capas internas de negocio."
+			},
+			{
+				"tipo": "completar",
+				"lenguaje": "texto",
+				"enunciado": "Completa el nombre de la capa más interna de Clean Architecture que encapsula las reglas críticas de negocio y entidades empresariales.",
+				"codigo": "La capa central independiente de frameworks es el ___ (Domain / Entities).",
+				"opciones": [
+					"Dominio",
+					"Infraestructura",
+					"Controlador",
+					"Base de Datos"
+				],
+				"correcta": 0,
+				"explicacion": "El Dominio (Entities) es el núcleo central que alberga las reglas de negocio de la empresa."
+			},
+			{
+				"tipo": "encontrar_error",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué afirmación viola los principios de Clean Architecture?",
+				"lineas": [
+					"Los casos de uso orquestan el flujo de datos entre entidades y adaptadores.",
+					"Las entidades de dominio importan directamente librerías de controladores HTTP de Express.",
+					"Los repositorios se declaran como interfaces en las capas internas y se implementan en infraestructura.",
+					"La lógica de negocio se puede probar sin levantar servidores web ni bases de datos."
+				],
+				"correcta": 1,
+				"corregida": "Las entidades de dominio no conocen ni importan frameworks web ni librerías externas.",
+				"explicacion": "El dominio debe ser 100% puro y no tener dependencias de frameworks web como Express o ASP.NET."
+			},
+			{
+				"tipo": "ordenar",
+				"lenguaje": "texto",
+				"enunciado": "Ordena las capas de Clean Architecture desde la más externa (detalle) hasta la más interna (núcleo):",
+				"lineas": [
+					"Infraestructura (Frameworks, Web, Base de Datos, UI)",
+					"Adaptadores de Interfaz (Controllers, Presenters, Gateways)",
+					"Casos de Uso / Aplicación (Reglas de la aplicación)",
+					"Dominio / Entidades (Reglas críticas del negocio)"
+				],
+				"orden_correcto": [
+					0,
+					1,
+					2,
+					3
+				],
+				"explicacion": "Capas de fuera a dentro: Infraestructura -> Adaptadores -> Casos de Uso -> Dominio."
+			}
+		]
+	}
+]

@@ -1,0 +1,11 @@
+[
+	{
+		"id": "z7", "zona": 7, "semana": 7,
+		"nombre": "Ciudadela IAM",
+		"tema": "Autenticación y autorización, OAuth 2.0, PKCE, OpenID Connect, buenas prácticas con tokens, IAM y autenticación en el frontend",
+		"salas": ["z7_puesto", "z7_barbacana", "z7_patio", "z7_capilla", "z7_muralla", "z7_torre", "z7_sesiones"],
+		"habilidad": "token",
+		"jefe": "impostor_implicito",
+		"fragmentos": ["z7_capilla:fragmento"]
+	}
+]

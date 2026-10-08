@@ -1,0 +1,11 @@
+[
+	{
+		"id": "rest_dash",
+		"zona": 1,
+		"nombre": "REST Dash",
+		"descripcion": "Un impulso horizontal rápido. Si atraviesas un terminal REST con él, el terminal recibe la petición y responde abriendo la compuerta que controla. En el aire puedes usarlo una vez por salto.",
+		"leccion": "En REST, el cliente envía una petición HTTP (método + ruta, como GET /api/pedidos) y el servidor responde con un código de estado: 401 si falta autenticación, 200 si todo fue bien. Lo estudias en las Catacumbas de Endpoints.",
+		"control": "dash",
+		"instruccion": "Pulsa [%s] para lanzar el REST Dash. Atraviesa un terminal con él para enviar la petición."
+	}
+]

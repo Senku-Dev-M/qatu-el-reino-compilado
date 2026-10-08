@@ -1,0 +1,231 @@
+[
+	{
+		"id": "L134",
+		"zona": 1,
+		"sala": "z1_bastion",
+		"orden": 134,
+		"nivel": "inicial",
+		"titulo": "Autenticación básica HTTP y API Keys",
+		"resumen": "Mecanismos iniciales de autenticación en APIs: HTTP Basic Auth y claves de API en cabeceras.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "HTTP Basic Auth",
+				"texto": "El esquema de autenticación más elemental envía usuario y contraseña, separados por `:` y codificados en Base64, en la cabecera `Authorization`. Para `ana:alpaca123`:\n\n`Authorization: Basic YW5hOmFscGFjYTEyMw==`\n\n**Inseguro sin HTTPS:** Base64 no es cifrado; cualquier intermediario puede decodificarlo. Solo es admisible sobre canales cifrados con TLS."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Claves de API (API Keys)",
+				"texto": "Una [[api_key]] es una cadena secreta que identifica a la aplicación que realiza la llamada:\n\n• Se envía comúnmente en una cabecera personalizada como `X-API-Key`.\n• Es útil para control de cuotas y seguimiento de uso entre servidores, pero no identifica la identidad del usuario final."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Petición autenticada",
+				"texto": "La API key identifica a la **aplicación** y viaja en una cabecera. Y Basic Auth no protege nada por sí solo: cualquiera decodifica el Base64.",
+				"vista": {
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "GET",
+								"url": "https://api.qatu.com/catalogo",
+								"cabeceras": [
+									"X-API-Key: qk_live_8f2c..."
+								],
+								"estado": "200 OK",
+								"respuesta": "[ { \"id\": 42, \"nombre\": \"Poncho\" } ]"
+							}
+						},
+						{
+							"consola": [
+								"> atob('YW5hOmFscGFjYTEyMw==')",
+								"'ana:alpaca123'"
+							]
+						}
+					],
+					"pestana": "DevTools"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Credenciales expuestas",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "// en el código de la SPA\nfetch('https://api.pagos.com/cobros', {\n  headers: { 'X-API-Key': 'sk_live_9a7...' },\n});",
+						"bien": "// la SPA llama a su propio backend\nfetch('/api/pagos', { method: 'POST', body });\n// el backend usa la clave de una variable de entorno",
+						"explicacion": "Todo lo que llega al navegador es público: la clave aparece en el bundle y en la pestaña Network. Las claves secretas se quedan en el servidor."
+					},
+					{
+						"mal": "GET https://api.qatu.com/catalogo?api_key=qk_live_8f2c",
+						"bien": "GET https://api.qatu.com/catalogo\nX-API-Key: qk_live_8f2c",
+						"explicacion": "Las URL quedan en historiales y en los logs de servidores y proxies. Las credenciales van en cabeceras."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Requisito de Basic Auth",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Dónde debe guardarse la clave secreta de la pasarela de pagos que usa Qatu?",
+					"opciones": [
+						"En el código JavaScript de la SPA",
+						"En la URL de cada petición",
+						"En una variable de entorno del backend",
+						"En LocalStorage"
+					],
+					"correcta": 2,
+					"explicacion": "Todo lo que llega al navegador es público; los secretos se quedan en el servidor."
+				}
+			}
+		]
+	},
+	{
+		"id": "L135",
+		"zona": 1,
+		"sala": "z1_bastion",
+		"orden": 135,
+		"nivel": "intermedio",
+		"titulo": "Tokens de referencia frente a Tokens JWT",
+		"resumen": "Diferencia entre tokens con estado (requieren consulta a BD) y tokens autocontenidos y firmados (stateless).",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Tokens de referencia (Stateful)",
+				"texto": "Un token opaco (ej. `sess_abc123`) es un identificador aleatorio. Cada vez que el servidor recibe la petición, debe consultar la base de datos o Redis para recuperar la información del usuario. Permite revocación inmediata pero introduce latencia de consulta."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Tokens JWT (Stateless)",
+				"texto": "Un [[jwt]] (JSON Web Token) contiene la información del usuario codificada y firmada criptográficamente en 3 secciones separadas por puntos (`Header.Payload.Signature`):\n\n• **Header:** algoritmo y tipo (`{\"alg\": \"HS256\", \"typ\": \"JWT\"}`).\n• **Payload (Claims):** datos del usuario (`sub`, `roles`, `exp`).\n• **Signature:** firma con clave secreta que garantiza que nadie alteró el contenido."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Validación sin consultar BD",
+				"texto": "Un middleware valida la firma y la expiración con la clave del servidor. Si todo es correcto, los claims quedan disponibles sin consultar la base de datos:",
+				"lenguaje": "js",
+				"codigo": "const jwt = require('jsonwebtoken');\n\nfunction autenticar(req, res, next) {\n  const token = req.headers.authorization?.replace('Bearer ', '');\n  try {\n    req.usuario = jwt.verify(token, process.env.JWT_SECRETO, {\n      algorithms: ['HS256'],\n    });\n    next();\n  } catch {\n    res.sendStatus(401); // firma inválida o token expirado\n  }\n}",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"> req.usuario",
+								"{ sub: '7', roles: ['comprador'], exp: 1767225600 }"
+							]
+						}
+					],
+					"pestana": "Node.js"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores con JWT",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "jwt.sign({ sub: '7', password: 'alpaca123' }, secreto);",
+						"bien": "jwt.sign({ sub: '7', roles: ['comprador'] }, secreto, { expiresIn: '15m' });",
+						"explicacion": "El payload solo está **codificado en Base64**, no cifrado: cualquiera lo lee. Nunca lleva datos sensibles y siempre debe expirar."
+					},
+					{
+						"mal": "const datos = jwt.decode(token);\nreq.usuario = datos;",
+						"bien": "req.usuario = jwt.verify(token, secreto, { algorithms: ['HS256'] });",
+						"explicacion": "`decode` no comprueba la firma: un atacante podría fabricar un token con `roles: ['admin']`."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Ventaja del JWT",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué pasa si el backend usa jwt.decode en lugar de jwt.verify para autenticar?",
+					"opciones": [
+						"Nada: ambos comprueban la firma",
+						"Acepta tokens falsificados porque no valida la firma",
+						"Los tokens dejan de expirar",
+						"El token se cifra dos veces"
+					],
+					"correcta": 1,
+					"explicacion": "decode solo lee el payload; verify comprueba la firma y la expiración."
+				}
+			}
+		]
+	},
+	{
+		"id": "L136",
+		"zona": 1,
+		"sala": "z1_bastion",
+		"orden": 136,
+		"nivel": "intermedio",
+		"titulo": "Pruebas automatizadas de APIs",
+		"resumen": "Pirámide de pruebas aplicada a APIs: pruebas unitarias con mocks, pruebas de integración y contratos.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Pruebas en el backend",
+				"texto": "La calidad de una API descansa en pruebas automatizadas:\n\n• [[prueba_unitaria]]: evalúa la lógica de un método o servicio aislando repositorios y llamadas de red con dobles de prueba (Mocks / Stubs).\n• **Prueba de Integración:** valida la interacción real entre controladores, servicios, base de datos en memoria y middlewares.\n• **Prueba de Contrato:** verifica que las respuestas del backend cumplan rigurosamente el esquema OpenAPI acordado."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Prueba unitaria en xUnit / Jest",
+				"texto": "Prueba unitaria con Jest. El repositorio se sustituye por un **mock**; así solo se prueba la regla del descuento:",
+				"lenguaje": "js",
+				"codigo": "test('aplica 10% de descuento a pedidos de más de 100', async () => {\n  const repo = { obtenerProducto: jest.fn().mockResolvedValue({ precio: 60 }) };\n  const servicio = new PedidoService(repo);\n\n  const total = await servicio.calcularTotal({ productoId: 42, cantidad: 2 });\n\n  expect(total).toBe(108);\n  expect(repo.obtenerProducto).toHaveBeenCalledWith(42);\n});"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Pipeline de verificación",
+				"texto": "Al ejecutar `dotnet test` o `npm test`, todas las pruebas unitarias y de integración se validan antes del despliegue.",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ npm test",
+								"PASS  src/pedidos/pedido.service.test.js",
+								"  ✓ aplica 10% de descuento a pedidos de más de 100 (4 ms)",
+								"PASS  src/pedidos/pedidos.api.test.js",
+								"  ✓ POST /api/pedidos devuelve 201 (61 ms)",
+								"Tests: 2 passed, 2 total"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Pruebas que no prueban",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "test('calcula el total', async () => {\n  await servicio.calcularTotal(pedido);\n});",
+						"bien": "test('calcula el total', async () => {\n  const total = await servicio.calcularTotal(pedido);\n  expect(total).toBe(108);\n});",
+						"explicacion": "Sin `expect` la prueba pasa aunque el cálculo esté mal. Toda prueba necesita una **aserción**."
+					},
+					{
+						"mal": "// prueba unitaria\nconst repo = new PedidoRepositorio(conexionProduccion);",
+						"bien": "// prueba unitaria\nconst repo = { obtenerProducto: jest.fn().mockResolvedValue({ precio: 60 }) };",
+						"explicacion": "Una prueba unitaria contra la base real es lenta, frágil y puede modificar datos. Esa verificación corresponde a las pruebas de integración, con una base de pruebas."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Propósito del Mock",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Una prueba unitaria llama a calcularTotal pero no contiene ningún expect. ¿Qué ocurre si el cálculo está mal?",
+					"opciones": [
+						"La prueba falla",
+						"La prueba pasa igualmente",
+						"La prueba no se ejecuta",
+						"Jest corrige el cálculo"
+					],
+					"correcta": 1,
+					"explicacion": "Sin aserciones, la prueba solo comprueba que no se lanza una excepción."
+				}
+			}
+		]
+	}
+]

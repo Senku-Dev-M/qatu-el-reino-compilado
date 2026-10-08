@@ -1,0 +1,238 @@
+[
+	{
+		"id": "L158",
+		"zona": 8,
+		"sala": "z8_muelle",
+		"orden": 158,
+		"nivel": "inicial",
+		"titulo": "Virtualización frente a Contenedores",
+		"resumen": "Las máquinas virtuales virtualizan hardware y SO completo; los contenedores comparten el kernel haciéndolos ligeros e instantáneos.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Evolución de la infraestructura",
+				"texto": "• **Máquinas Virtuales (VMs):** cada VM incluye un sistema operativo invitado completo (Guest OS), binarios, librerías y hardware virtualizado por un Hypervisor. Pesan gigabytes y tardan minutos en arrancar.\n• [[contenedor]]es: empaquetan la aplicación y sus dependencias compartiendo el mismo kernel del sistema operativo anfitrión. Pesan megabytes y arrancan en milisegundos."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Arrancar la misma API de dos formas",
+				"lenguaje": "texto",
+				"texto": "Con una VM hay que crear la máquina, instalar un sistema operativo y después el runtime. Con un contenedor, la imagen ya trae la aplicación y sus dependencias, y arranca como un proceso más del anfitrión:",
+				"codigo": "# Máquina virtual (minutos)\n1. Crear la VM y asignarle 2 GB de RAM y disco\n2. Instalar Ubuntu Server\n3. Instalar Node.js 20 y las dependencias\n4. Copiar la API y arrancarla\n\n# Contenedor (segundos)\n$ docker run -d -p 8080:3000 qatu/api:1.4.0"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Máquina virtual frente a contenedor",
+				"texto": "Una VM lleva su propio sistema operativo completo; los contenedores comparten el **kernel** del anfitrión. Por eso ocupan megabytes y caben muchos más en el mismo servidor.",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"",
+									"Máquina virtual",
+									"Contenedor"
+								],
+								"filas": [
+									[
+										"Aislamiento",
+										"hardware virtual + SO invitado",
+										"procesos (namespaces, cgroups)"
+									],
+									[
+										"Tamaño típico",
+										"GB",
+										"MB"
+									],
+									[
+										"Arranque",
+										"minutos",
+										"milisegundos a segundos"
+									],
+									[
+										"Kernel",
+										"propio",
+										"compartido con el anfitrión"
+									],
+									[
+										"Cuándo elegirla",
+										"otro SO o aislamiento fuerte",
+										"empaquetar y escalar apps"
+									]
+								],
+								"resaltar": 2
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Ideas equivocadas sobre contenedores",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "\"Un contenedor es una máquina virtual\nmás ligera: tiene su propio kernel.\"",
+						"bien": "\"Un contenedor es un proceso aislado\nque usa el kernel del anfitrión.\"",
+						"explicacion": "Por compartir el kernel, una imagen de Linux no se ejecuta de forma nativa sobre un kernel de Windows: Docker Desktop usa una VM ligera para eso."
+					},
+					{
+						"mal": "Guardar los pedidos dentro del sistema de\narchivos del contenedor de la base de datos.",
+						"bien": "Montar un volumen para los datos\n(se ve en el Astillero de Compose).",
+						"explicacion": "Los contenedores son desechables: al eliminarlos se pierde todo lo escrito en su capa."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Ventaja de contenedores",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Por qué un contenedor arranca mucho más rápido que una máquina virtual?",
+					"opciones": [
+						"Porque usa una CPU dedicada",
+						"Porque comparte el kernel del anfitrión y no arranca un sistema operativo completo",
+						"Porque no tiene sistema de archivos",
+						"Porque solo funciona en la nube"
+					],
+					"correcta": 1,
+					"explicacion": "La VM emula hardware y arranca un SO invitado; el contenedor es un proceso aislado sobre el kernel existente."
+				}
+			}
+		]
+	},
+	{
+		"id": "L159",
+		"zona": 8,
+		"sala": "z8_muelle",
+		"orden": 159,
+		"nivel": "intermedio",
+		"titulo": "Namespaces y Cgroups en Linux",
+		"resumen": "Los dos pilares del kernel de Linux que hacen posible el aislamiento y control de recursos en contenedores.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Aislamiento a nivel de Kernel",
+				"texto": "Un contenedor no es magia: es un proceso estándar de Linux aislado mediante dos tecnologías:\n\n• **Namespaces (Aislamiento de vista):** deciden qué puede ver el contenedor. Aíslan procesos (`pid`), red (`net`), sistemas de archivos (`mnt`), usuarios (`user`) y nombres de host (`uts`).\n• **Cgroups - Control Groups (Límites de recursos):** deciden cuánto puede usar el contenedor. Limitan el uso máximo de CPU, memoria RAM, I/O de disco y ancho de banda de red."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Límites y aislamiento desde la línea de comandos",
+				"lenguaje": "texto",
+				"texto": "Docker traduce estas opciones a **cgroups**: `--memory` y `--cpus` fijan los topes. Dentro del contenedor, el namespace `pid` hace que la aplicación se vea como el proceso 1:",
+				"codigo": "$ docker run -d --name api --memory=256m --cpus=0.5 qatu/api:1.4.0\n\n$ docker exec api ps\nPID   USER     COMMAND\n  1   node     node server.js      <- namespace pid propio\n 27   node     ps\n\n$ docker stats --no-stream api\nNAME  CPU %   MEM USAGE / LIMIT\napi   3.10%   88MiB / 256MiB       <- tope del cgroup"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Protección contra saturación",
+				"texto": "Si el proceso intenta superar el límite de memoria de su cgroup, el kernel lo termina. Docker lo registra en el estado del contenedor:",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ docker inspect api --format '{{.State.OOMKilled}} {{.State.ExitCode}}'",
+								"true 137"
+							]
+						},
+						{
+							"nota": "137 = 128 + 9 (SIGKILL): el proceso no terminó por sí mismo, lo mató el kernel."
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Función de los Cgroups",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Un contenedor con --memory=256m intenta usar 400 MB. ¿Qué mecanismo del kernel lo impide?",
+					"opciones": [
+						"Los namespaces",
+						"Los cgroups",
+						"El Dockerfile",
+						"La red bridge"
+					],
+					"correcta": 1,
+					"explicacion": "Los namespaces aíslan lo que el proceso ve; los cgroups limitan lo que puede consumir."
+				}
+			}
+		]
+	},
+	{
+		"id": "L160",
+		"zona": 8,
+		"sala": "z8_muelle",
+		"orden": 160,
+		"nivel": "inicial",
+		"titulo": "Arquitectura de Docker Engine",
+		"resumen": "Cliente Docker, Docker Daemon (dockerd), imágenes, contenedores y registros de imágenes (Docker Hub).",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Componentes de Docker",
+				"texto": "La plataforma [[docker]] opera con arquitectura cliente-servidor:\n\n• **Docker CLI:** interfaz de línea de comandos que el desarrollador ejecuta (`docker run`, `docker build`).\n• **Docker Daemon (dockerd):** servicio en segundo plano que gestiona imágenes, contenedores, redes y volúmenes.\n• **Imágenes (Images):** plantillas inmutables de sólo lectura con el código y entorno.\n• **Contenedores:** instancias ejecutables de una imagen.\n• **Registro (Registry):** almacén central de imágenes públicas o privadas (Docker Hub, AWS ECR, GitLab Registry)."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Flujo de comandos esencial",
+				"texto": "El **cliente** (`docker`) envía cada orden al **daemon** (`dockerd`), que descarga imágenes del **registro**, crea contenedores y guarda los logs:",
+				"lenguaje": "texto",
+				"codigo": "$ docker pull node:20-alpine        # descarga una imagen del registro\n$ docker build -t qatu/api:1.4.0 .  # construye una imagen desde el Dockerfile\n$ docker run -d -p 8080:3000 --name api qatu/api:1.4.0\n$ docker ps                         # contenedores en ejecución\n$ docker logs -f api                # salida de la aplicación\n$ docker exec -it api sh            # abre una shell dentro\n$ docker stop api && docker rm api  # detiene y elimina\n$ docker push qatu/api:1.4.0        # publica en el registro"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Ejecución inmediata",
+				"texto": "`-p 8080:3000` publica el puerto 3000 del contenedor en el 8080 del anfitrión. La API de Qatu responde en `localhost:8080`:",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ docker ps",
+								"CONTAINER ID  IMAGE           STATUS        PORTS                   NAMES",
+								"3f9a1c2d7b10  qatu/api:1.4.0  Up 8 seconds  0.0.0.0:8080->3000/tcp  api",
+								"$ curl localhost:8080/health",
+								"{\"estado\":\"ok\"}"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Confusiones frecuentes con Docker",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "$ docker run qatu/api:1.4.0\n# la API escucha en 3000, pero curl localhost:3000 falla",
+						"bien": "$ docker run -p 3000:3000 qatu/api:1.4.0",
+						"explicacion": "Los puertos del contenedor no son accesibles desde el anfitrión hasta que se **publican** con `-p anfitrion:contenedor`."
+					},
+					{
+						"mal": "$ docker exec -it api sh\n# vi server.js   (se corrige un bug a mano)",
+						"bien": "# se corrige en el código, se reconstruye y se\n# despliega una imagen nueva\n$ docker build -t qatu/api:1.4.1 .",
+						"explicacion": "Los cambios dentro de un contenedor se pierden al recrearlo y no quedan en ninguna imagen. La imagen es la fuente de verdad."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Diferencia imagen y contenedor",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Ejecutas docker run qatu/api y la API escucha en el puerto 3000, pero curl localhost:3000 no responde. ¿Qué falta?",
+					"opciones": [
+						"Ejecutar docker build de nuevo",
+						"Publicar el puerto con -p 3000:3000",
+						"Añadir EXPOSE al docker-compose.yml",
+						"Usar docker exec"
+					],
+					"correcta": 1,
+					"explicacion": "Los puertos del contenedor no llegan al anfitrión hasta que se publican; EXPOSE solo documenta."
+				}
+			}
+		]
+	}
+]

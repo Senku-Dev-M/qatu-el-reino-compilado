@@ -1,0 +1,9 @@
+[
+	{
+		"id": "token", "zona": 7, "nombre": "Tokens",
+		"descripcion": "Pide un access token en un autorizador: tendrá un alcance y una caducidad. Mientras siga vigente, los arcos lectores de ese alcance te dejan pasar y los puentes de luz existen. Pulsa la tecla para renovarlo con tu refresh token.",
+		"leccion": "OAuth 2.0 emite un access token de vida corta con un alcance (scope) y un refresh token de vida larga. El access token se envía a la API en cada petición; el refresh solo sirve ante el servidor de autorización para pedir uno nuevo. Lo estudias en la Barbacana de los Tokens.",
+		"control": "token",
+		"instruccion": "Pide el token en un autorizador y pulsa [%s] para renovarlo cuando caduque"
+	}
+]

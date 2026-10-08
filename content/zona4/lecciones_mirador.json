@@ -1,0 +1,75 @@
+[
+	{
+		"id": "L29", "zona": 4, "sala": "z4_mirador", "orden": 29, "nivel": "inicial",
+		"titulo": "Qué es el layout en CSS",
+		"resumen": "El layout es la forma de colocar las cajas de una página. Sin reglas de layout, el navegador usa el flujo normal.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Colocar cajas",
+				"texto": "En la Semana 3 viste que cada elemento es una caja (modelo de cajas). El [[layout]] (diseño o maquetación) decide **dónde** va cada caja: qué va a la izquierda, qué va arriba, cuántas columnas hay y cómo cambia todo cuando la pantalla es más pequeña.\n\nCSS ofrece varias herramientas de layout. En esta zona aprenderás las dos modernas: **Flexbox** y **Grid**."
+			},
+			{
+				"tipo": "concepto", "titulo": "Una breve evolución",
+				"texto": "Las técnicas de layout cambiaron con el tiempo:\n\n• **Tablas** (`<table>`): en los 90 se usaban para maquetar páginas enteras. Mezclaban estructura y presentación.\n• [[float]]: pensado para que el texto rodee una imagen, se usó durante años para hacer columnas. Era frágil.\n• **inline-block**: permitía alinear cajas en una línea, con problemas de espacios.\n• **Flexbox**: diseñado para alinear y distribuir elementos en **una dimensión**.\n• **Grid**: diseñado para layouts en **dos dimensiones** (filas y columnas).\n\nHoy Flexbox y Grid funcionan en todos los navegadores modernos."
+			},
+			{
+				"tipo": "resultado", "titulo": "El flujo normal",
+				"texto": "Si no aplicas ninguna regla de layout, el navegador coloca los elementos según el [[flujo normal|flujo_normal]]: los elementos de **bloque** se apilan uno debajo de otro y los elementos **en línea** se colocan uno junto a otro, como las palabras de un texto.",
+				"lenguaje": "html",
+				"codigo": "<h1>Mercado</h1>\n<p>Productos del día:\n  <a href=\"#\">mantas</a>\n  <a href=\"#\">ponchos</a>\n</p>\n<div>Horario: 9 a 18 h</div>",
+				"vista": {"sin_navegador": true, "bloques": [{"flujo": {"ancho": 520, "elementos": [{"tipo": "block", "texto": "<h1>"}, {"tipo": "block", "texto": "<p> (bloque)"}, {"tipo": "inline", "texto": "<a> mantas"}, {"tipo": "inline", "texto": "<a> ponchos"}, {"tipo": "block", "texto": "<div>"}]}}, {"nota": "Azul: bloques (ocupan todo el ancho). Naranja: elementos en línea."}]}
+			},
+			{
+				"tipo": "comprueba", "titulo": "¿Qué pasa sin layout?",
+				"pregunta": {
+					"enunciado": "Escribes tres <div> seguidos sin ninguna regla de layout. ¿Cómo los coloca el navegador?",
+					"opciones": ["Uno al lado del otro", "Uno debajo del otro, cada uno ocupando todo el ancho", "Superpuestos en el mismo lugar", "En tres columnas iguales"],
+					"correcta": 1,
+					"explicacion": "`<div>` es un elemento de bloque: en el flujo normal cada uno empieza en una línea nueva y ocupa todo el ancho disponible."
+				}
+			}
+		]
+	},
+	{
+		"id": "L30", "zona": 4, "sala": "z4_mirador", "orden": 30, "nivel": "inicial",
+		"titulo": "Elementos de bloque y en línea",
+		"resumen": "display: block ocupa todo el ancho y empieza en línea nueva; display: inline fluye con el texto y no acepta width ni height. inline-block combina ambos.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "La propiedad display",
+				"texto": "La propiedad [[display]] decide cómo participa una caja en el layout. Sus dos valores básicos son:\n\n• [[block|elemento_de_bloque]]: empieza en una **línea nueva**, ocupa **todo el ancho** disponible y respeta `width`, `height` y los márgenes verticales. Por defecto: `div`, `p`, `h1`–`h6`, `ul`, `section`…\n• [[inline|elemento_en_linea]]: se coloca **junto** al contenido anterior, ocupa solo el ancho de su contenido e **ignora** `width` y `height`. Por defecto: `span`, `a`, `strong`, `em`…"
+			},
+			{
+				"tipo": "sintaxis", "titulo": "Cambiar el comportamiento",
+				"texto": "Cualquier elemento puede cambiar su comportamiento con `display`. El valor [[inline-block|inline_block]] mezcla ambos: se coloca en línea, pero **sí** acepta ancho, alto y padding vertical. Es útil, por ejemplo, para botones dentro de un texto.",
+				"lenguaje": "css",
+				"codigo": "a.boton {\n  display: inline-block;\n  width: 140px;\n  padding: 8px;\n}\n\nli {\n  display: inline;   /* lista en horizontal */\n}"
+			},
+			{
+				"tipo": "errores", "titulo": "Anchos que no funcionan",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": "span.precio {\n  width: 120px;\n}",
+						"bien": "span.precio {\n  display: inline-block;\n  width: 120px;\n}",
+						"explicacion": "`span` es en línea: ignora `width`. Para darle ancho hay que cambiarlo a `inline-block` o `block`."
+					},
+					{
+						"mal": ".menu li {\n  float: left;\n}",
+						"bien": ".menu {\n  display: flex;\n}",
+						"explicacion": "Usar `float` para colocar elementos en fila es una técnica antigua y frágil. Hoy se usa Flexbox, que verás en la siguiente sala."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba", "titulo": "Bloque o en línea",
+				"pregunta": {
+					"enunciado": "¿Cuál de estos elementos es de bloque por defecto?",
+					"opciones": ["<span>", "<a>", "<p>", "<strong>"],
+					"correcta": 2,
+					"explicacion": "`<p>` es de bloque. `<span>`, `<a>` y `<strong>` son elementos en línea."
+				}
+			}
+		]
+	}
+]

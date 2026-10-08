@@ -1,0 +1,274 @@
+[
+	{
+		"id": "L35",
+		"zona": 4,
+		"sala": "z4_caravana",
+		"orden": 35,
+		"nivel": "intermedio",
+		"titulo": "flex-wrap: elementos en varias líneas",
+		"resumen": "Por defecto (nowrap) los elementos flex se quedan en una sola línea aunque no quepan. Con flex-wrap: wrap pasan a la línea siguiente.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Una línea o varias",
+				"texto": "Por defecto un contenedor flex tiene `flex-wrap: nowrap`: **todos** los elementos se quedan en una línea. Si no caben, se encogen y, si no pueden encogerse más, se desbordan del contenedor.\n\nCon [[flex-wrap: wrap|flex_wrap]], los elementos que no caben **saltan a una línea nueva**, igual que las palabras de un párrafo. Es la forma más simple de hacer una lista de tarjetas que se adapta al ancho disponible."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Con wrap",
+				"texto": "Cinco tarjetas de 140 px en un contenedor de 480 px: caben tres por línea (con 12 px de gap) y las otras dos pasan a la siguiente.",
+				"lenguaje": "css",
+				"codigo": ".productos {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 12px;\n}\n\n.tarjeta {\n  width: 140px;\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"flex": {
+								"ancho": 480,
+								"alto": 110,
+								"wrap": true,
+								"gap": 12,
+								"align": "flex-start",
+								"items": [
+									{
+										"texto": "Manta",
+										"ancho": 140,
+										"alto": 44
+									},
+									{
+										"texto": "Poncho",
+										"ancho": 140,
+										"alto": 44
+									},
+									{
+										"texto": "Gorro",
+										"ancho": 140,
+										"alto": 44
+									},
+									{
+										"texto": "Bolso",
+										"ancho": 140,
+										"alto": 44
+									},
+									{
+										"texto": "Vasija",
+										"ancho": 140,
+										"alto": 44
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Contenido desbordado",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": ".productos {\n  display: flex;\n}\n.tarjeta {\n  min-width: 300px;\n}",
+						"bien": ".productos {\n  display: flex;\n  flex-wrap: wrap;\n}\n.tarjeta {\n  min-width: 300px;\n}",
+						"explicacion": "Con `nowrap` y un ancho mínimo, las tarjetas no pueden encogerse y se salen del contenedor en pantallas estrechas. `wrap` las reparte en varias líneas."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Valor por defecto",
+				"pregunta": {
+					"enunciado": "¿Qué ocurre con los elementos flex que no caben en el contenedor si no escribes flex-wrap?",
+					"opciones": [
+						"Pasan automáticamente a la línea siguiente",
+						"Se quedan en una línea: se encogen y pueden desbordarse",
+						"Desaparecen",
+						"Se convierten en una columna"
+					],
+					"correcta": 1,
+					"explicacion": "El valor por defecto es `nowrap`: todo en una línea. Para saltar de línea hay que escribir `flex-wrap: wrap`."
+				}
+			}
+		]
+	},
+	{
+		"id": "L36",
+		"zona": 4,
+		"sala": "z4_caravana",
+		"orden": 36,
+		"nivel": "intermedio",
+		"titulo": "flex-grow, flex-shrink y flex-basis",
+		"resumen": "flex-basis es el tamaño inicial, flex-grow reparte el espacio sobrante y flex-shrink decide cómo se encoge cada elemento cuando falta espacio.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Tamaños flexibles",
+				"texto": "Tres propiedades de los **elementos** flex controlan su tamaño en el eje principal:\n\n• [[flex-basis|flex_basis]]: tamaño **inicial** antes de repartir el espacio (por defecto `auto`, el tamaño de su contenido o su `width`).\n• [[flex-grow|flex_grow]]: cuánto **crece** para ocupar el espacio sobrante. Por defecto `0` (no crece).\n• [[flex-shrink|flex_shrink]]: cuánto **se encoge** si falta espacio. Por defecto `1`.\n\nEl atajo `flex: 1` equivale a `flex-grow: 1; flex-shrink: 1; flex-basis: 0%`."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Repartir el espacio sobrante",
+				"texto": "Contenedor de 480 px con dos elementos de 100 px: sobran 280 px. Con `flex-grow: 1` y `3`, el sobrante se reparte en 4 partes: el primero recibe 1 (70 px → 170 px) y el segundo 3 (210 px → 310 px).",
+				"lenguaje": "css",
+				"codigo": ".filtros {\n  flex-basis: 100px;\n  flex-grow: 1;\n}\n\n.resultados {\n  flex-basis: 100px;\n  flex-grow: 3;\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"flex": {
+								"ancho": 480,
+								"alto": 60,
+								"items": [
+									{
+										"texto": "filtros (170px)",
+										"ancho": 100,
+										"grow": 1
+									},
+									{
+										"texto": "resultados (310px)",
+										"ancho": 100,
+										"grow": 3
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Un patrón habitual",
+				"texto": "Un buscador con un campo que ocupa todo el espacio y un botón de tamaño fijo: el campo crece, el botón no.",
+				"lenguaje": "css",
+				"codigo": ".buscador {\n  display: flex;\n  gap: 8px;\n}\n\n.buscador input {\n  flex: 1;        /* ocupa lo que sobra */\n}\n\n.buscador button {\n  flex: none;     /* 0 0 auto: tamaño fijo */\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"flex": {
+								"ancho": 480,
+								"alto": 50,
+								"gap": 8,
+								"items": [
+									{
+										"texto": "input (flex: 1)",
+										"ancho": 0,
+										"grow": 1
+									},
+									{
+										"texto": "Buscar",
+										"ancho": 100
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Calcula",
+				"pregunta": {
+					"enunciado": "Contenedor de 600 px, tres elementos con flex-basis: 100px y flex-grow: 1. ¿Cuánto mide cada uno?",
+					"opciones": [
+						"100 px",
+						"150 px",
+						"200 px",
+						"300 px"
+					],
+					"correcta": 2,
+					"explicacion": "Sobran 600 − 300 = 300 px, que se reparten por igual (1:1:1): 100 cada uno. Cada elemento mide 100 + 100 = **200 px**."
+				}
+			}
+		]
+	},
+	{
+		"id": "L37",
+		"zona": 4,
+		"sala": "z4_caravana",
+		"orden": 37,
+		"nivel": "intermedio",
+		"titulo": "Flex anidados y compatibilidad",
+		"resumen": "Un elemento flex puede ser a su vez contenedor flex. Así se construyen cabeceras, tarjetas y barras. Flexbox funciona en todos los navegadores modernos.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Contenedores dentro de contenedores",
+				"texto": "Un elemento flex puede tener también `display: flex` y convertirse en contenedor de sus propios hijos. Así se construyen interfaces completas a partir de piezas simples:\n\n• La **cabecera** es un contenedor flex con dos hijos: el logo y el menú (`space-between`).\n• El **menú** es a su vez contenedor flex de sus enlaces (`gap`).\n\nCada nivel resuelve una sola alineación."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Cabecera de Qatu",
+				"lenguaje": "css",
+				"codigo": ".cabecera {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.cabecera nav {\n  display: flex;\n  gap: 16px;\n}",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"flex": {
+								"etiqueta": ".cabecera",
+								"ancho": 520,
+								"alto": 60,
+								"justify": "space-between",
+								"align": "center",
+								"items": [
+									{
+										"texto": "QATU",
+										"ancho": 90,
+										"alto": 40
+									},
+									{
+										"texto": "nav",
+										"ancho": 260,
+										"alto": 50
+									}
+								]
+							}
+						},
+						{
+							"flex": {
+								"etiqueta": ".cabecera nav",
+								"ancho": 260,
+								"alto": 44,
+								"gap": 16,
+								"items": [
+									{
+										"texto": "Inicio",
+										"ancho": 70
+									},
+									{
+										"texto": "Tienda",
+										"ancho": 70
+									},
+									{
+										"texto": "Ayuda",
+										"ancho": 70
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Compatibilidad entre navegadores",
+				"texto": "La especificación actual de Flexbox está soportada por todos los navegadores modernos (Chrome, Firefox, Safari, Edge). Hace años se necesitaban prefijos como `-webkit-` y existían sintaxis antiguas (`display: box`), que hoy ya no hacen falta.\n\nPara comprobar si una propiedad funciona en los navegadores de tu público, consulta tablas de compatibilidad como las de MDN o Can I use. La propiedad `gap` en contenedores flex es más reciente que el resto de Flexbox: en navegadores muy antiguos no funciona."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Anidamiento",
+				"pregunta": {
+					"enunciado": "En la cabecera anterior, ¿por qué se escribe display: flex también en el nav?",
+					"opciones": [
+						"Porque sin eso la cabecera no funciona",
+						"Para que los enlaces del nav se coloquen en fila con su propio gap",
+						"Porque nav no puede ser elemento flex",
+						"Para que el logo se centre"
+					],
+					"correcta": 1,
+					"explicacion": "`display: flex` en la cabecera solo afecta a sus hijos directos (logo y nav). Para organizar los enlaces, el nav debe ser también contenedor flex."
+				}
+			}
+		]
+	}
+]

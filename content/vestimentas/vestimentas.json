@@ -1,0 +1,387 @@
+[
+	{
+		"id": "base",
+		"orden": 0,
+		"zona": 0,
+		"nombre": "Poncho del Aprendiz",
+		"descripcion": "El poncho andino con grecas tejidas con el que todo aprendiz llega a Qatu.",
+		"requiere_jefe": "",
+		"retrato": "base",
+		"capa": [
+			0.07,
+			0.075,
+			0.1
+		],
+		"borde": [
+			0.16,
+			0.17,
+			0.22
+		],
+		"franja_a": [
+			0.55,
+			0.2,
+			0.14
+		],
+		"franja_b": [
+			0.7,
+			0.5,
+			0.16
+		],
+		"detalle": "",
+		"espada": [
+			0.9,
+			2.2,
+			2.6
+		]
+	},
+	{
+		"id": "z1_ruinas",
+		"orden": 1,
+		"zona": 1,
+		"nombre": "Túnica de las Catacumbas",
+		"descripcion": "Capa púrpura bordada con endpoints GET y POST y una hombrera monolítica.",
+		"requiere_jefe": "",
+		"retrato": "z1_ruinas",
+		"capa": [
+			0.16,
+			0.06,
+			0.2
+		],
+		"borde": [
+			0.8,
+			0.3,
+			0.9
+		],
+		"franja_a": [
+			1.6,
+			0.35,
+			1.5
+		],
+		"franja_b": [
+			0.55,
+			0.2,
+			0.65
+		],
+		"detalle": "hombrera",
+		"espada": [
+			2.4,
+			0.6,
+			2.4
+		]
+	},
+	{
+		"id": "z2_torres",
+		"orden": 2,
+		"zona": 2,
+		"nombre": "Armadura Clean Architecture",
+		"descripcion": "Capas concéntricas de dominio, casos de uso e interfaces en azul zafiro.",
+		"requiere_jefe": "monolito",
+		"retrato": "z2_torres",
+		"capa": [
+			0.1,
+			0.22,
+			0.55
+		],
+		"borde": [
+			0.9,
+			0.95,
+			1.0
+		],
+		"franja_a": [
+			0.95,
+			0.95,
+			1.0
+		],
+		"franja_b": [
+			0.4,
+			1.2,
+			1.6
+		],
+		"detalle": "anillos",
+		"espada": [
+			0.6,
+			2.0,
+			2.8
+		]
+	},
+	{
+		"id": "z3_bosque",
+		"orden": 3,
+		"zona": 3,
+		"nombre": "Manto del Bosque del DOM",
+		"descripcion": "Fibras vegetales con enredaderas luminosas y brotes en los cuernos.",
+		"requiere_jefe": "espagueti",
+		"retrato": "z3_bosque",
+		"capa": [
+			0.08,
+			0.2,
+			0.12
+		],
+		"borde": [
+			0.3,
+			0.8,
+			0.4
+		],
+		"franja_a": [
+			0.35,
+			1.5,
+			0.55
+		],
+		"franja_b": [
+			0.2,
+			0.6,
+			0.25
+		],
+		"detalle": "hojas",
+		"espada": [
+			0.5,
+			2.6,
+			0.8
+		]
+	},
+	{
+		"id": "z4_canones",
+		"orden": 4,
+		"zona": 4,
+		"nombre": "Atuendo Modular Flex y Grid",
+		"descripcion": "Poncho terracota con bandas ajustables y una cuadrícula dorada de CSS Grid.",
+		"requiere_jefe": "nodo_huerfano",
+		"retrato": "z4_canones",
+		"capa": [
+			0.55,
+			0.25,
+			0.1
+		],
+		"borde": [
+			0.95,
+			0.65,
+			0.3
+		],
+		"franja_a": [
+			1.3,
+			0.9,
+			0.35
+		],
+		"franja_b": [
+			0.9,
+			0.5,
+			0.2
+		],
+		"detalle": "rejilla",
+		"espada": [
+			2.6,
+			1.8,
+			0.6
+		]
+	},
+	{
+		"id": "z5_rios",
+		"orden": 5,
+		"zona": 5,
+		"nombre": "Túnica de la Cascada Asíncrona",
+		"descripcion": "Tela de agua luminosa con las tres gemas de estado de una promesa: pendiente, cumplida y rechazada.",
+		"requiere_jefe": "guardian_parcial",
+		"retrato": "z5_rios",
+		"capa": [
+			0.05,
+			0.25,
+			0.3
+		],
+		"borde": [
+			0.4,
+			1.2,
+			1.3
+		],
+		"franja_a": [
+			0.5,
+			1.5,
+			1.6
+		],
+		"franja_b": [
+			0.2,
+			0.7,
+			0.8
+		],
+		"detalle": "gemas",
+		"espada": [
+			0.4,
+			2.4,
+			2.4
+		]
+	},
+	{
+		"id": "z6_archivo",
+		"orden": 6,
+		"zona": 6,
+		"nombre": "Hábito del Archivero",
+		"descripcion": "Cuero de archivero con una bandolera de pergaminos encuadernados.",
+		"requiere_jefe": "callback_hell",
+		"retrato": "z6_archivo",
+		"capa": [
+			0.45,
+			0.33,
+			0.2
+		],
+		"borde": [
+			0.8,
+			0.6,
+			0.35
+		],
+		"franja_a": [
+			0.35,
+			0.2,
+			0.1
+		],
+		"franja_b": [
+			1.3,
+			0.95,
+			0.4
+		],
+		"detalle": "bandolera",
+		"espada": [
+			2.6,
+			1.6,
+			0.5
+		]
+	},
+	{
+		"id": "z7_ciudadela",
+		"orden": 7,
+		"zona": 7,
+		"nombre": "Guardapolvo del Custodio",
+		"descripcion": "Capa imperial púrpura y dorada con una medalla que guarda la llave del token.",
+		"requiere_jefe": "scroll_infinito",
+		"retrato": "z7_ciudadela",
+		"capa": [
+			0.25,
+			0.12,
+			0.4
+		],
+		"borde": [
+			1.1,
+			0.85,
+			0.35
+		],
+		"franja_a": [
+			1.4,
+			1.05,
+			0.4
+		],
+		"franja_b": [
+			0.6,
+			0.4,
+			0.8
+		],
+		"detalle": "llave",
+		"espada": [
+			2.8,
+			2.2,
+			0.8
+		]
+	},
+	{
+		"id": "z8_puerto",
+		"orden": 8,
+		"zona": 8,
+		"nombre": "Capote del Timonel",
+		"descripcion": "Lona naval impermeable con franjas de advertencia y el timón de Kubernetes en el pecho.",
+		"requiere_jefe": "impostor_implicito",
+		"retrato": "z8_puerto",
+		"capa": [
+			0.1,
+			0.16,
+			0.28
+		],
+		"borde": [
+			0.4,
+			0.5,
+			0.6
+		],
+		"franja_a": [
+			1.4,
+			0.65,
+			0.1
+		],
+		"franja_b": [
+			0.08,
+			0.08,
+			0.08
+		],
+		"detalle": "timon",
+		"espada": [
+			0.5,
+			1.8,
+			2.8
+		]
+	},
+	{
+		"id": "z9_laboratorio",
+		"orden": 9,
+		"zona": 9,
+		"nombre": "Bata del Inspector",
+		"descripcion": "Manto de inspector con distintivos de pruebas superadas y una lente de diagnóstico.",
+		"requiere_jefe": "kubernetes",
+		"retrato": "z9_laboratorio",
+		"capa": [
+			0.2,
+			0.26,
+			0.24
+		],
+		"borde": [
+			0.4,
+			1.2,
+			0.6
+		],
+		"franja_a": [
+			0.45,
+			1.5,
+			0.65
+		],
+		"franja_b": [
+			0.2,
+			0.5,
+			0.3
+		],
+		"detalle": "lente",
+		"espada": [
+			1.2,
+			2.8,
+			0.4
+		]
+	},
+	{
+		"id": "z10_arquitecto",
+		"orden": 10,
+		"zona": 10,
+		"nombre": "Manto del Gran Arquitecto",
+		"descripcion": "Manto supremo con la chakana dorada en el pecho y un halo solar: Qatu restaurada.",
+		"requiere_jefe": "regresion",
+		"retrato": "z10_arquitecto",
+		"capa": [
+			0.1,
+			0.12,
+			0.3
+		],
+		"borde": [
+			1.3,
+			1.0,
+			0.4
+		],
+		"franja_a": [
+			0.8,
+			0.2,
+			0.15
+		],
+		"franja_b": [
+			1.5,
+			1.15,
+			0.4
+		],
+		"detalle": "chakana",
+		"espada": [
+			3.0,
+			2.6,
+			1.2
+		]
+	}
+]

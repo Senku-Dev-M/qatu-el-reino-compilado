@@ -1,0 +1,297 @@
+[
+	{
+		"id": "L137",
+		"zona": 2,
+		"sala": "z2_torre_base",
+		"orden": 137,
+		"nivel": "inicial",
+		"titulo": "Flujo de una URL en el navegador",
+		"resumen": "Qué ocurre paso a paso cuando el usuario escribe una dirección en la barra de navegación.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El viaje de la URL",
+				"texto": "Al escribir `https://qatu.com/productos` en el navegador, se desencadenan las siguientes etapas:\n\n**1. Resolución DNS:** el navegador traduce el nombre de dominio a una dirección IP numérica.\n**2. Negociación TCP y TLS:** se establece el handshake TCP y la conexión cifrada HTTPS.\n**3. Envío de Petición HTTP:** el navegador envía `GET /productos`.\n**4. Procesamiento en Servidor:** el servidor procesa la solicitud y devuelve código HTML, CSS o JSON.\n**5. Renderizado:** el motor del navegador parsea el DOM y el CSSOM para pintar la pantalla."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "El viaje visto con curl",
+				"lenguaje": "texto",
+				"texto": "`curl -v` muestra cada etapa en orden: la IP que devolvió el DNS, la conexión TCP, el acuerdo TLS y, por último, la petición y la respuesta HTTP.",
+				"codigo": "$ curl -v https://qatu.com/productos\n*   Trying 104.21.3.18:443...          <- IP resuelta por DNS\n* Connected to qatu.com port 443        <- TCP establecido\n* TLSv1.3 (OUT), TLS handshake          <- negociación TLS\n* SSL connection using TLSv1.3\n> GET /productos HTTP/2                  <- petición HTTP\n> Host: qatu.com\n< HTTP/2 200                             <- respuesta\n< content-type: text/html; charset=utf-8\n<!doctype html> ..."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Tiempos de red",
+				"texto": "La pestaña **Network** dibuja la carga como una cascada. El documento llega primero; después el navegador descubre y pide el CSS, el JavaScript y los datos. El primer tramo de cada barra (verde) es la **espera** o TTFB: el tiempo que tarda el servidor en empezar a responder; el segundo (azul), la descarga.",
+				"vista": {
+					"bloques": [
+						{
+							"red": {
+								"filtro": "All",
+								"filas": [
+									{
+										"nombre": "productos",
+										"estado": "200",
+										"tipo": "document",
+										"tiempo": "180 ms",
+										"inicio": 0.0,
+										"fin": 0.2,
+										"espera": 0.65
+									},
+									{
+										"nombre": "estilos.css",
+										"estado": "200",
+										"tipo": "stylesheet",
+										"tiempo": "45 ms",
+										"inicio": 0.21,
+										"fin": 0.27,
+										"espera": 0.3
+									},
+									{
+										"nombre": "app.js",
+										"estado": "200",
+										"tipo": "script",
+										"tiempo": "90 ms",
+										"inicio": 0.21,
+										"fin": 0.33,
+										"espera": 0.25
+									},
+									{
+										"nombre": "api/productos",
+										"metodo": "GET",
+										"estado": "200",
+										"tipo": "fetch",
+										"tiempo": "260 ms",
+										"inicio": 0.36,
+										"fin": 0.66,
+										"espera": 0.75
+									}
+								]
+							}
+						}
+					],
+					"pestana": "DevTools · Network"
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Primer paso de red",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Al escribir https://qatu.com/productos, ¿qué ocurre antes de que el navegador pueda enviar la petición GET?",
+					"opciones": [
+						"Se construye el DOM de la página",
+						"Se resuelve el dominio por DNS y se establecen TCP y TLS",
+						"Se ejecuta el JavaScript de la página",
+						"Se calcula el layout"
+					],
+					"correcta": 1,
+					"explicacion": "Sin la IP y sin una conexión segura abierta no hay a quién enviar la petición HTTP; el DOM y el layout vienen después de recibir la respuesta."
+				}
+			}
+		]
+	},
+	{
+		"id": "L138",
+		"zona": 2,
+		"sala": "z2_torre_base",
+		"orden": 138,
+		"nivel": "inicial",
+		"titulo": "Arquitectura Cliente-Servidor",
+		"resumen": "Separación fundamental entre el software de interfaz (cliente) y los servicios de backend y almacenamiento (servidor).",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "División de responsabilidades",
+				"texto": "El modelo [[cliente_servidor]] desacopla dos mundos:\n\n• **Cliente (Frontend):** interfaz gráfica, captura de eventos del usuario, validación de formularios visuales y renderizado.\n• **Servidor (Backend):** reglas de negocio críticas, autorización de seguridad, transacciones y persistencia en base de datos."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Las dos mitades del mismo flujo",
+				"lenguaje": "js",
+				"texto": "El cliente pide y muestra; el servidor valida, calcula y guarda. Fíjate en que el **total** lo calcula el servidor con los precios de su base de datos:",
+				"codigo": "// Cliente (navegador)\nconst r = await fetch('/api/pedidos', {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({ productoId: 42, cantidad: 2 }),\n});\nmostrarConfirmacion(await r.json());\n\n// Servidor (Node.js + Express)\napp.post('/api/pedidos', autenticar, async (req, res) => {\n  const producto = await productos.buscar(req.body.productoId);\n  const total = producto.precio * req.body.cantidad;\n  const pedido = await pedidos.crear(req.usuario.id, producto.id, total);\n  res.status(201).json(pedido);\n});"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Flujo en Qatu",
+				"texto": "El navegador del comprador nunca habla con la base de datos: todo pasa por el servidor, que es quien aplica las reglas y protege los datos.",
+				"vista": {
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Navegador",
+									"Servidor Qatu",
+									"Base de datos"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "POST /api/pedidos"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "SELECT precio"
+									},
+									{
+										"de": 2,
+										"a": 1,
+										"texto": "25.00"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "INSERT pedido (total 50)"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "201 Created"
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Confiar en el cliente",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "// Cliente\nbody: JSON.stringify({ productoId: 42, total: 50 })\n// Servidor\nawait pedidos.crear(req.usuario.id, req.body.total);",
+						"bien": "// Cliente\nbody: JSON.stringify({ productoId: 42, cantidad: 2 })\n// Servidor\nconst total = producto.precio * req.body.cantidad;",
+						"explicacion": "Cualquier usuario puede modificar la petición desde las DevTools. Los precios y totales se calculan **en el servidor**."
+					},
+					{
+						"mal": "// solo en el navegador\nif (cantidad > 0) enviarPedido();",
+						"bien": "// en el navegador, para dar aviso rápido...\nif (cantidad > 0) enviarPedido();\n// ...y SIEMPRE en el servidor\nif (req.body.cantidad <= 0) return res.status(422).end();",
+						"explicacion": "La validación del cliente mejora la experiencia; la del servidor es la que protege. Hacen falta las dos."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Responsabilidad del cliente",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué debe calcular siempre el servidor de Qatu, aunque el navegador también lo muestre?",
+					"opciones": [
+						"El color del botón de compra",
+						"El total del pedido a partir de los precios guardados",
+						"La animación del carrito",
+						"El orden de las pestañas"
+					],
+					"correcta": 1,
+					"explicacion": "El cliente puede ser manipulado desde las DevTools; los importes y las reglas se aplican en el servidor."
+				}
+			}
+		]
+	},
+	{
+		"id": "L139",
+		"zona": 2,
+		"sala": "z2_torre_base",
+		"orden": 139,
+		"nivel": "inicial",
+		"titulo": "Ciclo de renderizado del navegador",
+		"resumen": "Cómo el navegador convierte HTML, CSS y JavaScript en píxeles interactivos en pantalla.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Critical Rendering Path",
+				"texto": "El ciclo de pintura en pantalla comprende:\n\n1. **Construcción del DOM:** árbol de nodos HTML.\n2. **Construcción del CSSOM:** árbol de estilos CSS.\n3. **Render Tree:** combinación de DOM visible y CSSOM.\n4. **Layout (Reflow):** cálculo de coordenadas y dimensiones exactas de cada caja.\n5. **Paint (Repaint):** dibujo de píxeles, colores y sombras.\n6. **Compositing:** combinación de capas en la GPU."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Qué etapa dispara cada cambio",
+				"lenguaje": "js",
+				"texto": "No todos los cambios de estilo cuestan lo mismo. Cambiar la geometría obliga a repetir **layout, paint y composición**; un color, solo **paint**; `transform` y `opacity` pueden resolverse solo en la **composición**, en la GPU:",
+				"codigo": "const tarjeta = document.querySelector('.tarjeta');\n\ntarjeta.style.width = '320px';            // layout + paint + composite\ntarjeta.style.backgroundColor = '#f2c46b'; // paint + composite\ntarjeta.style.transform = 'scale(1.05)';   // solo composite"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El render tree",
+				"texto": "El navegador parte del HTML y del CSS para construir dos árboles y los combina en el render tree, que solo contiene lo **visible**: un elemento con `display: none` está en el DOM, pero no en el render tree.",
+				"vista": {
+					"bloques": [
+						{
+							"arbol": {
+								"nombre": "Render tree",
+								"hijos": [
+									{
+										"nombre": "body",
+										"hijos": [
+											{
+												"nombre": "header.cabecera"
+											},
+											{
+												"nombre": "main",
+												"hijos": [
+													{
+														"nombre": "article.tarjeta",
+														"hijos": [
+															{
+																"nombre": "\"Poncho\"",
+																"tipo": "texto"
+															}
+														]
+													}
+												]
+											}
+										]
+									},
+									{
+										"nombre": "sin div.modal (display:none)",
+										"tipo": "texto"
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Provocar trabajo innecesario",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "for (const t of tarjetas) {\n  t.style.height = t.offsetWidth + 'px'; // lee y escribe\n}",
+						"bien": "const anchos = tarjetas.map((t) => t.offsetWidth); // lee todo\ntarjetas.forEach((t, i) => {\n  t.style.height = anchos[i] + 'px';               // escribe todo\n});",
+						"explicacion": "Leer una medida después de escribir estilos obliga a recalcular el layout en cada vuelta (layout thrashing). Se agrupan lecturas y escrituras."
+					},
+					{
+						"mal": ".menu { transition: left 0.3s; }\n.menu.abierto { left: 0; }",
+						"bien": ".menu { transition: transform 0.3s; }\n.menu.abierto { transform: translateX(0); }",
+						"explicacion": "Animar `left` repite layout en cada fotograma. `transform` se anima en la composición y mantiene los 60 fps.",
+						"lenguaje": "css"
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Etapa de cálculo de medidas",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué propiedad conviene animar para mover un menú sin repetir el layout en cada fotograma?",
+					"opciones": [
+						"left",
+						"width",
+						"transform",
+						"margin-left"
+					],
+					"correcta": 2,
+					"explicacion": "transform se resuelve en la composición; left, width y margin cambian la geometría y obligan a recalcular el layout."
+				}
+			}
+		]
+	}
+]

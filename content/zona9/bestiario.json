@@ -1,0 +1,42 @@
+[
+	{
+		"id": "flaky_test",
+		"zona": 9,
+		"nombre": "Test Flaky Intermitente",
+		"descripcion": "Espectro inestable que pasa y falla de forma no determinista por condiciones de carrera.",
+		"leccion": "Un flaky test erosiona la confianza en la suite de CI/CD. Se mitiga eliminando esperas fijas y usando aserciones reactivas explícitas.",
+		"derrotas_requeridas": 3
+	},
+	{
+		"id": "inyeccion_sql",
+		"zona": 9,
+		"nombre": "Inyección SQL",
+		"descripcion": "Sombra de sintaxis maliciosa que rompe delimitadores para secuestrar el flujo de datos.",
+		"leccion": "Las inyecciones SQL se previenen de raíz mediante consultas parametrizadas (Prepared Statements) y el uso de ORMs seguros.",
+		"derrotas_requeridas": 3
+	},
+	{
+		"id": "xss_fantasma",
+		"zona": 9,
+		"nombre": "Espectro XSS (Cross-Site Scripting)",
+		"descripcion": "Entidad reflectora que inyecta payloads maliciosos en el DOM del navegador.",
+		"leccion": "El XSS se neutraliza escapando y sanitizando siempre la salida del usuario en el navegador y aplicando una política CSP (Content Security Policy) estricta.",
+		"derrotas_requeridas": 3
+	},
+	{
+		"id": "mutacion_silenciosa",
+		"zona": 9,
+		"nombre": "Mutante Silencioso",
+		"descripcion": "Enemigo que muta operadores de código para verificar si las pruebas realmente atrapan anomalías.",
+		"leccion": "El testing mutacional evalúa la calidad de la suite de tests introduciendo fallos intencionados para comprobar si los tests fallan adecuadamente.",
+		"derrotas_requeridas": 4
+	},
+	{
+		"id": "regresion",
+		"zona": 9,
+		"nombre": "La Regresión del Código",
+		"descripcion": "Coloso espectral que encarna la reaparición de defectos previamente corregidos tras un cambio de código.",
+		"leccion": "Las suites de regresión automatizada garantizan que la refactorización y adición de features no rompa funcionalidades previas ya validadas.",
+		"derrotas_requeridas": 1
+	}
+]

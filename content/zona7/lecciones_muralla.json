@@ -1,0 +1,105 @@
+[
+	{
+		"id": "L107", "zona": 7, "sala": "z7_muralla", "orden": 107, "nivel": "intermedio",
+		"titulo": "La clave de firma y los datos del payload",
+		"resumen": "Quien tenga la clave de firma puede fabricar tokens válidos: se guarda en un gestor de secretos o un HSM, se rota y nunca se sube al repositorio. El payload es legible, así que no debe llevar datos sensibles.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Proteger la clave de firma",
+				"texto": "La [[clave de firma|clave_de_firma]] es lo más valioso del sistema: con ella se puede emitir un token que diga «soy administrador» y todas las APIs lo aceptarán.\n\n• Guárdala en un **gestor de secretos** o un **HSM/KMS**, nunca en el código ni en el repositorio.\n• **Rótala** periódicamente; publica varias claves con su `kid` para poder cambiar sin cortes.\n• Usa [[algoritmos asimétricos|algoritmo_de_firma]] (RS256, ES256) cuando quien firma y quien valida son partes distintas: el emisor guarda la privada y las APIs solo necesitan la pública.\n• Rechaza tokens con `alg: none` y no aceptes el algoritmo que diga el propio token."
+			},
+			{
+				"tipo": "errores", "titulo": "Datos en el payload",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "{\n  \"sub\": \"7f3c1a\",\n  \"dni\": \"12345678A\",\n  \"tarjeta\": \"4111 1111 1111 1111\",\n  \"direccion\": \"Calle Sol 12\"\n}",
+						"bien": "{\n  \"sub\": \"7f3c1a\",\n  \"scope\": \"pedidos:escribir\",\n  \"exp\": 1789459200\n}",
+						"explicacion": "El payload de un JWT va en base64url: cualquiera que vea el token lee su contenido. Incluye solo identificadores y permisos; los datos personales se consultan en la API cuando hacen falta."
+					}
+				]
+			},
+			{
+				"tipo": "concepto", "titulo": "Tamaño y contenido",
+				"texto": "Un token viaja en **cada** petición: cuanto más grande, más coste. Mete lo mínimo:\n\n• `sub` (quién), `scope` o permisos, `exp`, `iss`, `aud`.\n• Evita listas largas de permisos: si el token crece mucho, guarda los permisos en el servidor y deja en el token solo el identificador.\n• Nada de contraseñas, números de tarjeta, documentos ni direcciones."
+			},
+			{
+				"tipo": "comprueba", "titulo": "Una decisión de diseño",
+				"pregunta": {
+					"enunciado": "¿Por qué no se deben poner datos personales en el payload de un JWT?",
+					"opciones": ["Porque la firma dejaría de ser válida", "Porque el payload es legible por cualquiera que vea el token", "Porque el token caducaría antes", "Porque los JWT no admiten texto"],
+					"correcta": 1,
+					"explicacion": "Base64url no es cifrado: la firma protege la integridad, no la confidencialidad."
+				}
+			}
+		]
+	},
+	{
+		"id": "L108", "zona": 7, "sala": "z7_muralla", "orden": 108, "nivel": "intermedio",
+		"titulo": "Expiración, HTTPS y cubrir todos los casos",
+		"resumen": "Los access tokens duran poco y la API valida exp en cada petición. Todo el tráfico va por HTTPS. Y la autorización se comprueba en cada endpoint, no solo en el menú del frontend.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Caducar pronto",
+				"texto": "El claim [[exp|claim_exp]] marca el instante en que el token deja de valer. Con vidas cortas (5–15 minutos para el access token), un token robado sirve poco tiempo, y el refresh token permite renovar sin molestar al usuario.\n\nLa API debe validar `exp` **en cada petición** (con un margen mínimo de reloj), además de la firma, `iss` y `aud`. Un token caducado se responde con 401."
+			},
+			{
+				"tipo": "concepto", "titulo": "Siempre HTTPS",
+				"texto": "Un token portador es como una llave: quien lo ve, entra. Sobre HTTP plano, cualquiera en la red puede leerlo.\n\n• Usa [[TLS|tls]] (HTTPS) en **todas** las llamadas, también entre servicios internos.\n• Activa HSTS para evitar el primer salto en claro.\n• Nunca pongas tokens en la URL (quedan en historiales y registros): van en la cabecera `Authorization` o en una cookie `Secure`."
+			},
+			{
+				"tipo": "resultado", "titulo": "Comprobar todos los casos",
+				"texto": "No basta con proteger el endpoint «principal». Hay que revisar **cada** operación y cada recurso: listar, ver, crear, editar, borrar, exportar… y comprobar también la **propiedad** del recurso, no solo el rol.",
+				"lenguaje": "js",
+				"codigo": "router.patch('/api/productos/:id', autenticar, async (req, res) => {\n  const producto = await db.productos.findById(req.params.id);\n  if (!producto) return res.status(404).end();\n\n  const esDueno = producto.vendedorId === req.usuario.id;\n  if (req.usuario.rol !== 'admin' && !esDueno) {\n    return res.status(403).json({ error: 'Sin permiso' });\n  }\n  // …\n});",
+				"vista": {"sin_navegador": true, "bloques": [{"red": {"filtro": "Fetch/XHR", "filas": [{"nombre": "api/productos/12", "metodo": "PATCH", "estado": "403", "tipo": "fetch", "tiempo": "60 ms", "inicio": 0.0, "fin": 0.2}, {"nombre": "api/productos/31", "metodo": "PATCH", "estado": "200", "tipo": "fetch", "tiempo": "72 ms", "inicio": 0.3, "fin": 0.55}]}}, {"nota": "El 403 es el producto de otro vendedor; el 200, uno propio."}]}
+			},
+			{
+				"tipo": "comprueba", "titulo": "Una omisión típica",
+				"pregunta": {
+					"enunciado": "El frontend oculta el botón «Editar» en los productos ajenos. ¿Es suficiente?",
+					"opciones": ["Sí, el usuario no puede pulsarlo", "No: la API debe comprobar la propiedad en cada petición", "Sí, si además se usa HTTPS", "Solo hace falta comprobarlo al iniciar sesión"],
+					"correcta": 1,
+					"explicacion": "Ocultar es comodidad; cualquiera puede llamar al endpoint directamente, así que la comprobación va en el servidor."
+				}
+			}
+		]
+	},
+	{
+		"id": "L109", "zona": 7, "sala": "z7_muralla", "orden": 109, "nivel": "intermedio",
+		"titulo": "Guardar y reutilizar los tokens",
+		"resumen": "Pedir un token nuevo en cada llamada satura al servidor de autorización y añade latencia. Se guarda el access token mientras sea válido, se reutiliza, y se renueva un poco antes de que caduque, con una sola renovación en curso.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Minimizar las llamadas",
+				"texto": "Cada llamada a `/token` cuesta tiempo y carga. La práctica correcta es [[reutilizar el token|reutilizar_tokens]] mientras siga válido:\n\n• Guarda el access token junto con su instante de caducidad.\n• Antes de cada llamada, comprueba si queda tiempo (con un margen de 30–60 s).\n• Si va a caducar, renueva **una sola vez**: si varias peticiones coinciden, todas esperan a la misma renovación.\n\nEs el mismo criterio que la caché de la zona anterior: no repitas trabajo que ya está hecho y todavía sirve."
+			},
+			{
+				"tipo": "sintaxis", "titulo": "Una renovación compartida",
+				"lenguaje": "js",
+				"codigo": "let token = null;        // { valor, expiraEn }\nlet renovando = null;    // promesa en curso\n\nasync function obtenerToken() {\n  if (token && Date.now() < token.expiraEn - 45000) return token.valor;\n  if (!renovando) {\n    renovando = pedirTokenAlServidor().finally(() => { renovando = null; });\n  }\n  token = await renovando;\n  return token.valor;\n}",
+				"texto": "Así, diez peticiones simultáneas provocan **una** renovación, no diez."
+			},
+			{
+				"tipo": "errores", "titulo": "Error frecuente",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "async function llamar(url) {\n  const t = await pedirTokenAlServidor();   // en cada llamada\n  return fetch(url, { headers: { Authorization: `Bearer ${t}` } });\n}",
+						"bien": "async function llamar(url) {\n  const t = await obtenerToken();           // reutiliza si sigue válido\n  return fetch(url, { headers: { Authorization: `Bearer ${t}` } });\n}",
+						"explicacion": "Pedir un token por llamada multiplica la latencia y puede activar los límites de peticiones del servidor de autorización."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba", "titulo": "Cuándo renovar",
+				"pregunta": {
+					"enunciado": "¿Cuál es la política razonable para renovar un access token?",
+					"opciones": ["En cada petición a la API", "Poco antes de que caduque, con una sola renovación en curso", "Solo cuando la API responde 500", "Nunca: se usa hasta que el usuario vuelve a iniciar sesión"],
+					"correcta": 1,
+					"explicacion": "Se reutiliza mientras sea válido y se renueva con un pequeño margen, evitando renovaciones simultáneas."
+				}
+			}
+		]
+	}
+]

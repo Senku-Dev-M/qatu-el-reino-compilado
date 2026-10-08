@@ -1,0 +1,232 @@
+[
+	{
+		"id": "L16",
+		"zona": 3,
+		"sala": "z3_tronco",
+		"orden": 16,
+		"nivel": "intermedio",
+		"titulo": "Qué es el DOM",
+		"resumen": "El DOM es la representación en memoria del documento como árbol de nodos. JavaScript lee y modifica la página a través de él.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Del archivo al árbol",
+				"texto": "Cuando el navegador lee un archivo HTML, no trabaja con el texto directamente: construye en memoria una estructura llamada [[DOM]] (Document Object Model, modelo de objetos del documento).\n\nEl DOM es un **árbol**: cada elemento se convierte en un [[nodo]], y los nodos conservan las relaciones de anidamiento que viste en la Galería (padres e hijos). El texto dentro de los elementos también son nodos, de tipo texto."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El árbol de una página",
+				"texto": "A la izquierda, el HTML. A la derecha, el árbol DOM que construye el navegador. En azul, nodos de **elemento**; en verde, nodos de **texto**.",
+				"lenguaje": "html",
+				"codigo": "<html>\n  <head>\n    <title>Qatu</title>\n  </head>\n  <body>\n    <h1>Tienda</h1>\n    <p>Hola</p>\n  </body>\n</html>",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"arbol": {
+								"nombre": "html",
+								"hijos": [
+									{
+										"nombre": "head",
+										"hijos": [
+											{
+												"nombre": "title",
+												"hijos": [
+													{
+														"nombre": "\"Qatu\"",
+														"tipo": "texto"
+													}
+												]
+											}
+										]
+									},
+									{
+										"nombre": "body",
+										"hijos": [
+											{
+												"nombre": "h1",
+												"hijos": [
+													{
+														"nombre": "\"Tienda\"",
+														"tipo": "texto"
+													}
+												]
+											},
+											{
+												"nombre": "p",
+												"hijos": [
+													{
+														"nombre": "\"Hola\"",
+														"tipo": "texto"
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "El DOM no es tu archivo",
+				"texto": "Dos ideas importantes:\n\n• El DOM es un **estándar independiente del lenguaje**, definido por el W3C y WHATWG. [[JavaScript]] es el lenguaje con el que normalmente se usa en el navegador, pero no son lo mismo.\n• Si JavaScript modifica el DOM, **la página cambia en pantalla**, pero tu archivo `.html` en el servidor sigue igual. El DOM es la versión «viva» del documento mientras la página está abierta.\n\nEn JavaScript, el punto de entrada al DOM es el objeto [[document]]."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Archivo o DOM",
+				"pregunta": {
+					"enunciado": "Un script cambia el texto de un <h1> mientras la página está abierta. ¿Qué ocurre?",
+					"opciones": [
+						"Se reescribe el archivo .html en el servidor",
+						"Cambia el DOM y la pantalla, pero el archivo original no cambia",
+						"No se ve ningún cambio hasta recargar",
+						"Se borra el <h1> del árbol"
+					],
+					"correcta": 1,
+					"explicacion": "JavaScript modifica el DOM, que es la representación en memoria. El navegador redibuja la página, pero el archivo original permanece intacto."
+				}
+			}
+		]
+	},
+	{
+		"id": "L17",
+		"zona": 3,
+		"sala": "z3_tronco",
+		"orden": 17,
+		"nivel": "intermedio",
+		"titulo": "Seleccionar elementos con JavaScript",
+		"resumen": "document.querySelector devuelve el primer elemento que coincide con un selector CSS; querySelectorAll devuelve todos.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Buscar en el árbol",
+				"texto": "Antes de modificar un elemento, JavaScript tiene que **encontrarlo** en el DOM. Los métodos más usados reciben un **selector CSS**, el mismo que aprendiste en el Claro de Estilos:\n\n• [[document.querySelector(selector)|queryselector]]: devuelve el **primer** elemento que coincide, o `null` si no hay ninguno.\n• `document.querySelectorAll(selector)`: devuelve **todos** los que coinciden, en una lista.\n• `document.getElementById(\"nombre\")`: busca por id, sin escribir `#`."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Ejemplos",
+				"texto": "Cada búsqueda se guarda en una variable con `const` para usarla después. Observa que en `querySelector` se usan `#` y `.` igual que en CSS.",
+				"lenguaje": "js",
+				"codigo": "const titulo = document.querySelector('h1');\nconst carrito = document.querySelector('#carrito');\nconst ofertas = document.querySelectorAll('.oferta');\n\nconsole.log(ofertas.length); // cuántas ofertas hay",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"consola": [
+								"> ofertas.length",
+								"3"
+							]
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Selectores mal escritos",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "const carrito = document.querySelector('carrito');",
+						"bien": "const carrito = document.querySelector('#carrito');",
+						"explicacion": "Sin `#`, busca una etiqueta `<carrito>`. Como no existe, devuelve `null` y cualquier uso posterior fallará."
+					},
+					{
+						"mal": "const carrito = document.getElementById('#carrito');",
+						"bien": "const carrito = document.getElementById('carrito');",
+						"explicacion": "`getElementById` recibe solo el nombre del id, sin `#`."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Qué devuelve?",
+				"pregunta": {
+					"enunciado": "La página tiene tres elementos con class=\"oferta\". ¿Qué devuelve document.querySelector('.oferta')?",
+					"opciones": [
+						"Los tres elementos",
+						"Solo el primero de ellos",
+						"El último de ellos",
+						"null"
+					],
+					"correcta": 1,
+					"explicacion": "`querySelector` siempre devuelve el primer elemento que coincide. Para obtener todos se usa `querySelectorAll`."
+				}
+			}
+		]
+	},
+	{
+		"id": "L18",
+		"zona": 3,
+		"sala": "z3_tronco",
+		"orden": 18,
+		"nivel": "intermedio",
+		"titulo": "Modificar elementos",
+		"resumen": "Con textContent cambias el texto, con classList añades o quitas clases y con setAttribute cambias atributos.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Propiedades y métodos útiles",
+				"texto": "Una vez seleccionado un elemento, puedes cambiarlo:\n\n• [[textContent|textcontent]]: lee o reemplaza el texto del elemento.\n• [[classList|classlist]]: gestiona sus clases con `add()`, `remove()` y `toggle()`. Es la forma recomendada de cambiar estilos: defines la clase en CSS y la activas desde JavaScript.\n• `setAttribute(nombre, valor)`: cambia un atributo, por ejemplo el `src` de una imagen.\n• `style`: cambia estilos en línea (`elemento.style.color = 'red'`). Úsalo con moderación."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Antes y después",
+				"texto": "El script cambia el texto del título y añade la clase `oferta` al párrafo. El CSS de `.oferta` (fondo amarillo) se aplica automáticamente.",
+				"lenguaje": "js",
+				"codigo": "const titulo = document.querySelector('h1');\ntitulo.textContent = 'Qatu restaurada';\n\nconst aviso = document.querySelector('p');\naviso.classList.add('oferta');",
+				"vista": {
+					"pestana": "Qatu",
+					"bloques": [
+						{
+							"h1": "Qatu restaurada"
+						},
+						{
+							"texto": {
+								"valor": "Descuentos por la reapertura",
+								"fondo": "#ffe08a",
+								"negrita": true,
+								"tamano": 20,
+								"padding": 6
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores comunes",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "titulo.textcontent = 'Hola';",
+						"bien": "titulo.textContent = 'Hola';",
+						"explicacion": "JavaScript distingue mayúsculas y minúsculas. `textcontent` crea una propiedad nueva sin efecto; la correcta es `textContent`."
+					},
+					{
+						"mal": "aviso.classList.add('.oferta');",
+						"bien": "aviso.classList.add('oferta');",
+						"explicacion": "En `classList` se escribe el nombre de la clase sin punto. El punto solo se usa en selectores."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige el método",
+				"pregunta": {
+					"enunciado": "Tienes la clase .oculto { display: none; } en tu CSS. ¿Cómo ocultas un elemento guardado en la variable menu?",
+					"opciones": [
+						"menu.textContent = 'oculto';",
+						"menu.classList.add('oculto');",
+						"menu.setAttribute('oculto');",
+						"document.querySelector('.oculto');"
+					],
+					"correcta": 1,
+					"explicacion": "`classList.add('oculto')` le añade la clase y el navegador aplica la regla CSS correspondiente."
+				}
+			}
+		]
+	}
+]

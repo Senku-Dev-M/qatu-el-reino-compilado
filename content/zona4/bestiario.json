@@ -1,0 +1,27 @@
+[
+	{
+		"id": "float_errante", "zona": 4, "nombre": "Float Errante", "derrotas_requeridas": 5,
+		"descripcion": "Salta de un lado a otro sin respetar a nadie. Todo lo que tiene alrededor acaba descolocado.",
+		"leccion": "Error real: construir columnas con float: left. Los elementos flotantes salen del flujo normal, así que el contenedor no crece para envolverlos (se «colapsa») y el contenido siguiente se sube por los lados. Hacía falta un clearfix. Solución actual: usa display: flex o display: grid para los layouts y reserva float para que el texto rodee una imagen."
+	},
+	{
+		"id": "desbordamiento", "zona": 4, "nombre": "Desbordamiento", "derrotas_requeridas": 4,
+		"descripcion": "Flota fuera de los bordes de la roca, donde nadie lo espera.",
+		"leccion": "Error real: un elemento más ancho que su contenedor (una imagen de 1200px, una tabla o un texto sin espacios) provoca scroll horizontal en móviles. Busca el culpable con DevTools y corrígelo con max-width: 100%, flex-wrap: wrap, min-width: 0 en elementos flex u overflow-wrap: anywhere para textos largos. Evita ocultarlo sin más con overflow: hidden."
+	},
+	{
+		"id": "pixel_rigido", "zona": 4, "nombre": "Píxel Rígido", "derrotas_requeridas": 4,
+		"descripcion": "Mide exactamente 960 píxeles y se niega a cambiar, pase lo que pase debajo.",
+		"leccion": "Error real: fijar anchos en píxeles, como .contenedor { width: 960px; }. En pantallas más estrechas el contenido se corta o aparece scroll horizontal. Usa max-width: 960px con width: 100%, unidades relativas (%, fr, rem) y media queries para adaptar el diseño."
+	},
+	{
+		"id": "guardia_important", "zona": 4, "nombre": "Guardia !important", "derrotas_requeridas": 3,
+		"descripcion": "Su escudo frontal bloquea cualquier golpe. Hay que buscarle la espalda o atacar desde arriba.",
+		"leccion": "!important hace que una declaración gane a cualquier otra sin importar la especificidad. Abusar de él obliga a añadir más !important para sobrescribirlo y el CSS se vuelve imposible de mantener. En lugar de eso, revisa el orden de las reglas y la especificidad de tus selectores; resérvalo para casos excepcionales, como utilidades que siempre deben aplicarse."
+	},
+	{
+		"id": "guardian_parcial", "zona": 4, "nombre": "El Guardián del Parcial", "derrotas_requeridas": 1, "jefe": true,
+		"descripcion": "Custodia la salida de los cañones. Descoloca sus plataformas y exige responder con propiedades exactas.",
+		"leccion": "Resumen de la semana: justify-content reparte en el eje principal y align-items alinea en el transversal; flex-direction decide cuál es cuál. Grid organiza filas y columnas con fr, repeat() y áreas. Con mobile first y media queries min-width, el mismo layout se adapta a cualquier pantalla."
+	}
+]

@@ -1,0 +1,247 @@
+[
+	{
+		"id": "L19",
+		"zona": 3,
+		"sala": "z3_copa",
+		"orden": 19,
+		"nivel": "intermedio",
+		"titulo": "Qué es un evento",
+		"resumen": "Un evento es una señal que emite el navegador cuando ocurre algo: un clic, una tecla, el envío de un formulario o el fin de la carga.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "La página reacciona",
+				"texto": "Un [[evento]] es una notificación que el navegador genera cuando ocurre algo en la página. Cada evento tiene un **tipo** (su nombre) y un **objetivo** (el elemento donde ocurrió).\n\nTu código puede «escuchar» un tipo de evento en un elemento y ejecutar una función cuando suceda. Así funcionan los botones, los menús desplegables y los formularios interactivos."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Tipos frecuentes",
+				"texto": "• `click`: se hace clic sobre el elemento.\n• `mouseover` / `mouseout`: el puntero entra o sale del elemento.\n• `keydown`: se pulsa una tecla.\n• `input`: cambia el valor de un campo de texto.\n• `submit`: se envía un formulario.\n• `DOMContentLoaded`: el navegador terminó de construir el DOM.\n\nEn la Copa verás nodos click (se activan al golpearlos) y nodos hover (se activan al acercarte): imitan `click` y `mouseover`."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Nombra el evento",
+				"pregunta": {
+					"enunciado": "Quieres mostrar una ayuda cuando el puntero pasa por encima de un botón. ¿Qué evento escuchas?",
+					"opciones": [
+						"click",
+						"mouseover",
+						"submit",
+						"keydown"
+					],
+					"correcta": 1,
+					"explicacion": "`mouseover` se dispara cuando el puntero entra en el elemento, sin necesidad de hacer clic."
+				}
+			}
+		]
+	},
+	{
+		"id": "L20",
+		"zona": 3,
+		"sala": "z3_copa",
+		"orden": 20,
+		"nivel": "intermedio",
+		"titulo": "addEventListener paso a paso",
+		"resumen": "elemento.addEventListener(tipo, función) registra una función manejadora que se ejecuta cada vez que ocurre ese evento en ese elemento.",
+		"paginas": [
+			{
+				"tipo": "sintaxis",
+				"titulo": "La instrucción completa",
+				"texto": "[[addEventListener]] recibe dos argumentos principales:\n\n**1.** El **tipo** de evento, como texto: `'click'`.\n**2.** La [[función manejadora|funcion_manejadora]]: el código que se ejecuta cuando ocurre el evento.\n\nLos pasos son siempre los mismos: **seleccionar** el elemento, **registrar** el listener y **escribir** qué hacer.",
+				"lenguaje": "js",
+				"codigo": "// 1. Seleccionar\nconst boton = document.querySelector('#comprar');\n\n// 2. Registrar el listener\nboton.addEventListener('click', () => {\n  // 3. Qué hacer\n  console.log('Producto añadido');\n});"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Qué ocurre al hacer clic",
+				"texto": "Cada clic en el botón ejecuta la función. Aquí se hizo clic dos veces, por eso el mensaje aparece dos veces en la consola.",
+				"lenguaje": "html",
+				"codigo": "<button id=\"comprar\">Comprar</button>",
+				"vista": {
+					"pestana": "Tienda",
+					"bloques": [
+						{
+							"boton": "Comprar"
+						},
+						{
+							"consola": [
+								"Producto añadido",
+								"Producto añadido"
+							]
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Funciones con nombre",
+				"texto": "La función manejadora también puede definirse aparte y pasarse por su nombre. Fíjate en que se escribe `anadir`, **sin paréntesis**: le das la función a `addEventListener` para que la ejecute más tarde.",
+				"lenguaje": "js",
+				"codigo": "function anadir() {\n  console.log('Producto añadido');\n}\n\nboton.addEventListener('click', anadir);"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores clásicos",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "boton.addEventListener('click', anadir());",
+						"bien": "boton.addEventListener('click', anadir);",
+						"explicacion": "Con paréntesis, `anadir()` se ejecuta **inmediatamente** al registrar y lo que se pasa es su resultado, no la función. El clic ya no hace nada."
+					},
+					{
+						"mal": "boton.addEventListener('onclick', anadir);",
+						"bien": "boton.addEventListener('click', anadir);",
+						"explicacion": "El tipo de evento se escribe sin el prefijo `on`: `'click'`, no `'onclick'`."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Cuál funciona?",
+				"pregunta": {
+					"enunciado": "¿Qué línea registra correctamente la función avisar para el clic del botón?",
+					"opciones": [
+						"boton.addEventListener('click', avisar());",
+						"boton.addEventListener(click, avisar);",
+						"boton.addEventListener('click', avisar);",
+						"boton.addEventListener('onclick', 'avisar');"
+					],
+					"correcta": 2,
+					"explicacion": "El tipo va entre comillas (`'click'`) y la función se pasa por su nombre, sin paréntesis."
+				}
+			}
+		]
+	},
+	{
+		"id": "L21",
+		"zona": 3,
+		"sala": "z3_copa",
+		"orden": 21,
+		"nivel": "intermedio",
+		"titulo": "El objeto event",
+		"resumen": "La función manejadora recibe un objeto event con información del evento: su tipo, el elemento donde ocurrió (target) y métodos como preventDefault.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Información del evento",
+				"texto": "Cuando el navegador ejecuta tu función manejadora, le pasa automáticamente un argumento: el [[objeto event|objeto_event]]. Se suele llamar `event` o `e`.\n\nPropiedades y métodos útiles:\n\n• `event.type`: el tipo, por ejemplo `'click'`.\n• [[event.target|event_target]]: el elemento sobre el que ocurrió el evento.\n• [[event.preventDefault()|preventdefault]]: cancela el comportamiento por defecto del navegador, como enviar un formulario o seguir un enlace."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Leer target",
+				"texto": "Un solo listener en la lista sirve para saber qué producto se pulsó: `event.target` es el `<li>` concreto.",
+				"lenguaje": "js",
+				"codigo": "const lista = document.querySelector('ul');\n\nlista.addEventListener('click', (event) => {\n  console.log(event.type);\n  console.log(event.target.textContent);\n});",
+				"vista": {
+					"pestana": "Productos",
+					"bloques": [
+						{
+							"ul": [
+								"Mantas",
+								"Ponchos"
+							]
+						},
+						{
+							"nota": "Clic sobre «Ponchos»:"
+						},
+						{
+							"consola": [
+								"click",
+								"Ponchos"
+							]
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "preventDefault en formularios",
+				"texto": "Por defecto, enviar un formulario **recarga la página**. Si quieres validar los datos con JavaScript antes, cancelas ese comportamiento.",
+				"lenguaje": "js",
+				"codigo": "const form = document.querySelector('form');\n\nform.addEventListener('submit', (event) => {\n  event.preventDefault();\n  console.log('Validando datos...');\n});"
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Qué propiedad?",
+				"pregunta": {
+					"enunciado": "¿Qué te indica qué elemento concreto recibió el clic?",
+					"opciones": [
+						"event.type",
+						"event.target",
+						"event.preventDefault()",
+						"document.body"
+					],
+					"correcta": 1,
+					"explicacion": "`event.target` es el elemento donde se originó el evento. `event.type` solo dice qué tipo de evento fue."
+				}
+			}
+		]
+	},
+	{
+		"id": "L22",
+		"zona": 3,
+		"sala": "z3_copa",
+		"orden": 22,
+		"nivel": "intermedio",
+		"titulo": "Quitar listeners con removeEventListener",
+		"resumen": "removeEventListener deja de escuchar un evento. Necesita el mismo tipo y la misma función (la misma referencia) que se usó al registrarlo.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Dejar de escuchar",
+				"texto": "Cada llamada a `addEventListener` añade una función a la lista de oyentes del elemento. Si registras la misma acción varias veces con funciones distintas, **se ejecutará varias veces**.\n\n[[removeEventListener]] quita una función de esa lista. Es útil, por ejemplo, para un botón que solo debe funcionar una vez o para limpiar elementos que ya no se usan."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Misma referencia",
+				"texto": "Para poder quitar un listener, la función debe tener **nombre** (o guardarse en una variable): así pasas exactamente la misma función a ambos métodos.",
+				"lenguaje": "js",
+				"codigo": "function reclamar() {\n  console.log('Premio reclamado');\n  boton.removeEventListener('click', reclamar);\n}\n\nboton.addEventListener('click', reclamar);",
+				"vista": {
+					"pestana": "Premio",
+					"bloques": [
+						{
+							"boton": "Reclamar premio"
+						},
+						{
+							"nota": "Tres clics seguidos:"
+						},
+						{
+							"consola": [
+								"Premio reclamado"
+							]
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Por qué no se quita",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "boton.addEventListener('click', () => avisar());\nboton.removeEventListener('click', () => avisar());",
+						"bien": "boton.addEventListener('click', avisar);\nboton.removeEventListener('click', avisar);",
+						"explicacion": "Cada `() => ...` crea una función **nueva**. Aunque tengan el mismo código, no son la misma referencia, así que no se quita nada."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Listeners duplicados",
+				"pregunta": {
+					"enunciado": "Una función registra un listener de clic cada vez que se abre un menú, y nunca lo quita. Tras abrir el menú 3 veces, ¿qué pasa al hacer clic?",
+					"opciones": [
+						"La acción se ejecuta 1 vez",
+						"La acción se ejecuta 3 veces",
+						"No se ejecuta nada",
+						"El navegador borra los listeners viejos automáticamente"
+					],
+					"correcta": 1,
+					"explicacion": "Hay tres listeners registrados, y cada uno ejecuta la acción. Por eso hay que quitarlos con `removeEventListener` o registrarlos una sola vez."
+				}
+			}
+		]
+	}
+]

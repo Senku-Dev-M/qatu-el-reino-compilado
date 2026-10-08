@@ -1,0 +1,30 @@
+[
+	{
+		"id": "santuario_token",
+		"speaker": "",
+		"lineas": [
+			"Sobre el pedestal gira un sello de identidad que no pertenece a nadie… todavía.",
+			"Al tocarlo, la ciudadela te reconoce: podrás pedir credenciales en sus autorizadores.",
+			"Pide un token en la consola y cruza antes de que caduque. Si expira, pulsa {token} para renovarlo con tu refresh."
+		]
+	},
+	{
+		"id": "mentora_victoria_z7",
+		"speaker": "La Mentora",
+		"lineas": [
+			"La ciudadela reconoce por fin a los suyos. Venciste al Impostor Implícito.",
+			"Ahora sabes autenticar y autorizar, pedir tokens con OAuth 2.0 y PKCE, verificar identidades con OIDC y guardar las credenciales sin regalarlas.",
+			"Otro farol de Qatu brilla. Quedan cuatro regiones."
+		]
+	},
+	{
+		"id": "final_z7",
+		"speaker": "",
+		"lineas": [
+			"La Ciudadela IAM vuelve a distinguir a cada visitante.",
+			"Cada token lleva su alcance y su hora de caducar, cada respuesta trae el state que se le pidió y ninguna llave duerme a la intemperie.",
+			"Qatu todavía no compila. Cuatro regiones esperan.",
+			"Próximamente: Semana 8."
+		]
+	}
+]

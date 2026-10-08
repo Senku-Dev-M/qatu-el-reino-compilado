@@ -1,0 +1,24 @@
+[
+	{
+		"id": "z1",
+		"zona": 1,
+		"semana": 1,
+		"nombre": "Ruinas del Backend",
+		"tema": "Integración de sistemas, APIs REST, arquitectura en 3 capas, bases de datos y migración",
+		"salas": [
+			"z1_atrio",
+			"z1_catacumbas",
+			"z1_galeria",
+			"z1_altar",
+			"z1_boveda",
+			"z1_cripta",
+			"z1_bastion"
+		],
+		"habilidad": "rest_dash",
+		"jefe": "monolito",
+		"fragmentos": [
+			"z1_galeria:fragmento",
+			"z1_bastion:fragmento"
+		]
+	}
+]

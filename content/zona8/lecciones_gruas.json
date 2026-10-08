@@ -1,0 +1,317 @@
+[
+	{
+		"id": "L170",
+		"zona": 8,
+		"sala": "z8_gruas_cicd",
+		"orden": 170,
+		"nivel": "inicial",
+		"titulo": "Fundamentos de CI/CD",
+		"resumen": "Integración Continua (validación automática temprana) y Entrega Continua (despliegue automatizado y seguro).",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "La cultura CI/CD",
+				"texto": "[[cicd]] transforma el desarrollo de software mediante automatización:\n\n• **Integración Continua (CI):** los desarrolladores integran código frecuentemente. Cada push desencadena compilación automática y ejecución de pruebas unitarias y de integración.\n• **Entrega Continua (CD):** los cambios aprobados se empaquetan en artefactos (imágenes Docker) listos para producción con aprobación manual.\n• **Despliegue Continuo (CD total):** todo cambio que pasa las pruebas se despliega automáticamente en producción sin intervención humana."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Flujo de pipeline",
+				"texto": "Al subir código, el pipeline recorre sus etapas en orden. Si una falla, las siguientes no se ejecutan. La única diferencia entre **entrega** y **despliegue** continuo es el último paso:",
+				"vista": {
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Desarrollador",
+									"GitLab CI",
+									"Registro",
+									"Producción"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "git push"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "build y pruebas: OK"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "publica imagen"
+									},
+									{
+										"de": 1,
+										"a": 3,
+										"texto": "entrega: espera aprobación manual"
+									},
+									{
+										"de": 1,
+										"a": 3,
+										"texto": "despliegue: automático"
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Costes, beneficios y herramientas",
+				"texto": "Cada práctica tiene un coste. Y existen muchas herramientas para implementarlas:",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Práctica",
+									"Beneficio",
+									"Coste"
+								],
+								"filas": [
+									[
+										"Integración continua",
+										"errores detectados en minutos",
+										"escribir y mantener pruebas"
+									],
+									[
+										"Entrega continua",
+										"siempre listo para publicar",
+										"automatizar empaquetado y entornos"
+									],
+									[
+										"Despliegue continuo",
+										"valor en producción sin esperas",
+										"pruebas y monitoreo muy fiables"
+									]
+								]
+							}
+						},
+						{
+							"p": "Herramientas: GitLab CI/CD, GitHub Actions, Jenkins, Azure DevOps, CircleCI, Argo CD (GitOps)."
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Malas prácticas de integración",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Rama de funcionalidad abierta 5 semanas\ny un merge gigante al final.",
+						"bien": "Integrar en main varias veces por semana,\ncon cambios pequeños detrás de feature flags.",
+						"explicacion": "La integración continua exige integrar **a menudo**. Cuanto más tiempo divergen las ramas, más conflictos y errores aparecen juntos."
+					},
+					{
+						"mal": "El pipeline falla \"a veces\";\nse relanza hasta que pasa.",
+						"bien": "Una prueba inestable se corrige o se aísla\ny se registra como incidencia.",
+						"explicacion": "Si el equipo se acostumbra a ignorar fallos, el pipeline deja de proteger: un error real pasará también."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Objetivo de la Integración Continua",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué diferencia a la entrega continua del despliegue continuo?",
+					"opciones": [
+						"La entrega continua no ejecuta pruebas",
+						"En la entrega continua el paso a producción requiere aprobación manual",
+						"El despliegue continuo no usa contenedores",
+						"No hay diferencia"
+					],
+					"correcta": 1,
+					"explicacion": "Ambas dejan cada cambio listo para publicar; en el despliegue continuo la publicación también es automática."
+				}
+			}
+		]
+	},
+	{
+		"id": "L171",
+		"zona": 8,
+		"sala": "z8_gruas_cicd",
+		"orden": 171,
+		"nivel": "intermedio",
+		"titulo": "Estructura de un Pipeline (GitLab CI / Actions)",
+		"resumen": "Definición de etapas (stages), trabajos (jobs), variables secretas y artefactos en archivos YAML.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Componentes de un Pipeline",
+				"texto": "Un [[pipeline]] se describe formalmente en un archivo `.gitlab-ci.yml` o workflow de GitHub Actions:\n\n• **Stages:** fases secuenciales (ej. `test`, `build`, `deploy`).\n• **Jobs:** tareas que se ejecutan dentro de un stage (pueden correr en paralelo).\n• **Runners:** agentes de ejecución (máquinas o contenedores) que procesan los jobs.\n• **Variables de Entorno y Secretos:** credenciales seguras inyectadas en tiempo de ejecución (tokens, contraseñas de BD)."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Pipeline de Qatu en GitLab CI",
+				"texto": "El job `build` usa **Docker in Docker** (`docker:dind`): el runner arranca un daemon de Docker dentro de un contenedor para poder construir imágenes. Las credenciales llegan como variables protegidas:",
+				"lenguaje": "texto",
+				"codigo": "stages: [test, build, deploy]\n\ntest:\n  stage: test\n  image: node:20-alpine\n  script:\n    - npm ci\n    - npm test\n\nbuild:\n  stage: build\n  image: docker:27\n  services: [docker:27-dind]\n  script:\n    - docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" $CI_REGISTRY\n    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .\n    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA\n\ndeploy:\n  stage: deploy\n  script: kubectl set image deploy/qatu-api api=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA\n  environment: production\n  when: manual          # entrega continua: aprobación humana"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Trazabilidad de builds",
+				"texto": "Cada imagen en el registro queda etiquetada con el hash del commit (`$CI_COMMIT_SHA`) para rollback exacto.",
+				"vista": {
+					"bloques": [
+						{
+							"panel": {
+								"titulo": "Pipeline",
+								"pestanas": [
+									"Pipeline",
+									"Jobs",
+									"Tests"
+								],
+								"lineas": [
+									"Pipeline #1284 · main · 8f3c2a1",
+									"✔ test      npm test        42 s",
+									"✔ build     docker build    1 min 12 s",
+									"▶ deploy    manual          esperando aprobación",
+									"Imagen: registry.gitlab.com/qatu/api:8f3c2a1"
+								]
+							}
+						}
+					],
+					"pestana": "GitLab"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Pipelines frágiles o inseguros",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "script:\n  - docker login -u admin -p Qatu2026! registry...",
+						"bien": "script:\n  - docker login -u \"$CI_REGISTRY_USER\" -p \"$CI_REGISTRY_PASSWORD\" ...",
+						"explicacion": "El `.gitlab-ci.yml` está en el repositorio. Los secretos se guardan como variables protegidas y enmascaradas del proyecto."
+					},
+					{
+						"mal": "docker build -t qatu/api:latest .\ndocker push qatu/api:latest",
+						"bien": "docker build -t qatu/api:$CI_COMMIT_SHA .\ndocker push qatu/api:$CI_COMMIT_SHA",
+						"explicacion": "Con `latest` no se sabe qué commit está en producción ni se puede volver exactamente a una versión anterior."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Rol del Runner",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Por qué conviene etiquetar la imagen con $CI_COMMIT_SHA en lugar de latest?",
+					"opciones": [
+						"Porque latest ocupa más espacio",
+						"Para saber exactamente qué commit está desplegado y poder volver a él",
+						"Porque el registro no acepta latest",
+						"Para que el build sea más rápido"
+					],
+					"correcta": 1,
+					"explicacion": "Una etiqueta inmutable por commit da trazabilidad y permite rollback exacto."
+				}
+			}
+		]
+	},
+	{
+		"id": "L172",
+		"zona": 8,
+		"sala": "z8_gruas_cicd",
+		"orden": 172,
+		"nivel": "intermedio",
+		"titulo": "Estrategias de Despliegue: Rolling, Blue/Green y Canary",
+		"resumen": "Técnicas de actualización en producción con cero tiempo de inactividad y reducción de riesgo.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Despliegues sin downtime",
+				"texto": "• **Rolling Update (Progresivo):** reemplaza pods viejos por nuevos de forma gradual uno a uno. Si surge un error, se detiene el despliegue.\n• **Blue/Green:** mantiene dos entornos idénticos (Azul = producción actual, Verde = versión nueva). Se prueba la versión Verde y luego el router/balanceador cambia el 100% del tráfico instantáneamente.\n• **Canary (Canario):** redirige solo un pequeño porcentaje de usuarios reales (ej. 5%) a la versión nueva para validar métricas y errores antes del despliegue masivo."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Parámetros de un rolling update",
+				"lenguaje": "texto",
+				"texto": "En Kubernetes el rolling update es la estrategia por defecto. Con estos valores nunca baja la capacidad: primero se crea un Pod nuevo y solo cuando está ready se retira uno viejo:",
+				"codigo": "spec:\n  replicas: 4\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxSurge: 1          # como mucho 5 Pods durante el cambio\n      maxUnavailable: 0    # nunca menos de 4 disponibles"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Comparar estrategias",
+				"texto": "En Qatu, los despliegues de pagos usan Canary: si la tasa de error 500 sube más de 0.1%, el tráfico vuelve automáticamente a la versión anterior.",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Estrategia",
+									"Riesgo",
+									"Recursos extra",
+									"Vuelta atrás"
+								],
+								"filas": [
+									[
+										"Rolling",
+										"medio (conviven versiones)",
+										"pocos",
+										"otro rolling"
+									],
+									[
+										"Blue/Green",
+										"bajo",
+										"el doble durante el cambio",
+										"inmediata (router)"
+									],
+									[
+										"Canary",
+										"muy bajo (pocos usuarios)",
+										"pocos",
+										"inmediata (0% de tráfico)"
+									]
+								],
+								"resaltar": 3
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Despliegues que no protegen",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Canary al 5% sin métricas ni alertas.",
+						"bien": "Canary al 5% vigilando tasa de errores y latencia;\nsi superan el umbral, el tráfico vuelve a la versión estable.",
+						"explicacion": "Un canary solo reduce riesgo si alguien, o algo, **mira** los datos y puede revertir."
+					},
+					{
+						"mal": "Blue/Green con una migración que borra\nla columna usada por la versión azul.",
+						"bien": "Migraciones compatibles hacia atrás:\nañadir primero, retirar lo viejo en otra versión.",
+						"explicacion": "Durante el cambio, y si hay que volver atrás, ambas versiones usan la misma base de datos."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Despliegue Blue/Green",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Qatu quiere probar una versión nueva de pagos con el 5% de los usuarios reales antes de ampliarla. ¿Qué estrategia es?",
+					"opciones": [
+						"Rolling update",
+						"Blue/Green",
+						"Canary",
+						"Recreate"
+					],
+					"correcta": 2,
+					"explicacion": "Canary expone la versión nueva a una fracción del tráfico y amplía solo si las métricas son buenas."
+				}
+			}
+		]
+	}
+]

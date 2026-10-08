@@ -1,0 +1,286 @@
+[
+	{
+		"id": "L122",
+		"zona": 1,
+		"sala": "z1_galeria",
+		"orden": 122,
+		"nivel": "inicial",
+		"titulo": "Métodos HTTP y Semántica REST",
+		"resumen": "Los métodos HTTP indican la acción deseada sobre el recurso: GET (leer), POST (crear), PUT/PATCH (modificar) y DELETE (eliminar).",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Verbos principales",
+				"texto": "En una arquitectura [[rest]], los verbos HTTP tienen significados específicos:\n\n• **GET:** recupera la representación de un recurso sin modificar el estado del servidor.\n• **POST:** crea un nuevo recurso subordinado a la colección indicada.\n• **PUT:** reemplaza completamente el recurso existente o lo crea si no existe con ese ID.\n• **PATCH:** aplica modificaciones parciales al recurso sin sobreescribir todos los campos.\n• **DELETE:** elimina el recurso especificado por la URI."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Operaciones CRUD en Qatu",
+				"texto": "Mapeo estándar de operaciones sobre la colección `/api/productos`. La URI nombra el **recurso** (sustantivo en plural) y el método indica la **acción**:",
+				"lenguaje": "texto",
+				"codigo": "GET    /api/productos       lista los productos\nGET    /api/productos/42    obtiene el producto 42\nPOST   /api/productos       crea un producto\nPUT    /api/productos/42    reemplaza el producto 42\nPATCH  /api/productos/42    modifica campos del 42\nDELETE /api/productos/42    elimina el producto 42"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Una actualización parcial",
+				"texto": "Para cambiar solo el precio basta con enviar ese campo con PATCH:",
+				"vista": {
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "PATCH",
+								"url": "/api/productos/42",
+								"cabeceras": [
+									"Content-Type: application/json"
+								],
+								"cuerpo": "{\"precio\": 22.50}",
+								"estado": "200 OK",
+								"respuesta": "{ \"id\": 42, \"nombre\": \"Poncho\", \"precio\": 22.50 }"
+							}
+						}
+					],
+					"pestana": "DevTools · Network"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Anti-patrón de verbos en la URI",
+				"texto": "",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "POST /api/getProductos\nPOST /api/borrarProducto?id=42",
+						"bien": "GET    /api/productos\nDELETE /api/productos/42",
+						"explicacion": "El verbo va en el **método HTTP**, no en la ruta. Así la API es predecible y aprovecha cachés y reintentos."
+					},
+					{
+						"mal": "PUT /api/productos/42\n\n{\"precio\": 22.50}",
+						"bien": "PATCH /api/productos/42\n\n{\"precio\": 22.50}",
+						"explicacion": "PUT **reemplaza** el recurso completo: los campos que no se envían pueden quedar vacíos. Para cambiar un campo se usa PATCH."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Verbo para actualizar parcialmente",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué petición sigue las convenciones REST para eliminar el producto 42?",
+					"opciones": [
+						"POST /api/borrarProducto?id=42",
+						"GET /api/productos/42/eliminar",
+						"DELETE /api/productos/42",
+						"PUT /api/productos/42 con {\"eliminado\": true}"
+					],
+					"correcta": 2,
+					"explicacion": "La ruta nombra el recurso y el método HTTP indica la acción."
+				}
+			}
+		]
+	},
+	{
+		"id": "L123",
+		"zona": 1,
+		"sala": "z1_galeria",
+		"orden": 123,
+		"nivel": "inicial",
+		"titulo": "Seguridad e Idempotencia HTTP",
+		"resumen": "Un método es seguro si no altera el estado del servidor; es idempotente si múltiples ejecuciones idénticas producen el mismo resultado final.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Métodos seguros",
+				"texto": "Un método es **seguro** (read-only) si su ejecución no produce efectos secundarios en el servidor. `GET`, `HEAD` y `OPTIONS` son seguros: el cliente puede invocarlos repetidamente para inspeccionar o consultar recursos sin riesgo."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "¿Qué es la idempotencia?",
+				"texto": "La [[idempotencia]] garantiza que realizar la misma petición N veces consecutivas deja el servidor en el **mismo estado** que realizarla una sola vez.\n\n• **Idempotentes:** `GET`, `PUT`, `DELETE` (eliminar un ítem 1 o 10 veces deja el ítem eliminado).\n• **No idempotentes:** `POST` (ejecutar 3 veces `POST /pedidos` creará 3 pedidos distintos con cargos repetidos)."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Tabla de propiedades HTTP",
+				"texto": "Métodos y garantías según la especificación HTTP (RFC 9110):",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Método",
+									"Seguro",
+									"Idempotente",
+									"Cuerpo"
+								],
+								"filas": [
+									[
+										"GET",
+										"sí",
+										"sí",
+										"no"
+									],
+									[
+										"HEAD",
+										"sí",
+										"sí",
+										"no"
+									],
+									[
+										"OPTIONS",
+										"sí",
+										"sí",
+										"opcional"
+									],
+									[
+										"PUT",
+										"no",
+										"sí",
+										"sí"
+									],
+									[
+										"DELETE",
+										"no",
+										"sí",
+										"opcional"
+									],
+									[
+										"POST",
+										"no",
+										"no",
+										"sí"
+									],
+									[
+										"PATCH",
+										"no",
+										"no*",
+										"sí"
+									]
+								],
+								"pie": "* PATCH puede diseñarse idempotente, pero la especificación no lo garantiza."
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores de seguridad e idempotencia",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "GET /api/productos/42/eliminar",
+						"bien": "DELETE /api/productos/42",
+						"explicacion": "GET debe ser **seguro**: buscadores, previsualizaciones de enlaces y precargas del navegador lanzan GET sin preguntar y borrarían datos."
+					},
+					{
+						"mal": "(timeout) -> el cliente repite\nPOST /api/pedidos\n=> se crean dos pedidos",
+						"bien": "POST /api/pedidos\nIdempotency-Key: 7f3a9c1e\n(timeout) -> repite con la misma clave\n=> el servidor devuelve el pedido ya creado",
+						"explicacion": "POST no es idempotente. Con una **clave de idempotencia** el servidor reconoce el reintento y no cobra dos veces."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Identificar idempotencia",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Un cliente reintenta automáticamente cualquier petición que agota el tiempo de espera. ¿Con qué petición puede duplicarse el efecto?",
+					"opciones": [
+						"GET /api/productos",
+						"PUT /api/productos/42",
+						"DELETE /api/productos/42",
+						"POST /api/pedidos"
+					],
+					"correcta": 3,
+					"explicacion": "POST no es idempotente: cada repetición puede crear un pedido nuevo. Se mitiga con una clave de idempotencia."
+				}
+			}
+		]
+	},
+	{
+		"id": "L124",
+		"zona": 1,
+		"sala": "z1_galeria",
+		"orden": 124,
+		"nivel": "inicial",
+		"titulo": "Códigos de Estado HTTP",
+		"resumen": "Los códigos de estado informan el resultado del procesamiento agrupados en 5 familias estándar.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Las 5 familias de códigos",
+				"texto": "Cada respuesta incluye un [[codigo_estado]] de 3 dígitos:\n\n• **1xx (Informativos):** solicitud recibida, continuando proceso (ej. 101 Switching Protocols).\n• **2xx (Éxito):** la acción se completó satisfactoriamente.\n• **3xx (Redirección):** se requiere acción adicional para completar la petición.\n• **4xx (Errores del Cliente):** la petición contiene sintaxis errónea o no está autorizada.\n• **5xx (Errores del Servidor):** el servidor falló al intentar procesar una petición válida."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Códigos esenciales en APIs REST",
+				"texto": "Los códigos que más aparecen en una API REST y cuándo usarlos:",
+				"lenguaje": "texto",
+				"codigo": "200 OK                   lectura o modificación correcta\n201 Created              recurso creado (con Location)\n204 No Content           correcto, sin cuerpo (DELETE)\n400 Bad Request          petición mal formada\n401 Unauthorized         falta autenticación o es inválida\n403 Forbidden            autenticado, pero sin permiso\n404 Not Found            el recurso no existe\n409 Conflict             choca con el estado actual (stock)\n422 Unprocessable        datos bien formados pero inválidos\n500 Internal Error       fallo inesperado del servidor\n503 Service Unavailable  caído o en mantenimiento"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Respuesta con código correcto",
+				"texto": "Al crear un producto en Qatu, el servidor devuelve 201 Created junto a la URI del nuevo recurso en la cabecera `Location`.",
+				"vista": {
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "POST",
+								"url": "/api/productos",
+								"cabeceras": [
+									"Content-Type: application/json"
+								],
+								"cuerpo": "{\"nombre\":\"Poncho\",\"precio\":25}",
+								"estado": "201 Created",
+								"respuesta_cabeceras": [
+									"Location: /api/productos/42"
+								],
+								"respuesta": "{ \"id\": 42, \"nombre\": \"Poncho\" }"
+							}
+						}
+					],
+					"pestana": "DevTools · Network"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Códigos mal elegidos",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "200 OK\n{\"error\": \"producto no encontrado\"}",
+						"bien": "404 Not Found\n{\"error\": \"producto no encontrado\"}",
+						"explicacion": "El cliente decide por el **código**, no leyendo el texto. Un 200 con error hace que `response.ok` sea `true`."
+					},
+					{
+						"mal": "500 Internal Server Error\n{\"error\": \"el precio no puede ser negativo\"}",
+						"bien": "422 Unprocessable Content\n{\"error\": \"el precio no puede ser negativo\"}",
+						"explicacion": "Los datos inválidos son un error **del cliente** (4xx). Un 5xx indica que el servidor falló y dispara alertas innecesarias."
+					},
+					{
+						"mal": "Usuario autenticado sin rol de vendedor\n-> 401 Unauthorized",
+						"bien": "Usuario autenticado sin rol de vendedor\n-> 403 Forbidden",
+						"explicacion": "401 significa «no sé quién eres»; 403, «sé quién eres, pero no tienes permiso»."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Código para recurso creado",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Un usuario autenticado como comprador intenta borrar un producto, algo que solo puede hacer un vendedor. ¿Qué código corresponde?",
+					"opciones": [
+						"401 Unauthorized",
+						"403 Forbidden",
+						"404 Not Found",
+						"500 Internal Server Error"
+					],
+					"correcta": 1,
+					"explicacion": "El servidor sabe quién es (está autenticado), pero no tiene permiso: 403."
+				}
+			}
+		]
+	}
+]

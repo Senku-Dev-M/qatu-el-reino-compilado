@@ -1,0 +1,122 @@
+[
+	{
+		"id": "tdd_test",
+		"termino": "TDD (Test-Driven Development)",
+		"leccion": "L184",
+		"definicion": "Metodología de desarrollo donde las pruebas se escriben antes del código de producción."
+	},
+	{
+		"id": "flaky_def",
+		"termino": "Flaky Test",
+		"leccion": "L186",
+		"definicion": "Prueba no determinista que produce resultados intermitentes por condiciones de carrera."
+	},
+	{
+		"id": "playwright_e2e",
+		"termino": "Playwright",
+		"leccion": "L185",
+		"definicion": "Framework moderno de automatización de pruebas End-to-End en navegadores reales."
+	},
+	{
+		"id": "owasp_sec",
+		"termino": "OWASP Top 10",
+		"leccion": "L191",
+		"definicion": "Listado de los diez riesgos de seguridad más críticos en aplicaciones web."
+	},
+	{
+		"id": "sqli_vuln",
+		"termino": "Inyección SQL",
+		"leccion": "L191",
+		"definicion": "Ataque que altera consultas a la base de datos introduciendo código malicioso en la entrada."
+	},
+	{
+		"id": "verificacion_validacion",
+		"termino": "Verificación y validación",
+		"leccion": "L179",
+		"definicion": "Verificación comprueba que el software cumple su especificación («¿lo construimos bien?»); validación comprueba que resuelve la necesidad real del usuario («¿construimos lo correcto?»)."
+	},
+	{
+		"id": "prueba_compatibilidad",
+		"termino": "Prueba de compatibilidad",
+		"leccion": "L179",
+		"definicion": "Prueba que comprueba que la aplicación funciona igual en distintos navegadores, sistemas operativos y dispositivos. La prueba cross-browser es su caso más común en la web."
+	},
+	{
+		"id": "piramide_pruebas",
+		"termino": "Pirámide de pruebas",
+		"leccion": "L180",
+		"definicion": "Modelo que recomienda muchas pruebas unitarias rápidas en la base, menos de integración en el medio y pocas pruebas end-to-end en la cúspide."
+	},
+	{
+		"id": "doble_prueba",
+		"termino": "Doble de prueba",
+		"leccion": "L183",
+		"definicion": "Objeto que sustituye a una dependencia real durante una prueba: dummy, stub, spy, mock o fake."
+	},
+	{
+		"id": "selenium",
+		"termino": "Selenium WebDriver",
+		"leccion": "L185",
+		"definicion": "Herramienta de automatización que controla navegadores reales mediante el protocolo WebDriver para ejecutar pruebas end-to-end."
+	},
+	{
+		"id": "prueba_carga",
+		"termino": "Prueba de carga",
+		"leccion": "L187",
+		"definicion": "Prueba de rendimiento que somete al sistema al volumen de usuarios esperado para medir latencia, rendimiento y tasa de errores."
+	},
+	{
+		"id": "prueba_estres",
+		"termino": "Prueba de estrés",
+		"leccion": "L187",
+		"definicion": "Prueba de rendimiento que supera la carga esperada hasta encontrar el punto en que el sistema se degrada o falla."
+	},
+	{
+		"id": "cobertura_ramas",
+		"termino": "Cobertura de ramas",
+		"leccion": "L188",
+		"definicion": "Porcentaje de caminos de cada decisión (if, switch, operador ternario) que las pruebas ejecutan, tanto en el caso verdadero como en el falso."
+	},
+	{
+		"id": "prepared_statement",
+		"termino": "Consulta parametrizada",
+		"leccion": "L191",
+		"definicion": "Consulta SQL en la que los valores del usuario se envían como parámetros separados del texto de la consulta, de modo que nunca se interpretan como código."
+	},
+	{
+		"id": "csp",
+		"termino": "CSP (Content Security Policy)",
+		"leccion": "L192",
+		"definicion": "Cabecera HTTP que indica al navegador de qué orígenes puede cargar scripts, estilos y otros recursos, y si se permiten scripts inline."
+	},
+	{
+		"id": "sast",
+		"termino": "SAST",
+		"leccion": "L194",
+		"definicion": "Análisis de seguridad estático: examina el código fuente sin ejecutarlo para encontrar vulnerabilidades y secretos."
+	},
+	{
+		"id": "dast",
+		"termino": "DAST",
+		"leccion": "L195",
+		"definicion": "Análisis de seguridad dinámico: ataca la aplicación en ejecución desde fuera, como lo haría un usuario malicioso."
+	},
+	{
+		"id": "sbom",
+		"termino": "SBOM",
+		"leccion": "L196",
+		"definicion": "Software Bill of Materials: inventario de todos los componentes y dependencias, directas y transitivas, de una aplicación."
+	},
+	{
+		"id": "monitoreo_continuo",
+		"termino": "Monitoreo continuo",
+		"leccion": "L197",
+		"definicion": "Recolección y análisis permanente de métricas, logs y alertas de la aplicación, la infraestructura y la red para detectar problemas en producción."
+	},
+	{
+		"id": "pruebas_continuas",
+		"termino": "Pruebas continuas (continuous testing)",
+		"leccion": "L198",
+		"definicion": "Ejecución automática de pruebas en cada etapa del pipeline, de modo que cada cambio obtiene una evaluación de riesgo antes de avanzar."
+	}
+]

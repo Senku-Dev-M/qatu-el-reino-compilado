@@ -1,0 +1,110 @@
+[
+	{
+		"id": "S13", "zona": 7, "nombre": "Sello del Portador",
+		"lecciones": ["L95", "L96", "L97", "L99"],
+		"pista": "401 es falta de autenticación; 403, falta de permiso. El access token va a la API; el refresh, solo al servidor de autorización. RBAC decide por rol; la propiedad del recurso se comprueba aparte.",
+		"retos": [
+			{
+				"tipo": "completar", "lenguaje": "texto",
+				"enunciado": "Completa la cabecera para enviar un access token a la API.",
+				"codigo": "GET /api/pedidos\nAuthorization: ___ eyJhbGciOiJSUzI1NiJ9…",
+				"opciones": ["Basic", "Bearer", "Token", "OAuth"],
+				"correcta": 1,
+				"explicacion": "El esquema para tokens portadores es `Bearer`. `Basic` es para usuario y contraseña."
+			},
+			{
+				"tipo": "elegir", "lenguaje": "texto",
+				"enunciado": "Ana está autenticada como vendedora e intenta editar un producto de Rosa. ¿Qué responde la API?",
+				"opciones": ["401 Unauthorized", "403 Forbidden", "200 OK", "404 Not Found"],
+				"correcta": 1,
+				"explicacion": "Se sabe quién es (autenticada), pero no tiene permiso sobre ese recurso: 403."
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "js",
+				"enunciado": "Esta llamada a la API falla siempre con 401. ¿Qué línea tiene el error?",
+				"lineas": ["const r = await fetch('/api/pedidos', {", "  headers: {", "    Authorization: `Bearer ${refreshToken}`", "  }", "});"],
+				"correcta": 2,
+				"corregida": "    Authorization: `Bearer ${accessToken}`",
+				"explicacion": "El refresh token solo se presenta en /token del servidor de autorización; la API espera el access token."
+			},
+			{
+				"tipo": "ordenar", "lenguaje": "js",
+				"enunciado": "Ordena el middleware que autentica y comprueba la propiedad del producto.",
+				"lineas": ["const usuario = verificarToken(req.headers.authorization);", "if (!usuario) return res.status(401).end();", "const producto = await db.productos.findById(req.params.id);", "if (producto.vendedorId !== usuario.id) return res.status(403).end();", "await actualizar(producto, req.body);"],
+				"explicacion": "Primero se autentica (401 si falla), después se busca el recurso, luego se comprueba el permiso sobre él (403) y solo entonces se actúa."
+			}
+		]
+	},
+	{
+		"id": "S14", "zona": 7, "nombre": "Sello de la Identidad",
+		"lecciones": ["L100", "L101", "L103", "L105", "L106"],
+		"pista": "En /authorize viaja el code_challenge; el verifier se revela en /token. El ID Token es para el cliente; el access token, para la API. El payload de un JWT se lee sin clave.",
+		"retos": [
+			{
+				"tipo": "completar", "lenguaje": "texto",
+				"enunciado": "Completa el método de PKCE que realmente protege el código.",
+				"codigo": "GET /authorize?response_type=code&client_id=tienda-app\n  &code_challenge=E9Melhoa2Owv…&code_challenge_method=___",
+				"opciones": ["plain", "S256", "HS256", "none"],
+				"correcta": 1,
+				"explicacion": "`S256` envía el hash SHA-256 del verifier. `plain` enviaría el verifier tal cual y no protege."
+			},
+			{
+				"tipo": "elegir", "lenguaje": "texto",
+				"enunciado": "¿Qué información NO debe ir nunca en el payload de un JWT?",
+				"opciones": ["El identificador del usuario (sub)", "El alcance del token (scope)", "El número de tarjeta del usuario", "La expiración (exp)"],
+				"correcta": 2,
+				"explicacion": "El payload es legible en base64url: solo identificadores y permisos, nunca datos sensibles."
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "js",
+				"enunciado": "La API rechaza estas peticiones con 401 aunque el usuario acaba de iniciar sesión. ¿Qué línea está mal?",
+				"lineas": ["const { id_token, access_token } = await canjearCodigo(code);", "guardarSesion(id_token);", "await fetch('/api/pedidos', {", "  headers: { Authorization: `Bearer ${id_token}` }", "});"],
+				"correcta": 3,
+				"corregida": "  headers: { Authorization: `Bearer ${access_token}` }",
+				"explicacion": "El ID Token tiene como audiencia el cliente; la API valida `aud` y lo rechaza. A la API se envía el access token."
+			},
+			{
+				"tipo": "ordenar", "lenguaje": "texto",
+				"enunciado": "Ordena los pasos del flujo Authorization Code con PKCE.",
+				"lineas": ["El cliente genera un code_verifier y calcula su code_challenge.", "Envía al usuario a /authorize con el challenge y el state.", "El usuario se autentica y el servidor devuelve un code.", "El cliente comprueba el state recibido.", "Canjea el code en /token enviando el code_verifier.", "El servidor valida el verifier y entrega los tokens."],
+				"explicacion": "El challenge viaja al pedir autorización; el verifier solo al canjear, y el state se comprueba nada más volver."
+			}
+		]
+	},
+	{
+		"id": "S15", "zona": 7, "nombre": "Sello de la Sesión",
+		"lecciones": ["L107", "L108", "L113", "L114", "L115"],
+		"pista": "Caducidad corta y HTTPS siempre. LocalStorage lo lee JavaScript; la cookie HttpOnly no. El refresh se rota y su reutilización revoca la sesión. La sesión del servidor se revoca al instante; el JWT, no.",
+		"retos": [
+			{
+				"tipo": "elegir", "lenguaje": "texto",
+				"enunciado": "Quieres reducir el daño de un XSS que intente robar la sesión de tu SPA. ¿Qué haces?",
+				"opciones": ["Guardar el access token en LocalStorage", "Access token en memoria y refresh token en cookie HttpOnly, Secure y SameSite", "Guardar ambos tokens en LocalStorage pero cifrados con una clave del propio JavaScript", "Poner el token en la URL"],
+				"correcta": 1,
+				"explicacion": "HttpOnly impide que JavaScript lea la cookie, y el access token en memoria no queda almacenado. Cifrar en el propio cliente no ayuda: la clave también es accesible."
+			},
+			{
+				"tipo": "completar", "lenguaje": "texto",
+				"enunciado": "Completa los atributos de la cookie que guarda el refresh token.",
+				"codigo": "Set-Cookie: refresh=def50200…; Path=/; ___; Secure; SameSite=Strict",
+				"opciones": ["HttpOnly", "Public", "Max-Age=0", "Domain=*"],
+				"correcta": 0,
+				"explicacion": "`HttpOnly` impide el acceso desde JavaScript; junto con `Secure` y `SameSite` es la configuración recomendada."
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "js",
+				"enunciado": "Este interceptor entra en un bucle infinito cuando el usuario no tiene permisos. ¿Qué línea lo provoca?",
+				"lineas": ["async function api(url) {", "  let r = await fetch(url, conToken());", "  while (r.status === 401 || r.status === 403) {", "    await renovarToken();", "    r = await fetch(url, conToken());", "  }", "  return r;", "}"],
+				"correcta": 2,
+				"corregida": "  if (r.status === 401 && await renovarToken()) {",
+				"explicacion": "Renovar no arregla un 403 (falta de permisos) y el bucle no termina. Se reintenta una sola vez y solo ante un 401."
+			},
+			{
+				"tipo": "ordenar", "lenguaje": "texto",
+				"enunciado": "Ordena la reacción correcta cuando llega un refresh token ya utilizado.",
+				"lineas": ["El servidor busca el refresh recibido y ve que ya fue canjeado.", "Deduce que el token pudo ser copiado por un tercero.", "Revoca toda la familia de tokens de esa sesión.", "Responde con un error de autenticación.", "La aplicación lleva al usuario a iniciar sesión de nuevo."],
+				"explicacion": "Con rotación, un refresh repetido es señal de robo: se corta la sesión entera y se exige autenticarse otra vez."
+			}
+		]
+	}
+]

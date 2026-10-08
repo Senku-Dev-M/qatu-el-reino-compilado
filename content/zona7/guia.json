@@ -1,0 +1,95 @@
+[
+	{
+		"id": "z7_puesto", "nombre": "Puesto de Control",
+		"intro": [
+			"Bienvenido a la Ciudadela IAM. Soy El Manual. Esta semana estudiaremos quién entra, qué puede hacer y cómo se demuestra.",
+			"En el Archivo Paginado viste middlewares que autenticaban peticiones. Aquí veremos qué hay detrás de esa comprobación.",
+			"En este puesto empezamos por lo básico: la diferencia entre autenticación y autorización, los métodos de autenticación y los modelos de permisos RBAC y ABAC.",
+			"Coge el mapa de la garita: la ciudadela tiene muchos patios."
+		],
+		"recordatorio": "401 es «no sé quién eres»; 403 es «sé quién eres y no puedes». RBAC decide por rol; ABAC, por atributos y contexto.",
+		"cierre": [
+			"Bien. Ya distingues autenticar de autorizar y conoces los métodos y modelos que usan las APIs.",
+			"Siguiente sala: la Barbacana de los Tokens. Allí conocerás OAuth 2.0 y recibirás una habilidad."
+		]
+	},
+	{
+		"id": "z7_barbacana", "nombre": "Barbacana de los Tokens",
+		"intro": [
+			"La Barbacana de los Tokens. Aquí estudiaremos OAuth 2.0 y la pareja de credenciales que lo mueve todo: access token y refresh token.",
+			"En el pedestal espera la habilidad Tokens. En los autorizadores pides un token con un alcance y una caducidad; los arcos lectores solo se abren mientras siga vigente.",
+			"Si el token caduca o te lo roban, pulsa la tecla de Tokens para renovarlo con el refresh, sin volver al autorizador.",
+			"Cuidado con el ladrón que ronda el foso: robar el access token es su oficio."
+		],
+		"recordatorio": "El access token se envía a la API y dura poco; el refresh solo sirve ante el servidor de autorización para pedir otro.",
+		"cierre": [
+			"Muy bien. Ya sabes qué resuelve OAuth 2.0, quiénes son sus cuatro roles y en qué se diferencian los dos tokens.",
+			"Siguiente sala: el Patio de las Concesiones. Veremos los flujos: cuál usar y cuáles están desaconsejados."
+		]
+	},
+	{
+		"id": "z7_patio", "nombre": "Patio de las Concesiones",
+		"intro": [
+			"El Patio de las Concesiones. Cada arco de este patio representa un flujo distinto para obtener un token.",
+			"Estudiaremos Authorization Code, el implícito y el de contraseña (ambos desaconsejados), Client Credentials y, para terminar, PKCE.",
+			"Fíjate en los dos autorizadores: uno emite el alcance «visitante» y otro «vendedor». El arco pide «vendedor»: con el token equivocado responderá 403."
+		],
+		"recordatorio": "Authorization Code con PKCE es el flujo recomendado. El state liga la respuesta con tu petición; el code_verifier demuestra que eres quien empezó.",
+		"cierre": [
+			"Excelente. Ya sabes elegir flujo según el tipo de cliente y por qué PKCE es hoy la norma.",
+			"Siguiente sala: la Capilla de la Identidad. Pasamos de «qué puedes hacer» a «quién eres»."
+		]
+	},
+	{
+		"id": "z7_capilla", "nombre": "Capilla de la Identidad",
+		"intro": [
+			"La Capilla de la Identidad. Aquí estudiaremos OpenID Connect: la capa de autenticación que se apoya en OAuth 2.0.",
+			"Veremos el flujo con la Relying Party y el proveedor de identidad, el ID Token y su formato JWT, y en qué se diferencia del access token.",
+			"Detrás de la pared del fondo hay una cámara olvidada; quizá guarde algo tuyo."
+		],
+		"recordatorio": "El ID Token es para el cliente y se valida (iss, aud, exp, nonce y firma). El access token es para la API y no se interpreta.",
+		"cierre": [
+			"Muy bien. Ya sabes cómo una aplicación averigua quién entró y qué contiene un JWT.",
+			"Siguiente sala: la Muralla de las Buenas Prácticas. Veremos cómo no perder todo esto por un descuido."
+		]
+	},
+	{
+		"id": "z7_muralla", "nombre": "Muralla de las Buenas Prácticas",
+		"intro": [
+			"La Muralla de las Buenas Prácticas. Desde aquí se ve todo lo que puede salir mal.",
+			"Estudiaremos cómo proteger la clave de firma, qué no debe ir en el payload, la expiración y el uso de HTTPS, y cómo guardar y reutilizar los tokens.",
+			"El adarve es largo y el token de este autorizador dura poco. Cruza el puente renovando el token cuando haga falta: ese ladrón no perdona."
+		],
+		"recordatorio": "Clave de firma a buen recaudo, payload sin datos sensibles, caducidad corta, siempre HTTPS y comprobar la autorización en cada endpoint.",
+		"cierre": [
+			"Perfecto. Ya conoces las prácticas que separan una autenticación sólida de una frágil.",
+			"Siguiente sala: la Torre del IdP. Veremos quién emite todas estas credenciales."
+		]
+	},
+	{
+		"id": "z7_torre", "nombre": "Torre del IdP",
+		"intro": [
+			"La Torre del IdP. En lo alto está el proveedor de identidad: el que autentica y firma.",
+			"Estudiaremos qué es IAM y su flujo, el papel del IdP, el Single Sign-On, el identity brokering y el social login, con los proveedores del mercado.",
+			"Pide arriba un token de alcance «admin»: con ese único token se abrirán los dos arcos de la torre. Eso es SSO."
+		],
+		"recordatorio": "Un IdP centraliza autenticación y ciclo de vida. SSO: una sesión, muchas aplicaciones. Brokering: un IdP que delega en otros.",
+		"cierre": [
+			"Muy bien. Ya sabes cómo se organiza la identidad en una organización y qué herramientas existen.",
+			"Última sala: la Sala de Sesiones. Volvemos al frontend: dónde se guardan los tokens y cómo se renuevan."
+		]
+	},
+	{
+		"id": "z7_sesiones", "nombre": "Sala de Sesiones",
+		"intro": [
+			"La Sala de Sesiones. Aquí se decide dónde vive el token en el navegador.",
+			"Estudiaremos LocalStorage frente a cookies HttpOnly, el papel del refresh token con access tokens cortos y la elección entre sesión en el servidor y JWT.",
+			"En esta sala no hay autorizadores: el arco final pide un token de «admin» y tu access token ya habrá caducado. Renueva con el refresh, que para eso está."
+		],
+		"recordatorio": "Access token en memoria, refresh en cookie HttpOnly. Renueva antes de que caduque o al recibir un 401, y rota el refresh.",
+		"cierre": [
+			"Has terminado la Semana 7: autenticación y autorización, OAuth 2.0, PKCE, OIDC, buenas prácticas, IAM y tokens en el frontend.",
+			"Al fondo espera El Impostor Implícito: presume de un flujo que regalaba tokens en la URL. Comprueba el state y exige PKCE."
+		]
+	}
+]

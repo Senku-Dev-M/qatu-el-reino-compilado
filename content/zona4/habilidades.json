@@ -1,0 +1,9 @@
+[
+	{
+		"id": "flex", "zona": 4, "nombre": "Flex",
+		"descripcion": "Cambia el valor de los contenedores flex del cañón: sus losas se reorganizan como elementos flex reales.",
+		"leccion": "Cada marco dorado es un contenedor con display: flex. Al cambiar justify-content o align-items, el navegador recalcula la posición de sus elementos; aquí, las losas se mueven igual. Lo estudias en el Desfiladero de los Ejes.",
+		"control": "flex",
+		"instruccion": "Acércate a un contenedor flex y pulsa [%s] para cambiar su valor"
+	}
+]

@@ -1,0 +1,172 @@
+[
+	{
+		"id": "L191",
+		"zona": 9,
+		"sala": "z9_bunker_owasp",
+		"orden": 191,
+		"nivel": "intermedio",
+		"titulo": "OWASP: Inyecciones SQL y Prepared Statements",
+		"resumen": "Mecanismo de explotación de inyecciones y defensa categórica mediante consultas parametrizadas.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El Peligro de la Concatenación",
+				"texto": "El [[OWASP Top 10|owasp_sec]] lista los riesgos más críticos de las aplicaciones web, y la **guía de pruebas de OWASP** propone probarlos de dos formas: **pasiva** (observar y entender la aplicación sin alterarla) y **activa** (enviar entradas maliciosas para comprobar si es vulnerable).\n\nLa [[inyección SQL|sqli_vuln]] aparece al **concatenar** la entrada del usuario en una consulta: un atacante cierra la comilla y añade su propio SQL, como `' OR '1'='1' --`."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Consultas Parametrizadas (Prepared Statements)",
+				"texto": "Las [[consultas parametrizadas|prepared_statement]] envían el texto de la consulta y los valores **por separado**. La base de datos trata cada valor siempre como dato, nunca como código, por mucho SQL que contenga."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Concatenar frente a parametrizar",
+				"lenguaje": "js",
+				"codigo": "// Vulnerable: email = \"' OR '1'='1' --\" devuelve todos los usuarios\nconst r1 = await pool.query(\n  `SELECT * FROM usuarios WHERE email = '${email}'`);\n\n// Seguro: el valor viaja como parámetro $1\nconst r2 = await pool.query(\n  'SELECT * FROM usuarios WHERE email = $1', [email]);"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Defensas insuficientes",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "const limpio = email.replace(\"'\", \"\");\npool.query(`... WHERE email = '${limpio}'`);",
+						"bien": "pool.query('... WHERE email = $1', [email]);",
+						"explicacion": "Filtrar caracteres a mano siempre deja variantes sin cubrir (otras comillas, codificaciones). La parametrización elimina el problema de raíz."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: OWASP: Inyecciones SQL y Prepared Statements",
+				"pregunta": {
+					"enunciado": "¿Qué defensa elimina la inyección SQL de raíz?",
+					"opciones": [
+						"Quitar las comillas del texto del usuario",
+						"Usar consultas parametrizadas",
+						"Validar solo en el frontend",
+						"Ocultar los mensajes de error"
+					],
+					"correcta": 1,
+					"explicacion": "Con parámetros, los valores nunca se interpretan como parte de la consulta."
+				}
+			}
+		]
+	},
+	{
+		"id": "L192",
+		"zona": 9,
+		"sala": "z9_bunker_owasp",
+		"orden": 192,
+		"nivel": "intermedio",
+		"titulo": "OWASP: Cross-Site Scripting (XSS) y CSP",
+		"resumen": "Tipos de XSS (Reflected, Stored, DOM) y políticas de seguridad de contenido.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Tipos de XSS",
+				"texto": "- **Stored XSS**: El script malicioso se almacena en la base de datos (comentarios, nombres) y se ejecuta en cada visitante.\n- **Reflected XSS**: El script viaja en la URL o query params y se refleja en la respuesta sin sanitizar.\n- **DOM-based XSS**: La vulnerabilidad reside exclusivamente en el código JavaScript del cliente al manipular `innerHTML` o `eval`."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Content Security Policy (CSP)",
+				"texto": "La [[CSP|csp]] (`Content-Security-Policy`) es una cabecera HTTP que dice al navegador de qué orígenes puede cargar scripts y otros recursos. Si un atacante inyecta `<script>`, el navegador lo bloquea porque no está permitido. Es una **segunda barrera**: la primera sigue siendo escapar siempre la salida."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Escapar la salida y declarar una CSP",
+				"lenguaje": "js",
+				"codigo": "// DOM XSS: innerHTML interpreta el HTML de la reseña\ntarjeta.innerHTML = `<p>${resena.texto}</p>`;       // vulnerable\n// textContent lo trata siempre como texto\nparrafo.textContent = resena.texto;                  // seguro\n\n// Express: la CSP solo permite scripts del propio origen\napp.use((req, res, next) => {\n  res.set('Content-Security-Policy',\n    \"default-src 'self'; script-src 'self'; object-src 'none'\");\n  next();\n});"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "La CSP bloqueando un script inyectado",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"Refused to execute inline script because it violates the following",
+								"Content Security Policy directive: \"script-src 'self'\"."
+							]
+						}
+					],
+					"pestana": "DevTools · Console"
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: OWASP: Cross-Site Scripting (XSS) y CSP",
+				"pregunta": {
+					"enunciado": "Una reseña con <script> se ejecuta al mostrarla con innerHTML. ¿Cuál es la corrección principal?",
+					"opciones": [
+						"Añadir más validación en la base de datos",
+						"Asignar el texto con textContent (y, como refuerzo, una CSP)",
+						"Mostrar la reseña en mayúsculas",
+						"Cargar la reseña por WebSocket"
+					],
+					"correcta": 1,
+					"explicacion": "textContent trata la entrada como texto; la CSP es una segunda barrera, no la primera."
+				}
+			}
+		]
+	},
+	{
+		"id": "L193",
+		"zona": 9,
+		"sala": "z9_bunker_owasp",
+		"orden": 193,
+		"nivel": "intermedio",
+		"titulo": "OWASP: CSRF, CORS y Cookies Seguras",
+		"resumen": "Protección contra falsificación de peticiones y configuración estricta de cookies HTTP.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "CSRF y CORS no son lo mismo",
+				"texto": "**CSRF** (Cross-Site Request Forgery): una página maliciosa hace que el navegador de la víctima envíe una petición a Qatu, y el navegador adjunta **automáticamente** la cookie de sesión.\n\n**CORS** es otra cosa: el mecanismo por el que un servidor indica qué **otros orígenes** pueden leer sus respuestas desde JavaScript. No protege contra CSRF, porque el navegador puede **enviar** la petición aunque no deje leer la respuesta."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Defensa con Atributos de Cookie y Tokens",
+				"texto": "- `SameSite=Strict` o `Lax`: Impide que el navegador envíe cookies de sesión en peticiones de origen cruzado.\n- `HttpOnly`: Impide el acceso a la cookie desde scripts de JavaScript (mitigando robo en caso de XSS).\n- `Secure`: Fuerza el envío exclusivo a través de HTTPS cifrado."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Cookie de sesión y CORS configurados",
+				"lenguaje": "js",
+				"codigo": "res.cookie('sesion', id, {\n  httpOnly: true,     // JavaScript no puede leerla\n  secure: true,       // solo por HTTPS\n  sameSite: 'lax',    // no viaja en POST desde otros sitios\n  maxAge: 2 * 60 * 60 * 1000,\n});\n\napp.use(cors({\n  origin: ['https://qatu.com'],   // lista explícita, nunca '*'\n  credentials: true,\n}));"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Configuraciones peligrosas",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "app.use(cors({ origin: true, credentials: true }));",
+						"bien": "app.use(cors({ origin: ['https://qatu.com'], credentials: true }));",
+						"explicacion": "`origin: true` refleja cualquier origen y, con credenciales, permite que cualquier sitio lea respuestas autenticadas del usuario."
+					},
+					{
+						"mal": "res.cookie('sesion', id);",
+						"bien": "res.cookie('sesion', id,\n  { httpOnly: true, secure: true, sameSite: 'lax' });",
+						"explicacion": "Sin atributos la cookie se puede leer con JavaScript, viaja por HTTP y se adjunta en peticiones de otros sitios."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: OWASP: CSRF, CORS y Cookies Seguras",
+				"pregunta": {
+					"enunciado": "¿Qué atributo de cookie evita que se adjunte en un POST enviado desde otro sitio?",
+					"opciones": [
+						"HttpOnly",
+						"Secure",
+						"SameSite=Lax o Strict",
+						"Max-Age"
+					],
+					"correcta": 2,
+					"explicacion": "SameSite controla el envío en peticiones entre sitios; HttpOnly y Secure protegen de otras amenazas."
+				}
+			}
+		]
+	}
+]

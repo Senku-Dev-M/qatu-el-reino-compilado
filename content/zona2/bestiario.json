@@ -1,0 +1,42 @@
+[
+	{
+		"id": "acoplamiento_rigido",
+		"zona": 2,
+		"nombre": "Acoplamiento Rígido",
+		"descripcion": "Monstruo de piedra que une la vista directamente a la base de datos sin capas intermedias.",
+		"leccion": "El acoplamiento rígido impide reutilizar componentes y dificulta las pruebas unitarias. Se soluciona mediante abstracciones e inyección de dependencias.",
+		"derrotas_requeridas": 3
+	},
+	{
+		"id": "render_bloqueante",
+		"zona": 2,
+		"nombre": "Render Bloqueante",
+		"descripcion": "Aparición espectral que congela la pantalla durante cargas sincrónicas pesadas.",
+		"leccion": "El render bloqueante ocurre cuando el hilo principal de la UI se satura con operaciones lentas. Se mitiga con renderizado asíncrono, web workers y placeholders.",
+		"derrotas_requeridas": 3
+	},
+	{
+		"id": "logica_en_vista",
+		"zona": 2,
+		"nombre": "Lógica en la Vista",
+		"descripcion": "Criatura caótica que mezcla consultas SQL y fórmulas de negocio dentro del código HTML.",
+		"leccion": "Mezclar lógica de negocio en la vista viola el principio de separación de responsabilidades, haciendo que los cambios visuales puedan corromper datos.",
+		"derrotas_requeridas": 2
+	},
+	{
+		"id": "framework_obsoleto",
+		"zona": 2,
+		"nombre": "Framework Abandonado",
+		"descripcion": "Armadura oxidada basada en librerías sin soporte ni comunidad activa.",
+		"leccion": "Elegir un framework requiere evaluar madurez, licencias, soporte corporativo, comunidad y compatibilidad a largo plazo.",
+		"derrotas_requeridas": 4
+	},
+	{
+		"id": "espagueti",
+		"zona": 2,
+		"nombre": "Espagueti, el Acoplado",
+		"descripcion": "El señor de las Torres de Arquitectura. Una masa enredada de dependencias circulares y referencias cruzadas.",
+		"leccion": "El código espagueti carece de arquitectura definida. Clean Architecture organiza el software en capas concéntricas donde las dependencias solo apuntan hacia adentro.",
+		"derrotas_requeridas": 1
+	}
+]

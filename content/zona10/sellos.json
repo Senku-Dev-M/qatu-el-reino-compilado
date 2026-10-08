@@ -1,0 +1,79 @@
+[
+	{
+		"id": "S28",
+		"zona": 10,
+		"nombre": "Sello del Capstone y Excelencia Full-Stack",
+		"lecciones": [
+			"L200",
+			"L201",
+			"L202",
+			"L203",
+			"L204",
+			"L205"
+		],
+		"pista": "La Definition of Done asegura que ningún código llegue a producción sin pruebas, revisión y despliegue reproducible.",
+		"retos": [
+			{
+				"tipo": "elegir",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué elemento es indispensable en una Definition of Done (DoD) profesional antes del release?",
+				"opciones": [
+					"Pruebas automáticas pasando en verde y revisión por pares aprobada",
+					"Aprobación verbal sin ejecutar pruebas",
+					"Desplegar directamente a producción sin pasar por CI",
+					"Ignorar los fallos de seguridad si la interfaz se ve bonita"
+				],
+				"correcta": 0,
+				"explicacion": "La DoD exige validación automatizada en CI y revisión de código por pares."
+			},
+			{
+				"tipo": "completar",
+				"lenguaje": "texto",
+				"enunciado": "La regla que aconseja 'dejar el código siempre más limpio de lo que lo encontraste' se conoce como la Regla del ___.",
+				"codigo": "Clean Code Principle: Always leave the campsite cleaner than you found it -> The ___ Scout Rule.",
+				"opciones": [
+					"Boy",
+					"Cub",
+					"Eagle",
+					"Senior"
+				],
+				"correcta": 0,
+				"explicacion": "La regla del Boy Scout fomenta la refactorización continua y la reducción de deuda técnica."
+			},
+			{
+				"tipo": "encontrar_error",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué concepción sobre la Deuda Técnica es errónea?",
+				"lineas": [
+					"La deuda técnica genera intereses en forma de mayor lentitud para desarrollar futuras funcionalidades.",
+					"Refactorizar continuamente mantiene la base de código ágil y saludable.",
+					"La deuda técnica nunca necesita pagarse y el código desordenado no tiene ningún impacto en el negocio.",
+					"El análisis estático con herramientas SAST ayuda a identificar deuda técnica acumulada."
+				],
+				"correcta": 2,
+				"corregida": "La deuda técnica debe gestionarse activamente; si se ignora, provoca parálisis en los ciclos de desarrollo futuros.",
+				"explicacion": "La deuda técnica acumulada puede destruir la capacidad de un equipo para entregar valor."
+			},
+			{
+				"tipo": "ordenar",
+				"lenguaje": "texto",
+				"enunciado": "Ordena las etapas del ciclo de vida completo del desarrollo de software profesional:",
+				"lineas": [
+					"Análisis de requisitos y diseño de arquitectura desacoplada",
+					"Desarrollo guiado por pruebas (TDD) y revisión de código en PR",
+					"Pipeline de CI con validación estática, escaneo de seguridad y pruebas automáticas",
+					"Despliegue automatizado en clúster de contenedores (CD)",
+					"Monitorización, observabilidad en producción y retrospectiva del sprint"
+				],
+				"orden_correcto": [
+					0,
+					1,
+					2,
+					3,
+					4
+				],
+				"explicacion": "Ciclo completo: Requisitos/Diseño -> TDD/PR -> CI/Seguridad -> CD -> Observabilidad/Retro."
+			}
+		]
+	}
+]

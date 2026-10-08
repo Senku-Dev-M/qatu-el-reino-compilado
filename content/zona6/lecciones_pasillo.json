@@ -1,0 +1,214 @@
+[
+	{
+		"id": "L92",
+		"zona": 6,
+		"sala": "z6_pasillo",
+		"orden": 92,
+		"nivel": "intermedio",
+		"titulo": "Qué es un middleware HTTP",
+		"resumen": "Un middleware es una función que se ejecuta en la cadena de procesamiento de una petición antes (o después) del controlador. Recibe la petición y la respuesta, puede modificarlas o terminar la respuesta, y llama a next() para pasar al siguiente.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Una cadena de funciones",
+				"texto": "Muchas tareas se repiten en casi todas las rutas: comprobar quién llama, registrar la petición, leer el cuerpo JSON, comprimir la respuesta. En lugar de copiarlas en cada controlador, se escriben como [[middlewares|middleware]].\n\nUn middleware es una función que se ejecuta en la **cadena** (pipeline) por la que pasa cada petición. Puede:\n\n• leer o **modificar** la petición (por ejemplo, añadir `req.usuario`);\n• **terminar** la respuesta (por ejemplo, devolver 401);\n• **pasar** al siguiente eslabón llamando a [[next()|funcion_next]]."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Un middleware en Express",
+				"texto": "En Express, un middleware recibe `(req, res, next)`. Si no responde ni llama a `next()`, la petición **se queda colgada**.",
+				"lenguaje": "js",
+				"codigo": "function registrar(req, res, next) {\n  const inicio = Date.now();\n  res.on('finish', () => {\n    console.log(`${req.method} ${req.url} ${res.statusCode} ${Date.now() - inicio} ms`);\n  });\n  next();\n}\n\napp.use(registrar);\n\napp.get('/api/productos', (req, res) => {\n  res.json([{ id: 1, nombre: 'Poncho' }]);\n});"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El flujo de una petición",
+				"texto": "Los middlewares se ejecutan **en el orden** en que se registran. Cada uno decide si continúa o corta la cadena.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Cliente",
+									"registrar",
+									"autenticar",
+									"controlador"
+								],
+								"ancho": 620,
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "GET /api/pedidos"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "next()"
+									},
+									{
+										"de": 2,
+										"a": 3,
+										"texto": "next() · req.usuario"
+									},
+									{
+										"de": 3,
+										"a": 0,
+										"texto": "200 OK"
+									}
+								]
+							}
+						},
+						{
+							"secuencia": {
+								"actores": [
+									"Cliente",
+									"registrar",
+									"autenticar",
+									"controlador"
+								],
+								"ancho": 620,
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "GET /api/pedidos (sin token)"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "next()"
+									},
+									{
+										"de": 2,
+										"a": 0,
+										"texto": "401 Unauthorized",
+										"error": true
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores frecuentes",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "app.get('/api/pedidos', controlador);\napp.use(autenticar);",
+						"bien": "app.use(autenticar);\napp.get('/api/pedidos', controlador);",
+						"explicacion": "El orden de registro es el orden de ejecución: si la ruta se registra antes, responde sin pasar por la autenticación."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Qué pasa?",
+				"pregunta": {
+					"enunciado": "Un middleware hace console.log(req.url) pero olvida llamar a next() y no responde. ¿Qué ocurre?",
+					"opciones": [
+						"La petición continúa igualmente",
+						"La petición queda colgada hasta que el cliente agota el tiempo de espera",
+						"Express llama a next() automáticamente",
+						"Se devuelve un 404"
+					],
+					"correcta": 1,
+					"explicacion": "La cadena solo avanza con `next()` o termina con una respuesta; sin ninguna de las dos, la petición nunca se completa."
+				}
+			}
+		]
+	},
+	{
+		"id": "L93",
+		"zona": 6,
+		"sala": "z6_pasillo",
+		"orden": 93,
+		"nivel": "intermedio",
+		"titulo": "Tipos de middleware",
+		"resumen": "Globales: se aplican a todas las peticiones. Específicos de ruta: solo a ciertas rutas. De respuesta: actúan sobre la respuesta después del controlador (compresión, cabeceras). En Express existen además los de manejo de errores, con cuatro parámetros.",
+		"paginas": [
+			{
+				"tipo": "sintaxis",
+				"titulo": "Globales y de ruta",
+				"texto": "• Un [[middleware global|middleware_global]] se registra con `app.use()` y se ejecuta en **todas** las peticiones: registro de logs, lectura de JSON, CORS.\n• Un [[middleware de ruta|middleware_de_ruta]] se coloca solo en las rutas que lo necesitan: por ejemplo, exigir el rol de administrador.",
+				"lenguaje": "js",
+				"codigo": "app.use(express.json());   // global: lee cuerpos JSON\napp.use(registrar);         // global: logs\n\n// Solo en rutas de administración\napp.delete('/api/productos/:id', autenticar, soloAdmin, borrarProducto);\n\n// Para un grupo de rutas\napp.use('/api/admin', autenticar, soloAdmin);"
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "De respuesta",
+				"texto": "Un middleware **de respuesta** actúa sobre lo que devuelve el controlador: añadir cabeceras de seguridad o de caché, comprimir el cuerpo, medir el tiempo total. Se registra antes del controlador pero hace su trabajo cuando la respuesta sale.",
+				"lenguaje": "js",
+				"codigo": "function cabecerasSeguridad(req, res, next) {\n  res.setHeader('X-Content-Type-Options', 'nosniff');\n  res.setHeader('Cache-Control', 'no-store');\n  next();\n}\n\napp.use(compression());  // comprime la respuesta al enviarla\napp.use('/api/cuenta', cabecerasSeguridad);"
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Manejo de errores",
+				"texto": "Express reconoce un middleware de errores porque tiene **cuatro parámetros** `(err, req, res, next)`. Se registra **al final** y recibe cualquier error pasado con `next(error)` o lanzado en la cadena.",
+				"lenguaje": "js",
+				"codigo": "app.use((err, req, res, next) => {\n  console.error(err);\n  res.status(err.status ?? 500).json({ error: 'Algo salió mal' });\n});"
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige el tipo",
+				"pregunta": {
+					"enunciado": "Solo las rutas bajo /api/admin deben comprobar que el usuario es administrador. ¿Cómo lo registras?",
+					"opciones": [
+						"app.use(soloAdmin) al principio de la aplicación",
+						"app.use('/api/admin', soloAdmin)",
+						"Dentro del middleware de errores",
+						"Como middleware de compresión"
+					],
+					"correcta": 1,
+					"explicacion": "Montarlo con una ruta base lo limita a ese grupo; `app.use(soloAdmin)` sin ruta lo aplicaría a todas las peticiones."
+				}
+			}
+		]
+	},
+	{
+		"id": "L94",
+		"zona": 6,
+		"sala": "z6_pasillo",
+		"orden": 94,
+		"nivel": "intermedio",
+		"titulo": "Ventajas y casos de uso de los middlewares",
+		"resumen": "Los middlewares permiten reutilizar código, separar responsabilidades y escalar la aplicación añadiendo o quitando eslabones. Casos comunes: autenticación y autorización, logging, CORS, compresión, límites de peticiones y validación.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Ventajas",
+				"texto": "• **Reutilización de código**: una sola función de autenticación sirve para cien rutas.\n• **Separación de responsabilidades**: el controlador se ocupa del negocio; seguridad, logs y formato van aparte.\n• **Escalabilidad y mantenimiento**: añadir compresión o un límite de peticiones es registrar un middleware, sin tocar los controladores.\n• **Orden explícito**: la cadena documenta qué pasa con cada petición y en qué orden.\n\nEl coste: cada middleware añade algo de trabajo a cada petición, así que conviene aplicar a rutas concretas lo que no es global."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Autenticación y autorización",
+				"texto": "**Autenticar** es comprobar quién llama; **autorizar**, comprobar si puede hacer lo que pide. Son el caso de uso más habitual (en la Semana 7 lo verás a fondo).",
+				"lenguaje": "js",
+				"codigo": "function autenticar(req, res, next) {\n  const token = req.headers.authorization?.replace('Bearer ', '');\n  const usuario = verificarToken(token);\n  if (!usuario) return res.status(401).json({ error: 'No autenticado' });\n  req.usuario = usuario;\n  next();\n}\n\nfunction soloAdmin(req, res, next) {\n  if (req.usuario.rol !== 'admin') return res.status(403).json({ error: 'Sin permiso' });\n  next();\n}"
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Otros casos de uso",
+				"texto": "• **Logging**: registrar método, ruta, estado y duración de cada petición (idealmente de forma asíncrona).\n• **CORS**: añadir las cabeceras `Access-Control-Allow-*` que estudiaste con Fetch.\n• **Compresión**: aplicar gzip o Brotli a las respuestas.\n• **Caché**: añadir `Cache-Control` o servir respuestas guardadas.\n• [[Limitación de peticiones|rate_limiting]] (rate limiting): responder 429 Too Many Requests si un cliente supera, por ejemplo, 100 peticiones por minuto.\n• **Validación**: rechazar con 400 los cuerpos o parámetros inválidos antes de llegar al controlador."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Autenticar o autorizar",
+				"pregunta": {
+					"enunciado": "Un usuario con sesión válida intenta borrar un producto sin tener el rol de administrador. ¿Qué debería responder el middleware de autorización?",
+					"opciones": [
+						"401 Unauthorized",
+						"403 Forbidden",
+						"404 Not Found",
+						"429 Too Many Requests"
+					],
+					"correcta": 1,
+					"explicacion": "Está autenticado (se sabe quién es) pero no autorizado para esa acción: 403. El 401 se usa cuando no se ha podido autenticar."
+				}
+			}
+		]
+	}
+]

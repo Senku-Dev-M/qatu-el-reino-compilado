@@ -1,0 +1,266 @@
+[
+	{
+		"id": "L155",
+		"zona": 2,
+		"sala": "z2_mirador_frameworks",
+		"orden": 155,
+		"nivel": "inicial",
+		"titulo": "Criterios para elegir un framework",
+		"resumen": "Cómo seleccionar la tecnología frontend adecuada según el tamaño del equipo, complejidad y requisitos no funcionales.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Más allá de las modas",
+				"texto": "Elegir un framework (React, Vue, Angular, Svelte) debe basarse en criterios verificables:\n\n• **Documentación y madurez:** guías oficiales completas, años en producción y política de versiones clara (semver, soporte a largo plazo).\n• **Licencia y soporte:** licencia compatible con el negocio y respaldo de una empresa o fundación.\n• **Comunidad y ecosistema:** librerías de componentes, enrutadores, herramientas de pruebas y respuestas a problemas frecuentes.\n• **Preferencias y experiencia del equipo:** lo que el equipo ya domina reduce riesgos y tiempo de entrega.\n• **Rendimiento:** tamaño del bundle y velocidad de carga."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Matriz de evaluación",
+				"texto": "Una **matriz ponderada** convierte la discusión en números: cada criterio recibe un peso según lo que importa a Qatu y cada opción una nota de 1 a 5.",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Criterio (peso)",
+									"React",
+									"Vue",
+									"Angular"
+								],
+								"filas": [
+									[
+										"Experiencia del equipo (30%)",
+										"4",
+										"5",
+										"2"
+									],
+									[
+										"Documentación (20%)",
+										"4",
+										"5",
+										"4"
+									],
+									[
+										"Ecosistema (20%)",
+										"5",
+										"4",
+										"4"
+									],
+									[
+										"Soporte y licencia (15%)",
+										"5",
+										"4",
+										"5"
+									],
+									[
+										"Rendimiento (15%)",
+										"4",
+										"4",
+										"3"
+									],
+									[
+										"Total ponderado",
+										"4.35",
+										"4.50",
+										"3.40"
+									]
+								],
+								"resaltar": 2,
+								"pie": "Los pesos y notas son de ejemplo: cada equipo los ajusta a su contexto."
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Malas razones para elegir",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "\"Usemos el framework que salió este mes,\nes el más rápido en un benchmark.\"",
+						"bien": "\"Evaluemos madurez, documentación y soporte;\nun benchmark es solo uno de los criterios.\"",
+						"explicacion": "Un proyecto de años necesita estabilidad y comunidad. La novedad y un benchmark aislado no garantizan mantenimiento."
+					},
+					{
+						"mal": "Elegir Angular porque es \"más empresarial\"\ncuando nadie del equipo lo ha usado.",
+						"bien": "Incluir la experiencia del equipo como criterio\ncon su peso en la matriz.",
+						"explicacion": "La curva de aprendizaje de todo el equipo tiene coste real en plazos y errores."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Factor técnico de selección",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Dos frameworks tienen rendimiento parecido, pero el equipo ya domina uno de ellos. ¿Cómo debe influir eso?",
+					"opciones": [
+						"No debe influir: solo cuentan los benchmarks",
+						"Es un criterio válido que reduce riesgo y tiempo de entrega",
+						"Obliga a elegir el que el equipo no conoce para aprender",
+						"Solo importa si el framework es de pago"
+					],
+					"correcta": 1,
+					"explicacion": "Las preferencias y la experiencia del equipo son uno de los criterios de selección del curso."
+				}
+			}
+		]
+	},
+	{
+		"id": "L156",
+		"zona": 2,
+		"sala": "z2_mirador_frameworks",
+		"orden": 156,
+		"nivel": "intermedio",
+		"titulo": "Ecosistema, licencias y soporte",
+		"resumen": "Evaluación legal y técnica: licencias de código abierto (MIT, Apache) y salud del repositorio.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Aspectos legales y comunitarios",
+				"texto": "Antes de adoptar una librería de terceros en una empresa:\n\n• **Licencias:** licencias permisivas (**MIT**, **Apache 2.0**, **BSD**) permiten uso comercial sin restricciones; licencias restrictivas (GPL) pueden obligar a abrir el código propietario.\n• **Mantenimiento activo:** frecuencia de commits, resolución de vulnerabilidades (CVEs) y número de colaboradores activos.\n• **Vendor Lock-in:** qué tan costoso sería reemplazar la librería en el futuro si el proyecto es abandonado."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Licencia y versiones en package.json",
+				"lenguaje": "js",
+				"texto": "El campo `license` declara la licencia del propio proyecto. Los rangos de versión controlan qué actualizaciones se aceptan: `^` permite minor y patch; `~`, solo patch.",
+				"codigo": "{\n  \"name\": \"qatu-web\",\n  \"license\": \"MIT\",\n  \"dependencies\": {\n    \"vue\": \"^3.4.21\",\n    \"vue-router\": \"~4.3.0\"\n  },\n  \"scripts\": {\n    \"audit\": \"npm audit --audit-level=high\"\n  }\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Auditoría de dependencias",
+				"texto": "En el pipeline, la auditoría falla si aparece una vulnerabilidad grave, y un informe de licencias muestra si alguna dependencia exige condiciones incompatibles.",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ npm audit --audit-level=high",
+								"axios  <1.6.0",
+								"Severity: high · Cross-Site Request Forgery",
+								"fix available via `npm audit fix`",
+								"1 high severity vulnerability",
+								"$ npx license-checker --summary",
+								"├─ MIT: 412",
+								"├─ Apache-2.0: 23",
+								"├─ ISC: 31",
+								"└─ GPL-3.0: 1   <- revisar"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Riesgos con dependencias",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Copiar una librería GPL-3.0 dentro de una\naplicación de escritorio privada que se vende.",
+						"bien": "Revisar la licencia antes de adoptarla y elegir\nuna alternativa permisiva (MIT, Apache-2.0).",
+						"explicacion": "La GPL obliga a publicar el código de la obra derivada **cuando se distribuye**. Hay que evaluarlo antes, no después."
+					},
+					{
+						"mal": "npm audit: 3 high\n-> se ignora para no retrasar la entrega",
+						"bien": "npm audit: 3 high\n-> se actualiza la dependencia o se documenta\n   por qué no aplica, con fecha de revisión",
+						"explicacion": "Las vulnerabilidades conocidas son las primeras que se explotan. Ignorarlas sin análisis deja la puerta abierta."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Licencia permisiva común",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Qatu es un producto privado. ¿Qué licencia de dependencia exige revisión antes de distribuirlo?",
+					"opciones": [
+						"MIT",
+						"Apache-2.0",
+						"GPL-3.0",
+						"ISC"
+					],
+					"correcta": 2,
+					"explicacion": "La GPL impone publicar el código de la obra derivada al distribuirla; MIT, Apache e ISC son permisivas."
+				}
+			}
+		]
+	},
+	{
+		"id": "L157",
+		"zona": 2,
+		"sala": "z2_mirador_frameworks",
+		"orden": 157,
+		"nivel": "intermedio",
+		"titulo": "Evaluación para el Capstone Qatu",
+		"resumen": "Definición arquitectónica para Qatu: SPA en cliente + API REST backend + Clean Architecture.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "La arquitectura final de Qatu",
+				"texto": "Integrando las lecciones de las Semanas 1 y 2:\n\n• **Frontend:** SPA con patrón MVVM para sincronización reactiva de catálogo y compras.\n• **Backend:** API RESTful modular en 3 capas con Clean Architecture.\n• **Persistencia:** RDBMS para transacciones y MongoDB para productos flexibles.\n• **Contrato:** OpenAPI First documentando todos los endpoints antes del código."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "El repositorio del Capstone",
+				"lenguaje": "texto",
+				"texto": "Una posible organización del repositorio de Qatu, que refleja la arquitectura elegida:",
+				"codigo": "qatu/\n  web/                     SPA (Vue) con MVVM\n    src/viewmodels/\n    src/views/\n  api/                     API REST (ASP.NET Core)\n    Qatu.Dominio/          entidades\n    Qatu.Aplicacion/       casos de uso + interfaces\n    Qatu.Infraestructura/  EF Core, MongoDB, pagos\n    Qatu.Api/              controladores\n  contrato/openapi.yaml    API First\n  docs/c4/                 diagramas C4 y ADRs"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Mapa completo del sistema",
+				"texto": "El mapa completo, de lo que ve el comprador a donde se guardan los datos:",
+				"vista": {
+					"bloques": [
+						{
+							"arbol": {
+								"nombre": "Comprador",
+								"hijos": [
+									{
+										"nombre": "SPA (MVVM)",
+										"hijos": [
+											{
+												"nombre": "API REST (Clean Arch.)",
+												"hijos": [
+													{
+														"nombre": "PostgreSQL"
+													},
+													{
+														"nombre": "MongoDB"
+													},
+													{
+														"nombre": "Pasarela de pagos"
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Arquitectura de Qatu",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "En la arquitectura de Qatu, ¿qué pieza garantiza que frontend y backend acuerdan las rutas antes de programar?",
+					"opciones": [
+						"El contrato OpenAPI (API First)",
+						"La base de datos MongoDB",
+						"El patrón MVVM",
+						"La pasarela de pagos"
+					],
+					"correcta": 0,
+					"explicacion": "El contrato OpenAPI es la fuente de verdad compartida que permite trabajar en paralelo."
+				}
+			}
+		]
+	}
+]

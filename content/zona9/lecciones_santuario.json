@@ -1,0 +1,221 @@
+[
+	{
+		"id": "L188",
+		"zona": 9,
+		"sala": "z9_santuario_inspector",
+		"orden": 188,
+		"nivel": "intermedio",
+		"titulo": "Métricas de Cobertura de Código",
+		"resumen": "Diferencia entre cobertura de líneas, ramas (branch coverage) y mutación.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "La Ilusión del 100% de Cobertura",
+				"texto": "Tener un 100% de cobertura de líneas no significa que el código esté libre de bugs; solo indica que cada línea fue ejecutada al menos una vez, no que todas las ramas lógicas ni valores extremos fueron verificados."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Branch Coverage",
+				"texto": "La [[cobertura de ramas|cobertura_ramas]] exige ejecutar **cada camino** de cada decisión (`if`/`else`, operador ternario, `switch`, `catch`), tanto el verdadero como el falso. Es más exigente que la cobertura de líneas."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "100% de líneas, 50% de ramas",
+				"lenguaje": "js",
+				"texto": "Una sola prueba con total 150 ejecuta todas las líneas, pero nunca el caso en que el `if` es falso:",
+				"codigo": "function envio(total) {\n  let costo = 8;\n  if (total > 100) costo = 0;\n  return costo;\n}\n\ntest('envío gratis', () => expect(envio(150)).toBe(0));"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El informe de cobertura",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ npx jest --coverage",
+								"File       | % Stmts | % Branch | % Funcs | % Lines",
+								"envio.js   |     100 |       50 |     100 |     100",
+								"Uncovered branch: línea 3 (total > 100 = false)"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Métricas de Cobertura de Código",
+				"pregunta": {
+					"enunciado": "Una función con un if tiene 100% de cobertura de líneas pero 50% de ramas. ¿Qué significa?",
+					"opciones": [
+						"Que la mitad de las líneas no se ejecutó",
+						"Que uno de los dos caminos del if nunca se probó",
+						"Que el código no compila",
+						"Que hay que borrar el else"
+					],
+					"correcta": 1,
+					"explicacion": "La cobertura de ramas exige recorrer el caso verdadero y el falso de cada decisión."
+				}
+			}
+		]
+	},
+	{
+		"id": "L189",
+		"zona": 9,
+		"sala": "z9_santuario_inspector",
+		"orden": 189,
+		"nivel": "intermedio",
+		"titulo": "Testing Mutacional con Stryker",
+		"resumen": "Evaluación de la calidad real de las pruebas inyectando mutantes intencionados.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "¿Qué es un Mutante?",
+				"texto": "El testing mutacional modifica operadores en el código (por ejemplo, cambia `>` por `<=`, `+` por `-` o elimina llamadas) y ejecuta la suite de pruebas. Si al menos un test falla, el mutante es **eliminado** (Killed). Si todos los tests pasan, el mutante **sobrevive** (Survives), revelando una prueba deficiente."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Un mutante que sobrevive",
+				"lenguaje": "js",
+				"texto": "Stryker cambia `>` por `>=`. Las pruebas no incluyen el valor límite 100, así que ninguna falla y el mutante **sobrevive**:",
+				"codigo": "// original\nif (total > 100) costo = 0;\n// mutante generado por Stryker\nif (total >= 100) costo = 0;\n\n// pruebas existentes: 150 y 50. Ambas siguen pasando.\n// prueba que mata al mutante:\ntest('100 exactos pagan envío', () => expect(envio(100)).toBe(8));"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Mutation Score",
+				"texto": "El **mutation score** es el porcentaje de mutantes eliminados sobre el total. Mide si las pruebas detectan cambios de comportamiento, algo que la cobertura de líneas no mide.",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ npx stryker run",
+								"Mutant survived: src/envio.js:3  >  ->  >=",
+								"Killed: 18  Survived: 2  Timeout: 0",
+								"Mutation score: 90.00%"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Malinterpretar la mutación",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "\"Tenemos 100% de cobertura, los mutantes\nque sobreviven no importan.\"",
+						"bien": "\"Cada mutante vivo es un comportamiento\nque ninguna prueba verifica.\"",
+						"explicacion": "Un mutante superviviente muestra un cambio de lógica que la suite no detectaría si ocurriera de verdad."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Testing Mutacional con Stryker",
+				"pregunta": {
+					"enunciado": "Stryker cambia > por >= y todas las pruebas siguen pasando. ¿Qué indica?",
+					"opciones": [
+						"Que el código es perfecto",
+						"Que falta una prueba del valor límite",
+						"Que Stryker tiene un error",
+						"Que la cobertura es 0%"
+					],
+					"correcta": 1,
+					"explicacion": "El mutante sobrevivió: ninguna prueba distingue > de >=, así que falta probar el límite."
+				}
+			}
+		]
+	},
+	{
+		"id": "L190",
+		"zona": 9,
+		"sala": "z9_santuario_inspector",
+		"orden": 190,
+		"nivel": "intermedio",
+		"titulo": "Pruebas de Contratos de API con Pact",
+		"resumen": "Validación de integración desacoplada entre microservicios sin desplegar entornos completos.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Consumer-Driven Contract Testing",
+				"texto": "El consumidor de la API define las expectativas exactas de payload y código HTTP en un contrato formal. El proveedor verifica periódicamente que su implementación satisface dicho contrato sin necesidad de levantar ambos servicios simultáneamente."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "El consumidor escribe el contrato",
+				"lenguaje": "js",
+				"texto": "Con **Pact**, la prueba del frontend describe qué petición hará y qué respuesta necesita. Al ejecutarse genera el contrato (un archivo JSON) que después verifica el backend:",
+				"codigo": "await provider\n  .given('existe el producto 42')\n  .uponReceiving('una petición del producto 42')\n  .withRequest({ method: 'GET', path: '/api/productos/42' })\n  .willRespondWith({\n    status: 200,\n    body: { id: 42, nombre: like('Poncho'), precio: decimal(25.0) },\n  })\n  .executeTest(async (mock) => {\n    const p = await new CatalogoApi(mock.url).producto(42);\n    expect(p.nombre).toBe('Poncho');\n  });"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El contrato entre equipos",
+				"texto": "Evita la fragilidad y lentitud de los entornos compartidos de staging, detectando incompatibilidades de esquema en segundos durante la fase de CI.",
+				"vista": {
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Frontend (consumidor)",
+									"Pact Broker",
+									"API (proveedor)"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "publica contrato"
+									},
+									{
+										"de": 2,
+										"a": 1,
+										"texto": "descarga contrato"
+									},
+									{
+										"de": 2,
+										"a": 1,
+										"texto": "verificado contra su código: compatible"
+									},
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "can-i-deploy? -> sí"
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Contratos que no protegen",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "El proveedor verifica los contratos\nsolo una vez al mes, a mano.",
+						"bien": "La verificación del proveedor corre en su\npipeline: un cambio incompatible no se despliega.",
+						"explicacion": "El valor de las pruebas de contrato está en detectar la rotura **antes** del despliegue."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Pruebas de Contratos de API con Pact",
+				"pregunta": {
+					"enunciado": "En las pruebas de contrato dirigidas por el consumidor, ¿quién define primero lo que espera de la API?",
+					"opciones": [
+						"El proveedor (backend)",
+						"El consumidor (frontend)",
+						"El equipo de operaciones",
+						"El usuario final"
+					],
+					"correcta": 1,
+					"explicacion": "El consumidor escribe el contrato con lo que necesita; el proveedor verifica que lo cumple."
+				}
+			}
+		]
+	}
+]

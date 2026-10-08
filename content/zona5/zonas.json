@@ -1,0 +1,11 @@
+[
+	{
+		"id": "z5", "zona": 5, "semana": 5,
+		"nombre": "Ríos Asíncronos",
+		"tema": "Formularios web, seguridad, asincronía en JavaScript, integración de API, Fetch y la pestaña Network",
+		"salas": ["z5_embarcadero", "z5_esclusas", "z5_compuerta", "z5_manantial", "z5_delta", "z5_aduana", "z5_observatorio"],
+		"habilidad": "promesa",
+		"jefe": "callback_hell",
+		"fragmentos": ["z5_compuerta:fragmento", "z5_delta:fragmento"]
+	}
+]

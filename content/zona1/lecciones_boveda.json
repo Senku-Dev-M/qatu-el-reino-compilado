@@ -1,0 +1,249 @@
+[
+	{
+		"id": "L128",
+		"zona": 1,
+		"sala": "z1_boveda",
+		"orden": 128,
+		"nivel": "inicial",
+		"titulo": "Arquitectura en 3 Capas",
+		"resumen": "Separación de responsabilidades en Presentación (Controladores), Lógica de Negocio (Servicios) y Acceso a Datos (Repositorios).",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Las tres capas lógicas",
+				"texto": "La [[arquitectura_3_capas]] es el estándar clásico para servicios empresariales:\n\n**1. Capa de Presentación (Controllers):** recibe la petición HTTP, valida DTOs, gestiona cabeceras y devuelve códigos de estado.\n**2. Capa de Negocio (Services):** contiene las reglas del dominio, cálculos, validaciones de negocio y orquestación de procesos.\n**3. Capa de Datos (Repositories / DAO):** interactúa directamente con el motor de base de datos para persistir y recuperar entidades."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Flujo de ejecución en Qatu",
+				"texto": "En ASP.NET Core cada capa es una clase con una sola responsabilidad. El controlador traduce HTTP, el servicio aplica las reglas y el repositorio habla con la base de datos:",
+				"lenguaje": "js",
+				"codigo": "[ApiController, Route(\"api/pedidos\")]\npublic class PedidosController : ControllerBase {\n  private readonly PedidoService _servicio;\n  public PedidosController(PedidoService s) => _servicio = s;\n\n  [HttpPost]\n  public async Task<IActionResult> Crear(CrearPedidoDto dto) {\n    var pedido = await _servicio.Crear(dto);   // negocio\n    return Created($\"/api/pedidos/{pedido.Id}\", pedido);\n  }\n}\n\npublic class PedidoService {\n  private readonly IPedidoRepositorio _repo;\n  public async Task<Pedido> Crear(CrearPedidoDto dto) {\n    if (dto.Cantidad <= 0) throw new ReglaException(\"Cantidad inválida\");\n    return await _repo.Guardar(new Pedido(dto.ProductoId, dto.Cantidad));\n  }\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El recorrido de una compra",
+				"texto": "Cada capa solo conoce a la de abajo. Por eso se puede cambiar la base de datos sin tocar el controlador.",
+				"vista": {
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Cliente",
+									"Controller",
+									"Service",
+									"Repository",
+									"BD"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "POST /api/pedidos"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "Crear(dto)"
+									},
+									{
+										"de": 2,
+										"a": 3,
+										"texto": "Guardar(pedido)"
+									},
+									{
+										"de": 3,
+										"a": 4,
+										"texto": "INSERT INTO pedidos"
+									},
+									{
+										"de": 2,
+										"a": 1,
+										"texto": "pedido"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "201 Created"
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Violación de responsabilidades",
+				"texto": "",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "[HttpPost]\npublic IActionResult Crear(CrearPedidoDto dto) {\n  _db.Execute(\"INSERT INTO pedidos ...\");\n  return Ok();\n}",
+						"bien": "[HttpPost]\npublic async Task<IActionResult> Crear(CrearPedidoDto dto) {\n  var p = await _servicio.Crear(dto);\n  return Created($\"/api/pedidos/{p.Id}\", p);\n}",
+						"explicacion": "SQL en el controlador se salta dos capas: la regla de negocio queda sin sitio y no se puede probar sin base de datos."
+					},
+					{
+						"mal": "return Ok(usuario); // entidad con PasswordHash",
+						"bien": "return Ok(new UsuarioDto(usuario.Id, usuario.Nombre));",
+						"explicacion": "Devolver la entidad expone campos internos. La capa de presentación responde con **DTOs** que solo contienen lo público."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Capa de reglas de negocio",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Dónde debe comprobarse que la cantidad de un pedido sea mayor que cero?",
+					"opciones": [
+						"En el controlador, junto al código HTTP",
+						"En el servicio de negocio",
+						"En el repositorio, antes del INSERT",
+						"Solo en la configuración de la base de datos"
+					],
+					"correcta": 1,
+					"explicacion": "Es una regla del dominio: pertenece a la capa de negocio, que se puede probar sin HTTP ni base de datos."
+				}
+			}
+		]
+	},
+	{
+		"id": "L129",
+		"zona": 1,
+		"sala": "z1_boveda",
+		"orden": 129,
+		"nivel": "intermedio",
+		"titulo": "Patrón Repositorio y DAO",
+		"resumen": "El patrón Repositorio aísla el acceso a datos proveyendo una interfaz tipo colección en memoria para el dominio.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Abstracción de persistencia",
+				"texto": "El [[patron_repositorio]] encapsula el acceso a los datos detrás de métodos con lenguaje del dominio (`ObtenerPorId`, `Guardar`, `Eliminar`) y oculta si se usa PostgreSQL, MongoDB o memoria.\n\n**Repositorio frente a DAO:** un Data Access Object se organiza por **tabla** y expone operaciones de persistencia (insertar o actualizar filas). Un repositorio se organiza por **agregado del dominio** (un pedido con sus líneas) y se comporta como una colección.\n\n**Beneficios:** pruebas unitarias con repositorios falsos y consultas centralizadas en un único lugar."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Interfaz de repositorio",
+				"texto": "La interfaz es el contrato que usa la capa de negocio; la implementación con Entity Framework queda en la capa de datos:",
+				"lenguaje": "js",
+				"codigo": "public interface IProductoRepositorio {\n  Task<Producto?> ObtenerPorId(int id);\n  Task<IReadOnlyList<Producto>> BuscarPorCategoria(string categoria);\n  Task Guardar(Producto producto);\n}\n\npublic class ProductoRepositorioEf : IProductoRepositorio {\n  private readonly QatuDbContext _db;\n  public ProductoRepositorioEf(QatuDbContext db) => _db = db;\n\n  public Task<Producto?> ObtenerPorId(int id) =>\n    _db.Productos.FirstOrDefaultAsync(p => p.Id == id);\n  // ...\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Desacoplamiento total",
+				"texto": "Para probar el servicio sin base de datos basta otra implementación de la misma interfaz. Si Qatu migra a NoSQL, solo cambia la clase de la capa de datos.",
+				"lenguaje": "js",
+				"codigo": "public class ProductoRepositorioEnMemoria : IProductoRepositorio {\n  private readonly List<Producto> _datos = new();\n\n  public Task<Producto?> ObtenerPorId(int id) =>\n    Task.FromResult(_datos.FirstOrDefault(p => p.Id == id));\n\n  public Task Guardar(Producto p) {\n    _datos.Add(p);\n    return Task.CompletedTask;\n  }\n  // ...\n}"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Repositorios que invaden otras capas",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "IQueryable<Producto> Todos();\n// en el servicio: repo.Todos().Where(...).Include(...)",
+						"bien": "Task<IReadOnlyList<Producto>> BuscarPorCategoria(string c);",
+						"explicacion": "Devolver `IQueryable` saca las consultas de la capa de datos: el servicio vuelve a depender de Entity Framework."
+					},
+					{
+						"mal": "public async Task Guardar(Pedido p) {\n  if (p.Total > 1000) p.AplicarDescuento(0.1m);\n  _db.Pedidos.Add(p);\n}",
+						"bien": "public async Task Guardar(Pedido p) {\n  _db.Pedidos.Add(p);\n  await _db.SaveChangesAsync();\n}",
+						"explicacion": "El descuento es una regla de negocio: pertenece al servicio. El repositorio solo persiste."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Rol del Repositorio",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Si el servicio usa una interfaz de repositorio, ¿qué cambio se puede hacer sin tocar el servicio?",
+					"opciones": [
+						"Cambiar la regla de descuento",
+						"Pasar el catálogo de PostgreSQL a MongoDB",
+						"Añadir un campo obligatorio al DTO de entrada",
+						"Cambiar el código HTTP de respuesta"
+					],
+					"correcta": 1,
+					"explicacion": "El repositorio aísla la tecnología de persistencia: cambiarla solo afecta a su implementación."
+				}
+			}
+		]
+	},
+	{
+		"id": "L130",
+		"zona": 1,
+		"sala": "z1_boveda",
+		"orden": 130,
+		"nivel": "intermedio",
+		"titulo": "Inyección de Dependencias en APIs",
+		"resumen": "La inyección de dependencias suministra las instancias requeridas a través de constructores, desacoplando componentes.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Inversión de Control (IoC)",
+				"texto": "La [[inyeccion_dependencias]] es una técnica donde una clase recibe sus dependencias de un contenedor externo en lugar de crearlas con `new`.\n\n**Ciclos de vida estándar:**\n• **Transient:** se crea una nueva instancia cada vez que se solicita.\n• **Scoped:** se crea una única instancia por cada petición HTTP entrante.\n• **Singleton:** se crea una única instancia para toda la vida de la aplicación."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Registro e inyección en ASP.NET Core",
+				"texto": "En `Program.cs` se registra qué implementación corresponde a cada interfaz y con qué ciclo de vida. El contenedor crea los objetos y los pasa por el **constructor**:",
+				"lenguaje": "js",
+				"codigo": "var builder = WebApplication.CreateBuilder(args);\n\nbuilder.Services.AddDbContext<QatuDbContext>();          // Scoped\nbuilder.Services.AddScoped<IProductoRepositorio, ProductoRepositorioEf>();\nbuilder.Services.AddScoped<ProductoService>();\nbuilder.Services.AddSingleton<IReloj, RelojSistema>();\nbuilder.Services.AddTransient<IGeneradorCodigo, GeneradorCodigo>();\n\npublic class ProductoService {\n  private readonly IProductoRepositorio _repo;\n  public ProductoService(IProductoRepositorio repo) => _repo = repo;\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Facilidad para pruebas",
+				"texto": "Como el servicio recibe la interfaz, la prueba le pasa un repositorio en memoria y no necesita servidor ni base de datos:",
+				"lenguaje": "js",
+				"codigo": "[Fact]\npublic async Task ObtenerPrecio_DevuelvePrecioDelProducto() {\n  var repo = new ProductoRepositorioEnMemoria();\n  await repo.Guardar(new Producto(42, \"Poncho\", 25m));\n  var servicio = new ProductoService(repo);\n\n  var precio = await servicio.ObtenerPrecio(42);\n\n  Assert.Equal(25m, precio);\n}",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ dotnet test",
+								"Passed!  - Failed: 0, Passed: 1, Skipped: 0 (38 ms)"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores de inyección",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "public class ProductoService {\n  private readonly ProductoRepositorioEf _repo\n    = new ProductoRepositorioEf(new QatuDbContext());\n}",
+						"bien": "public class ProductoService {\n  private readonly IProductoRepositorio _repo;\n  public ProductoService(IProductoRepositorio repo) => _repo = repo;\n}",
+						"explicacion": "Con `new` el servicio queda atado a una base de datos real: no se puede sustituir en pruebas ni cambiar de implementación."
+					},
+					{
+						"mal": "builder.Services.AddSingleton<ProductoService>();\n// ProductoService depende de QatuDbContext (Scoped)",
+						"bien": "builder.Services.AddScoped<ProductoService>();",
+						"explicacion": "Un Singleton que recibe una dependencia Scoped la **captura** para siempre: el mismo DbContext se compartiría entre peticiones concurrentes."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Ciclo de vida Scoped",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Un servicio registrado como Singleton recibe un DbContext registrado como Scoped. ¿Qué problema aparece?",
+					"opciones": [
+						"Ninguno: el contenedor crea un DbContext nuevo en cada llamada",
+						"El Singleton captura un único DbContext que se comparte entre peticiones",
+						"La aplicación consume menos memoria",
+						"Las pruebas unitarias dejan de compilar"
+					],
+					"correcta": 1,
+					"explicacion": "Es una dependencia cautiva: el objeto de vida corta queda atrapado dentro de uno de vida larga."
+				}
+			}
+		]
+	}
+]

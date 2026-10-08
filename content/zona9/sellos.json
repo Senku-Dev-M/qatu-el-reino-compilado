@@ -1,0 +1,232 @@
+[
+	{
+		"id": "S25",
+		"zona": 9,
+		"nombre": "Sello de la Pirámide de Pruebas",
+		"lecciones": [
+			"L179",
+			"L180",
+			"L181",
+			"L182",
+			"L183"
+		],
+		"pista": "La base debe contener tests unitarios rápidos y deterministas; los dobles de prueba aíslan dependencias externas.",
+		"retos": [
+			{
+				"tipo": "elegir",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué proporción de pruebas aconseja la Pirámide de Pruebas tradicional para una suite ágil y económica?",
+				"opciones": [
+					"Mayoría de pruebas unitarias, nivel medio de integración y mínimo de E2E",
+					"100% pruebas manuales en navegador y 0% unitarias",
+					"Solo pruebas de interfaz gráfica y nada de lógica de negocio",
+					"Una única prueba gigantesca al final del año"
+				],
+				"correcta": 0,
+				"explicacion": "La pirámide aconseja basar la estrategia en tests unitarios masivos, rápidos y económicos de mantener."
+			},
+			{
+				"tipo": "completar",
+				"lenguaje": "js",
+				"enunciado": "Completa la fase del patrón AAA encargada de invocar el método bajo prueba.",
+				"codigo": "// 1. Arrange: const calc = new Calculadora();\n// 2. ___: const res = calc.sumar(2, 3);\n// 3. Assert: expect(res).toBe(5);",
+				"opciones": [
+					"Act",
+					"Action",
+					"Run",
+					"Execute"
+				],
+				"correcta": 0,
+				"explicacion": "El patrón estándar se compone de Arrange, Act y Assert."
+			},
+			{
+				"tipo": "encontrar_error",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué afirmación sobre dobles de prueba contiene un error conceptual?",
+				"lineas": [
+					"Un Dummy es un objeto de relleno que nunca se utiliza en la lógica real.",
+					"Un Stub devuelve datos enlatados fijos preprogramados para el test.",
+					"Un Mock siempre se conecta a la base de datos de producción real para validar transacciones bancarias.",
+					"Un Spy registra las llamadas realizadas para su posterior comprobación."
+				],
+				"correcta": 2,
+				"corregida": "Un Mock es un doble de prueba en memoria que verifica interacciones sin tocar sistemas de producción.",
+				"explicacion": "Los dobles de prueba jamás tocan bases de datos de producción; operan aislados en memoria."
+			},
+			{
+				"tipo": "ordenar",
+				"lenguaje": "js",
+				"enunciado": "Ordena las líneas de esta prueba siguiendo el patrón AAA:",
+				"lineas": [
+					"test('calcula el total con 18% de impuesto', () => {",
+					"  const carrito = new Carrito();",
+					"  carrito.agregarItem({ precio: 100 });",
+					"  const total = carrito.calcularTotalConImpuesto(0.18);",
+					"  expect(total).toBe(118);",
+					"});"
+				],
+				"orden_correcto": [
+					0,
+					1,
+					2,
+					3,
+					4
+				],
+				"explicacion": "Arrange (crear el carrito y agregar el ítem), Act (calcular) y Assert (comprobar el resultado)."
+			}
+		]
+	},
+	{
+		"id": "S26",
+		"zona": 9,
+		"nombre": "Sello de TDD y Automatización Avanzada",
+		"lecciones": [
+			"L184",
+			"L185",
+			"L186",
+			"L188",
+			"L189"
+		],
+		"pista": "El ciclo TDD es Red -> Green -> Refactor; los mutantes miden la calidad real de las aserciones.",
+		"retos": [
+			{
+				"tipo": "elegir",
+				"lenguaje": "texto",
+				"enunciado": "¿Cuál es la secuencia correcta del ciclo de desarrollo guiado por pruebas (TDD)?",
+				"opciones": [
+					"Escribir test que falla (Red) -> Escribir código mínimo (Green) -> Mejorar diseño (Refactor)",
+					"Escribir todo el código -> Desplegar a producción -> Escribir tests si sobra tiempo",
+					"Refactorizar -> Escribir código -> Borrar tests viejos",
+					"Escribir tests que siempre pasen en verde sin validar nada"
+				],
+				"correcta": 0,
+				"explicacion": "TDD sigue estrictamente el ciclo Red -> Green -> Refactor."
+			},
+			{
+				"tipo": "completar",
+				"lenguaje": "texto",
+				"enunciado": "En testing mutacional, cuando un test falla al detectar una mutación introducida en el código, decimos que el mutante fue ___.",
+				"codigo": "Mutation Testing: Test failed on mutated line -> Mutant ___!",
+				"opciones": [
+					"eliminado (Killed)",
+					"sobrevivido (Survived)",
+					"ignorado (Skipped)",
+					"duplicado (Cloned)"
+				],
+				"correcta": 0,
+				"explicacion": "Un mutante es 'eliminado' (Killed) cuando los tests detectan la alteración y fallan adecuadamente."
+			},
+			{
+				"tipo": "encontrar_error",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué práctica provoca 'flaky tests' (pruebas intermitentes)?",
+				"lineas": [
+					"Usar auto-waiting reactivo sobre elementos del DOM en Playwright.",
+					"Insertar esperas estáticas fijas como sleep(5000) para sincronizar llamadas de red.",
+					"Ejecutar tests en bases de datos efímeras aisladas por suite.",
+					"Inyectar clocks simulados para pruebas dependientes del tiempo."
+				],
+				"correcta": 1,
+				"corregida": "Usar aserciones reactivas explícitas en lugar de pausas fijas arbitrarias con sleep.",
+				"explicacion": "Las pausas fijas con sleep causan inestabilidad de tiempo y ralentizan innecesariamente las suites."
+			},
+			{
+				"tipo": "ordenar",
+				"lenguaje": "texto",
+				"enunciado": "Ordena el flujo de ejecución de una prueba mutacional con Stryker:",
+				"lineas": [
+					"Ejecutar la suite original para comprobar que todos los tests están en verde",
+					"Analizar el AST del código fuente para identificar puntos de mutación",
+					"Inyectar mutaciones individuales (cambio de operadores aritméticos y lógicos)",
+					"Ejecutar la suite de pruebas contra cada mutante generado",
+					"Calcular el Mutation Score en base al ratio de mutantes eliminados frente a supervivientes"
+				],
+				"orden_correcto": [
+					0,
+					1,
+					2,
+					3,
+					4
+				],
+				"explicacion": "Flujo de mutación: Línea base verde -> Mutar AST -> Ejecutar tests -> Calcular Mutation Score."
+			}
+		]
+	},
+	{
+		"id": "S27",
+		"zona": 9,
+		"nombre": "Sello de Seguridad Web y OWASP",
+		"lecciones": [
+			"L191",
+			"L192",
+			"L193",
+			"L194",
+			"L196"
+		],
+		"pista": "Las consultas parametrizadas evitan SQLi; CSP y sanitización neutralizan XSS; cookies SameSite protegen contra CSRF.",
+		"retos": [
+			{
+				"tipo": "elegir",
+				"lenguaje": "texto",
+				"enunciado": "¿Cuál es la medida de protección más eficaz e infalible contra vulnerabilidades de Inyección SQL?",
+				"opciones": [
+					"Uso estricto de Consultas Parametrizadas (Prepared Statements)",
+					"Eliminar los espacios en blanco de las consultas con un script",
+					"Ocultar el nombre de las tablas en el backend",
+					"Pedir a los usuarios que no ingresen comillas simples"
+				],
+				"correcta": 0,
+				"explicacion": "Los Prepared Statements tratan las variables como datos literales inmutables, neutralizando toda inyección."
+			},
+			{
+				"tipo": "completar",
+				"lenguaje": "html",
+				"enunciado": "Completa el atributo de cabecera de cookie que impide que JavaScript del cliente lea el token de sesión.",
+				"codigo": "Set-Cookie: session_id=xyz789; Secure; ___ ; SameSite=Strict",
+				"opciones": [
+					"HttpOnly",
+					"NoScript",
+					"Secret",
+					"ReadOnly"
+				],
+				"correcta": 0,
+				"explicacion": "El flag HttpOnly previene el acceso al token de sesión mediante document.cookie ante ataques XSS."
+			},
+			{
+				"tipo": "encontrar_error",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué afirmación de seguridad web es incorrecta?",
+				"lineas": [
+					"Las herramientas SAST escanean el código fuente estático en busca de fallos conocidos.",
+					"Content-Security-Policy (CSP) mitiga el impacto de Cross-Site Scripting (XSS).",
+					"La validación de entrada en el cliente (HTML/JS) es suficiente y no hace falta validar en el backend.",
+					"El Software Bill of Materials (SBOM) ayuda a auditar vulnerabilidades en dependencias."
+				],
+				"correcta": 2,
+				"corregida": "La validación en backend es obligatoria e innegociable, ya que el cliente puede ser bypassado fácilmente con herramientas como curl o Postman.",
+				"explicacion": "El cliente nunca es de confianza; toda validación debe ser ejecutada y forzada en el backend."
+			},
+			{
+				"tipo": "ordenar",
+				"lenguaje": "js",
+				"enunciado": "Ordena las líneas de un endpoint que evita la inyección SQL:",
+				"lineas": [
+					"app.get('/api/pedidos/:id', autenticar, async (req, res) => {",
+					"  const id = Number(req.params.id);",
+					"  if (!Number.isInteger(id)) return res.sendStatus(400);",
+					"  const r = await pool.query('SELECT * FROM pedidos WHERE id = $1', [id]);",
+					"  res.json(r.rows[0]);",
+					"});"
+				],
+				"orden_correcto": [
+					0,
+					1,
+					2,
+					3,
+					4
+				],
+				"explicacion": "Se valida la entrada, se consulta con un parámetro ($1) en lugar de concatenar y solo al final se responde."
+			}
+		]
+	}
+]

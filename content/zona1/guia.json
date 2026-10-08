@@ -1,0 +1,81 @@
+[
+	{
+		"id": "z1_atrio",
+		"nombre": "Atrio de la Integración",
+		"intro": [
+			"Bienvenido a las Ruinas del Backend. Aquí repasaremos el ciclo de vida del software (SDLC), el liderazgo técnico y el modelo C4 para mapear la arquitectura de Qatu."
+		],
+		"recordatorio": "El modelo C4 divide la arquitectura en Contexto, Contenedores, Componentes y Código. El Tech Lead lidera la visión técnica y mentoría del equipo.",
+		"cierre": [
+			"Has comprendido los fundamentos del diseño y la coordinación técnica. Avanza hacia las catacumbas."
+		]
+	},
+	{
+		"id": "z1_catacumbas",
+		"nombre": "Catacumbas de los Protocolos",
+		"intro": [
+			"Estas galerías están repletas de mensajes web. Estudiaremos el protocolo HTTP, las cabeceras, los formatos JSON vs XML y cómo viajan los datos.",
+			"Recoge el REST Dash junto a la entrada. La salida está cerrada por una compuerta 401: sube a la meseta y atraviesa el terminal con {dash} para enviar GET /api/productos."
+		],
+		"recordatorio": "Recoge el REST Dash junto a la entrada. La salida está cerrada por una compuerta 401: sube a la meseta y atraviesa el terminal con {dash} para enviar GET /api/productos. Un mensaje HTTP contiene método, URI, cabeceras (headers) y cuerpo (body). JSON es el formato ligero estándar de intercambio.",
+		"cierre": [
+			"Dominas la anatomía del mensaje HTTP. Sigue adelante hacia el santuario."
+		]
+	},
+	{
+		"id": "z1_galeria",
+		"nombre": "Galería de los Verbos",
+		"intro": [
+			"Aquí obtendrás la habilidad REST Dash. Aprende la semántica de los métodos HTTP (GET, POST, PUT, DELETE) y la importancia de la idempotencia."
+		],
+		"recordatorio": "GET y DELETE son idempotentes. POST no lo es. Usa {dash} para realizar el REST Dash y cruzar abismos.",
+		"cierre": [
+			"Has adquirido el REST Dash y dominado los verbos HTTP. El altar del contrato te espera."
+		]
+	},
+	{
+		"id": "z1_altar",
+		"nombre": "Altar del Contrato",
+		"intro": [
+			"En este altar diseñamos contratos de API. Veremos los principios RESTful de Roy Fielding, el enfoque API First y la especificación OpenAPI."
+		],
+		"recordatorio": "API First define el contrato OpenAPI antes de escribir código. REST se basa en recursos identificados por URIs y sin estado.",
+		"cierre": [
+			"Has superado el Sello del Protocolo. Continúa hacia las bóvedas de implementación."
+		]
+	},
+	{
+		"id": "z1_boveda",
+		"nombre": "Bóveda de las Tres Capas",
+		"intro": [
+			"Observa la separación estricta: Controladores, Servicios y Repositorios. La inyección de dependencias mantiene el sistema desacoplado."
+		],
+		"recordatorio": "El Controlador recibe la petición y delega al Servicio; el Servicio ejecuta reglas de negocio y delega al Repositorio para persistir.",
+		"cierre": [
+			"Las 3 capas están alineadas. Desciende a la cripta de persistencia."
+		]
+	},
+	{
+		"id": "z1_cripta",
+		"nombre": "Cripta de los Datos",
+		"intro": [
+			"El reino de las bases de datos: RDBMS relacionales vs NoSQL (MongoDB, Sharding), y las estrategias de migración Big Bang vs Fases.",
+			"La compuerta de salida vuelve a pedir autenticación: atraviesa el terminal de la plataforma central con {dash} para enviar POST /api/pedidos."
+		],
+		"recordatorio": "La compuerta de salida vuelve a pedir autenticación: atraviesa el terminal de la plataforma central con {dash} para enviar POST /api/pedidos. Big Bang migra todo de golpe con ventana de mantenimiento. La migración por fases mantiene sincronización dual sin tiempo de inactividad.",
+		"cierre": [
+			"Has superado el Sello de los Datos. Prepárate para el bastión final."
+		]
+	},
+	{
+		"id": "z1_bastion",
+		"nombre": "Bastión de la Verificación",
+		"intro": [
+			"Última línea de defensa: autenticación básica, claves de API, tokens JWT y la pirámide de pruebas automatizadas para APIs."
+		],
+		"recordatorio": "Las pruebas unitarias aíslan la lógica con mocks. Los tokens JWT son autocontenidos y sin estado.",
+		"cierre": [
+			"Has completado el Sello de la Integración. La Cámara del Monolito está abierta."
+		]
+	}
+]

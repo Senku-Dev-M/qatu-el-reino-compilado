@@ -1,0 +1,28 @@
+[
+	{
+		"id": "intro_z9",
+		"speaker": "El Manual",
+		"lineas": [
+			"Bienvenido al Laboratorio de Pruebas y Seguridad.",
+			"Aquí cada afirmación debe ser probada empíricamente y cada entrada considerada hostil hasta validarse.",
+			"¡Activa el Prisma Inspector y blinda el código de Qatu!"
+		]
+	},
+	{
+		"id": "santuario_inspector",
+		"speaker": "El Manual",
+		"lineas": [
+			"Has adquirido el Prisma Inspector.",
+			"Esta lente te permite auditar el estado interno del software, revelando aserciones y vulnerabilidades ocultas."
+		]
+	},
+	{
+		"id": "final_z9",
+		"speaker": "El Manual",
+		"lineas": [
+			"¡Has derrotado a La Regresión!",
+			"El código de Qatu ahora cuenta con una muralla de pruebas deterministas y un blindaje OWASP impenetrable.",
+			"¡El portal al Sanctum Central ha quedado completamente desbloqueado!"
+		]
+	}
+]

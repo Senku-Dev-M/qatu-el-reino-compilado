@@ -1,0 +1,27 @@
+[
+	{
+		"id": "peticion_pendiente", "zona": 5, "nombre": "Petición Pendiente", "derrotas_requeridas": 5,
+		"descripcion": "Gira sin descanso esperando una respuesta. Mientras espera, nada la afecta.",
+		"leccion": "Una petición sin límite de tiempo puede quedar pendiente indefinidamente si el servidor no responde, y la interfaz se queda «cargando». Muestra un indicador de carga, gestiona el error y define un tiempo máximo: con fetch puedes cancelar mediante AbortController (por ejemplo, signal: AbortSignal.timeout(8000))."
+	},
+	{
+		"id": "script_inyectado", "zona": 5, "nombre": "Script Inyectado", "derrotas_requeridas": 4,
+		"descripcion": "Nació de un comentario que nadie escapó. Escupe etiquetas <script> a quien se acerca.",
+		"leccion": "Error real: insertar texto del usuario con innerHTML o concatenando HTML. Si el texto contiene <script> o atributos como onerror, el navegador lo ejecuta (XSS). Escapa la salida, usa textContent o las plantillas de tu framework, y valida también en el servidor."
+	},
+	{
+		"id": "csrf_impostor", "zona": 5, "nombre": "CSRF Impostor", "derrotas_requeridas": 4,
+		"descripcion": "Se hace pasar por un Bit brillante y ataca cuando te acercas con confianza.",
+		"leccion": "CSRF aprovecha que el navegador envía las cookies de sesión automáticamente: otro sitio dispara una petición a tu tienda como si fuera el usuario. Defensas: token CSRF en cada formulario, cookies con SameSite=Lax o Strict, comprobar la cabecera Origin y no modificar datos con GET."
+	},
+	{
+		"id": "guardia_cors", "zona": 5, "nombre": "Guardia CORS", "derrotas_requeridas": 3,
+		"descripcion": "Bloquea de frente todo lo que llega de otro origen. Hay que rodearlo.",
+		"leccion": "La política del mismo origen impide que JavaScript lea respuestas de otro origen. El error «blocked by CORS policy» se resuelve en el servidor de la API, respondiendo Access-Control-Allow-Origin con el origen permitido (y gestionando el preflight OPTIONS), no desactivando la protección en el cliente."
+	},
+	{
+		"id": "callback_hell", "zona": 5, "nombre": "Callback Hell", "derrotas_requeridas": 1, "jefe": true,
+		"descripcion": "Una pirámide de funciones anidadas que crece con cada petición. Solo cae cuando se reescribe.",
+		"leccion": "Anidar callbacks para operaciones asíncronas que dependen unas de otras produce código que crece hacia la derecha, repite el manejo de errores y es difícil de mantener. Encadenar promesas con then/catch lo aplana, y async/await con try/catch permite leerlo en orden. Usa Promise.all para las peticiones independientes."
+	}
+]

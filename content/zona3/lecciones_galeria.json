@@ -1,0 +1,394 @@
+[
+	{
+		"id": "L05",
+		"zona": 3,
+		"sala": "z3_galeria",
+		"orden": 5,
+		"nivel": "inicial",
+		"titulo": "Encabezados y párrafos",
+		"resumen": "Los encabezados h1–h6 organizan el contenido por niveles de importancia; p marca párrafos de texto.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Seis niveles de título",
+				"texto": "HTML tiene seis elementos de [[encabezado]]: `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` y `<h6>`. El número indica el **nivel de importancia**, no el tamaño que quieres:\n\n• `<h1>`: título principal de la página. Normalmente hay uno solo.\n• `<h2>`: secciones dentro de la página.\n• `<h3>`: subsecciones dentro de un `<h2>`, y así sucesivamente.\n\nEl elemento `<p>` marca un [[párrafo|parrafo]]: un bloque de texto normal."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Una página organizada",
+				"texto": "Los encabezados crean un índice lógico. Los buscadores y los lectores de pantalla usan esa jerarquía para entender la página.",
+				"lenguaje": "html",
+				"codigo": "<h1>Mercado de Qatu</h1>\n<p>Productos hechos a mano.</p>\n\n<h2>Tejidos</h2>\n<p>Mantas y ponchos.</p>\n\n<h2>Cerámica</h2>\n<p>Vasijas y platos.</p>",
+				"vista": {
+					"pestana": "Mercado",
+					"bloques": [
+						{
+							"h1": "Mercado de Qatu"
+						},
+						{
+							"p": "Productos hechos a mano."
+						},
+						{
+							"h2": "Tejidos"
+						},
+						{
+							"p": "Mantas y ponchos."
+						},
+						{
+							"h2": "Cerámica"
+						},
+						{
+							"p": "Vasijas y platos."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Usar títulos por su tamaño",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<h1>Mercado</h1>\n<h4>Tejidos</h4>",
+						"bien": "<h1>Mercado</h1>\n<h2>Tejidos</h2>",
+						"explicacion": "No saltes niveles para conseguir un texto más pequeño. El tamaño se cambia con CSS; el encabezado indica la jerarquía."
+					},
+					{
+						"mal": "<p>Tejidos</p>",
+						"bien": "<h2>Tejidos</h2>",
+						"explicacion": "Si un texto es el título de una sección, márcalo como encabezado aunque sea corto."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige el nivel",
+				"pregunta": {
+					"enunciado": "Tu página tiene el título «Mercado de Qatu» y dentro una sección llamada «Tejidos». ¿Qué elemento usas para «Tejidos»?",
+					"opciones": [
+						"<h1>",
+						"<h2>",
+						"<h6>",
+						"<p>"
+					],
+					"correcta": 1,
+					"explicacion": "«Tejidos» es una sección dentro del título principal (`<h1>`), así que le corresponde el siguiente nivel: `<h2>`."
+				}
+			}
+		]
+	},
+	{
+		"id": "L06",
+		"zona": 3,
+		"sala": "z3_galeria",
+		"orden": 6,
+		"nivel": "inicial",
+		"titulo": "Atributos: enlaces e imágenes",
+		"resumen": "Los atributos añaden información a un elemento con la forma nombre=\"valor\". href indica el destino de un enlace; src y alt, el archivo y la descripción de una imagen.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Qué es un atributo",
+				"texto": "Un [[atributo]] es información extra que se escribe **dentro de la etiqueta de apertura** con la forma `nombre=\"valor\"`.\n\n• El **nombre** indica qué dato es (`href`, `src`, `alt`…).\n• El [[valor del atributo|valor_de_atributo]] va entre comillas dobles.\n• Un elemento puede tener varios atributos separados por espacios.\n\nLos atributos nunca van en la etiqueta de cierre."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Enlaces con href",
+				"texto": "El elemento `<a>` crea un [[enlace]]. Su atributo [[href]] indica a dónde lleva: otra página del sitio (`tienda.html`) o una dirección completa (`https://...`). El contenido del elemento es el texto sobre el que se hace clic.",
+				"lenguaje": "html",
+				"codigo": "<p>Visita nuestra\n  <a href=\"tienda.html\">tienda en línea</a>.\n</p>",
+				"vista": {
+					"pestana": "Mercado",
+					"bloques": [
+						{
+							"p": "Visita nuestra"
+						},
+						{
+							"a": "tienda en línea"
+						}
+					]
+				}
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Imágenes con src y alt",
+				"texto": "`<img>` muestra una imagen. Necesita dos atributos:\n\n• [[src]]: la ruta del archivo de imagen.\n• [[alt]]: una descripción en texto. La leen los lectores de pantalla y se muestra si la imagen no carga.\n\n`<img>` es un [[elemento vacío|elemento_vacio]]: no tiene contenido ni etiqueta de cierre.",
+				"lenguaje": "html",
+				"codigo": "<img src=\"poncho.jpg\" alt=\"Poncho rojo tejido\">",
+				"vista": {
+					"pestana": "Mercado",
+					"bloques": [
+						{
+							"img": "Poncho rojo tejido"
+						},
+						{
+							"nota": "Si «poncho.jpg» no existiera, el navegador mostraría el texto de alt:"
+						},
+						{
+							"img_rota": "Poncho rojo tejido"
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores con atributos",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<a>tienda.html</a>",
+						"bien": "<a href=\"tienda.html\">Ir a la tienda</a>",
+						"explicacion": "Sin `href`, `<a>` no lleva a ningún sitio. La dirección va en el atributo, no en el contenido."
+					},
+					{
+						"mal": "<img src=\"poncho.jpg\">",
+						"bien": "<img src=\"poncho.jpg\" alt=\"Poncho rojo tejido\">",
+						"explicacion": "Falta `alt`. Una persona que usa lector de pantalla no sabrá qué muestra la imagen."
+					},
+					{
+						"mal": "<img src=poncho.jpg alt=Poncho rojo>",
+						"bien": "<img src=\"poncho.jpg\" alt=\"Poncho rojo\">",
+						"explicacion": "Sin comillas, el espacio corta el valor: el navegador entendería que `alt` vale solo «Poncho»."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Atributo correcto",
+				"pregunta": {
+					"enunciado": "¿Qué atributo describe el contenido de una imagen para quien no puede verla?",
+					"opciones": [
+						"src",
+						"href",
+						"alt",
+						"title"
+					],
+					"correcta": 2,
+					"explicacion": "`alt` (texto alternativo) describe la imagen. `src` es la ruta del archivo y `href` pertenece a los enlaces."
+				}
+			}
+		]
+	},
+	{
+		"id": "L07",
+		"zona": 3,
+		"sala": "z3_galeria",
+		"orden": 7,
+		"nivel": "inicial",
+		"titulo": "Listas",
+		"resumen": "ul crea listas sin orden (viñetas), ol listas numeradas, y cada elemento de la lista va en un li.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Dos tipos de lista",
+				"texto": "Una [[lista]] agrupa elementos relacionados:\n\n• `<ul>` (unordered list): lista **sin orden**. Se muestra con viñetas. Úsala cuando el orden no importa, como un menú de productos.\n• `<ol>` (ordered list): lista **numerada**. Úsala cuando el orden importa, como los pasos de una receta.\n• `<li>` (list item): cada elemento de la lista. Siempre va **dentro** de `<ul>` o `<ol>`."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "ul y ol",
+				"lenguaje": "html",
+				"codigo": "<h2>Productos</h2>\n<ul>\n  <li>Mantas</li>\n  <li>Ponchos</li>\n</ul>\n\n<h2>Cómo comprar</h2>\n<ol>\n  <li>Elige un producto</li>\n  <li>Añádelo al carrito</li>\n  <li>Paga</li>\n</ol>",
+				"vista": {
+					"pestana": "Productos",
+					"bloques": [
+						{
+							"h2": "Productos"
+						},
+						{
+							"ul": [
+								"Mantas",
+								"Ponchos"
+							]
+						},
+						{
+							"h2": "Cómo comprar"
+						},
+						{
+							"ol": [
+								"Elige un producto",
+								"Añádelo al carrito",
+								"Paga"
+							]
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "li fuera de su lista",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<li>Mantas</li>\n<li>Ponchos</li>",
+						"bien": "<ul>\n  <li>Mantas</li>\n  <li>Ponchos</li>\n</ul>",
+						"explicacion": "`<li>` solo es válido dentro de `<ul>` u `<ol>`. Sin la lista contenedora el HTML es inválido."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Qué lista usar?",
+				"pregunta": {
+					"enunciado": "Vas a escribir los pasos para registrarse en Qatu, que deben seguirse en orden. ¿Qué elemento usas?",
+					"opciones": [
+						"<ul>",
+						"<ol>",
+						"<li> sin contenedor",
+						"<p> con guiones"
+					],
+					"correcta": 1,
+					"explicacion": "Cuando el orden importa se usa `<ol>`, que numera automáticamente cada `<li>`."
+				}
+			}
+		]
+	},
+	{
+		"id": "L08",
+		"zona": 3,
+		"sala": "z3_galeria",
+		"orden": 8,
+		"nivel": "inicial",
+		"titulo": "Anidamiento: elementos dentro de elementos",
+		"resumen": "Un elemento puede contener a otros. El que contiene es el padre y los contenidos son hijos. Se cierran en orden inverso a como se abren.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Padres e hijos",
+				"texto": "El [[anidamiento]] consiste en poner elementos dentro de otros elementos:\n\n• El elemento que contiene a otro es su [[elemento padre|elemento_padre]].\n• Los elementos contenidos son sus [[elementos hijos|elemento_hijo]].\n\nEn `<ul><li>Mantas</li></ul>`, `<ul>` es el padre y `<li>` es el hijo. Así se forma la estructura en árbol de toda página."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "La regla de cierre",
+				"texto": "**Lo último que abres es lo primero que cierras.** Un hijo debe cerrarse antes que su padre, igual que unas cajas metidas una dentro de otra.\n\nEn el ejemplo, `<strong>` (texto importante, en negrita) está dentro de `<p>`, así que se cierra primero. La sangría ayuda a ver quién está dentro de quién.",
+				"lenguaje": "html",
+				"codigo": "<p>\n  Oferta de hoy:\n  <strong>mantas al 20%</strong>\n</p>",
+				"vista": {
+					"pestana": "Ofertas",
+					"bloques": [
+						{
+							"texto": {
+								"valor": "Oferta de hoy: mantas al 20%",
+								"tamano": 20
+							}
+						},
+						{
+							"nota": "El fragmento «mantas al 20%» se muestra en negrita por <strong>."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Etiquetas cruzadas",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<p>Oferta: <strong>mantas</p></strong>",
+						"bien": "<p>Oferta: <strong>mantas</strong></p>",
+						"explicacion": "`<strong>` se abrió después de `<p>`, así que debe cerrarse antes. Cruzar cierres produce una estructura ambigua que cada navegador puede corregir de forma distinta."
+					},
+					{
+						"mal": "<ul>\n  <li>Mantas\n</ul>\n</li>",
+						"bien": "<ul>\n  <li>Mantas</li>\n</ul>",
+						"explicacion": "El `<li>` es hijo de `<ul>`: se cierra dentro de la lista."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Está bien anidado?",
+				"pregunta": {
+					"enunciado": "¿Cuál de estos fragmentos está correctamente anidado?",
+					"opciones": [
+						"<p><em>Hola</p></em>",
+						"<em><p>Hola</em></p>",
+						"<p><em>Hola</em></p>",
+						"<p>Hola<em></p>"
+					],
+					"correcta": 2,
+					"explicacion": "Se abre `<p>`, luego `<em>`; por tanto se cierra primero `</em>` y después `</p>`."
+				}
+			}
+		]
+	},
+	{
+		"id": "L09",
+		"zona": 3,
+		"sala": "z3_galeria",
+		"orden": 9,
+		"nivel": "intermedio",
+		"titulo": "Contenedores y HTML semántico",
+		"resumen": "div y span agrupan contenido sin significado propio. Los elementos semánticos (header, nav, main, footer…) agrupan y además describen el propósito.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "div y span",
+				"texto": "A veces necesitas agrupar elementos para darles estilo juntos:\n\n• [[<div>|div]]: contenedor **de bloque**. Ocupa todo el ancho disponible y empieza en una línea nueva.\n• [[<span>|span]]: contenedor **en línea**. Rodea un fragmento de texto sin romper la línea.\n\nNinguno de los dos significa nada por sí mismo: solo agrupan."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Elementos semánticos",
+				"texto": "El [[HTML semántico|html_semantico]] usa elementos cuyo nombre describe su función:\n\n• `<header>`: cabecera de la página o de una sección.\n• `<nav>`: menú de navegación.\n• `<main>`: contenido principal (uno por página).\n• `<section>` y `<article>`: secciones y piezas de contenido independientes.\n• `<footer>`: pie de página.\n\nVisualmente se parecen a `<div>`, pero ayudan a buscadores y lectores de pantalla."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Una página con estructura",
+				"lenguaje": "html",
+				"codigo": "<header>\n  <h1>Qatu</h1>\n  <nav>\n    <a href=\"index.html\">Inicio</a>\n    <a href=\"tienda.html\">Tienda</a>\n  </nav>\n</header>\n<main>\n  <p>Precio: <span class=\"precio\">40 Bits</span></p>\n</main>\n<footer>\n  <p>Reino de Qatu</p>\n</footer>",
+				"vista": {
+					"pestana": "Qatu",
+					"bloques": [
+						{
+							"h1": "Qatu"
+						},
+						{
+							"a": "Inicio"
+						},
+						{
+							"a": "Tienda"
+						},
+						{
+							"separador": true
+						},
+						{
+							"p": "Precio: 40 Bits"
+						},
+						{
+							"separador": true
+						},
+						{
+							"nota": "Reino de Qatu"
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Todo con div",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<div>\n  <div>Inicio</div>\n  <div>Tienda</div>\n</div>",
+						"bien": "<nav>\n  <a href=\"index.html\">Inicio</a>\n  <a href=\"tienda.html\">Tienda</a>\n</nav>",
+						"explicacion": "Funciona visualmente, pero no comunica que es un menú. Si existe un elemento semántico para ese propósito, úsalo."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Semántica",
+				"pregunta": {
+					"enunciado": "¿Qué elemento es el más adecuado para envolver el menú principal de enlaces de un sitio?",
+					"opciones": [
+						"<div>",
+						"<span>",
+						"<nav>",
+						"<footer>"
+					],
+					"correcta": 2,
+					"explicacion": "`<nav>` indica explícitamente que ese bloque contiene enlaces de navegación."
+				}
+			}
+		]
+	}
+]

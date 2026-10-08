@@ -1,0 +1,89 @@
+[
+	{
+		"id": "z8_muelle",
+		"nombre": "Muelle de Descarga",
+		"intro": [
+			"Bienvenido al Puerto de Contenedores.",
+			"Aprenderás virtualización ligera y contenedores Linux."
+		],
+		"recordatorio": "Los contenedores comparten el kernel del host a diferencia de las máquinas virtuales pesadas.",
+		"cierre": [
+			"Has comprendido los fundamentos de contenedores.",
+			"Avanza hacia la Dársena de Docker."
+		]
+	},
+	{
+		"id": "z8_darsena_docker",
+		"nombre": "Dársena de Docker",
+		"intro": [
+			"Aquí construirás imágenes reproducibles mediante Dockerfiles."
+		],
+		"recordatorio": "El orden de las instrucciones en el Dockerfile determina la eficiencia de la caché de capas.",
+		"cierre": [
+			"Imágenes optimizadas.",
+			"Continúa al Astillero de Compose."
+		]
+	},
+	{
+		"id": "z8_astillero_compose",
+		"nombre": "Astillero de Compose",
+		"intro": [
+			"Orquestación multicontenedor local con docker-compose.yml."
+		],
+		"recordatorio": "Compose unifica servicios, redes y volúmenes en un solo manifiesto declarativo.",
+		"cierre": [
+			"Servicios integrados.",
+			"Siguiente: el Santuario del Pod."
+		]
+	},
+	{
+		"id": "z8_santuario_pod",
+		"nombre": "Santuario del Pod Aislado",
+		"intro": [
+			"Despliegue atómico de pods y aislamiento de recursos.",
+			"Recoge la habilidad Contenedor junto a la entrada. Salta y, en el aire, pulsa {contenedor}: el Pod aparece bajo tus pies y te sostiene unos segundos."
+		],
+		"recordatorio": "Recoge la habilidad Contenedor junto a la entrada. Salta y, en el aire, pulsa {contenedor}: el Pod aparece bajo tus pies y te sostiene unos segundos. Un Pod es la unidad mínima atómica de despliegue en Kubernetes.",
+		"cierre": [
+			"Cápsula Contenedor dominada.",
+			"Avanza a las Grúas de CI/CD."
+		]
+	},
+	{
+		"id": "z8_gruas_cicd",
+		"nombre": "Grúas de CI/CD",
+		"intro": [
+			"Automatización de pipelines: Lint, Test, Build, Scan y Deploy."
+		],
+		"recordatorio": "La integración continua valida cada commit para detectar errores de inmediato.",
+		"cierre": [
+			"Pipeline en verde.",
+			"Entra al Hangar de Kubernetes."
+		]
+	},
+	{
+		"id": "z8_hangar_k8s",
+		"nombre": "Hangar de Kubernetes",
+		"intro": [
+			"Control Plane de Kubernetes: API Server, etcd, Scheduler y Controller Manager.",
+			"La compuerta del hangar espera un Deployment: súbete al nodo del clúster de la izquierda, salta y pulsa {contenedor} encima de él."
+		],
+		"recordatorio": "La compuerta del hangar espera un Deployment: súbete al nodo del clúster de la izquierda, salta y pulsa {contenedor} encima de él. Los Deployments gestionan el ciclo de vida y las réplicas de los Pods.",
+		"cierre": [
+			"Clúster configurado.",
+			"Avanza al Faro del Clúster."
+		]
+	},
+	{
+		"id": "z8_faro_swarm",
+		"nombre": "Faro del Clúster",
+		"intro": [
+			"Comparativa de orquestadores y autoescalado horizontal (HPA)."
+		],
+		"recordatorio": "Kubernetes lidera en escalabilidad masiva y ecosistema en la nube.",
+		"cierre": [
+			"Todo el conocimiento consolidado.",
+			"¡Enfréntate a Kubernetes, el Timonel!"
+		]
+	}
+]

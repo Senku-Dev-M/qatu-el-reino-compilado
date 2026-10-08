@@ -1,0 +1,229 @@
+[
+	{
+		"id": "L167",
+		"zona": 8,
+		"sala": "z8_santuario_pod",
+		"orden": 167,
+		"nivel": "inicial",
+		"titulo": "El Pod: Unidad fundamental de Kubernetes",
+		"resumen": "El Pod es la unidad mínima de ejecución en K8s; agrupa uno o más contenedores que comparten red y almacenamiento.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "¿Qué es un Pod?",
+				"texto": "En [[kubernetes]], no se despliegan contenedores individuales directamente: se despliegan [[pod]]s.\n\n• Un Pod es una envoltura que contiene uno o más contenedores estrechamente vinculados.\n• Todos los contenedores dentro del mismo Pod comparten:\n  - La misma dirección IP y espacio de puertos de red (`localhost`).\n  - Los mismos volúmenes de almacenamiento montados.\n• Es la unidad atómica de escalado y programación en los nodos del clúster."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Manifiesto YAML de un Pod básico",
+				"texto": "Un manifiesto declara el **estado deseado**. Este Pod tiene la API y un contenedor auxiliar (sidecar) que comparten red y un volumen de logs:",
+				"lenguaje": "texto",
+				"codigo": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: qatu-api\n  labels: { app: qatu-api }\nspec:\n  containers:\n    - name: api\n      image: registry.gitlab.com/qatu/api:1.4.0\n      ports: [{ containerPort: 3000 }]\n      volumeMounts: [{ name: logs, mountPath: /var/log/qatu }]\n    - name: envio-logs\n      image: fluent/fluent-bit:3.0\n      volumeMounts: [{ name: logs, mountPath: /var/log/qatu }]\n  volumes:\n    - name: logs\n      emptyDir: {}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Estado del Pod en el clúster",
+				"texto": "`kubectl apply` envía el manifiesto al clúster; el scheduler elige un nodo y el `kubelet` de ese nodo arranca los dos contenedores:",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ kubectl apply -f pod.yaml",
+								"pod/qatu-api created",
+								"$ kubectl get pod qatu-api -o wide",
+								"NAME      READY  STATUS   RESTARTS  IP          NODE",
+								"qatu-api  2/2    Running  0         10.1.3.17   worker-2"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores al diseñar Pods",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Un solo Pod con los contenedores\nweb, api y base de datos.",
+						"bien": "Un Pod por componente (web, api, db),\ncada uno escalable por separado.",
+						"explicacion": "Los contenedores de un Pod escalan y se reinician **juntos**. Solo se agrupan procesos inseparables, como una app y su sidecar."
+					},
+					{
+						"mal": "$ kubectl apply -f pod.yaml   # Pod suelto en producción",
+						"bien": "$ kubectl apply -f deployment.yaml",
+						"explicacion": "Un Pod creado directamente no se recrea si su nodo falla. En producción se gestionan con un Deployment (Hangar de Kubernetes)."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Unidad mínima en K8s",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué comparten dos contenedores que están dentro del mismo Pod?",
+					"opciones": [
+						"Nada: cada uno tiene su IP",
+						"La dirección IP y los volúmenes declarados en el Pod",
+						"Solo el nombre del nodo",
+						"El mismo proceso"
+					],
+					"correcta": 1,
+					"explicacion": "Los contenedores de un Pod comparten red (se ven por localhost) y los volúmenes del Pod."
+				}
+			}
+		]
+	},
+	{
+		"id": "L168",
+		"zona": 8,
+		"sala": "z8_santuario_pod",
+		"orden": 168,
+		"nivel": "intermedio",
+		"titulo": "Ciclo de vida y sondas (Probes)",
+		"resumen": "Cómo Kubernetes monitoriza la salud de los pods mediante Liveness y Readiness Probes.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Sondas de salud en K8s",
+				"texto": "Para garantizar alta disponibilidad automática, Kubernetes utiliza sondas periódicas:\n\n• **Liveness Probe:** comprueba si la aplicación sigue viva. Si falla repetidamente, K8s reinicia el contenedor (autorreparación / self-healing).\n• **Readiness Probe:** comprueba si la aplicación está lista para recibir tráfico de usuarios (ej. terminó de cargar la base de datos). Si falla, retira el Pod del balanceador temporalmente sin destruirlo.\n• **Startup Probe:** protege aplicaciones con tiempos de inicialización lentos."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Configuración de sondas HTTP",
+				"texto": "Cada sonda hace una petición HTTP periódica. `failureThreshold` indica cuántos fallos seguidos se toleran antes de actuar:",
+				"lenguaje": "texto",
+				"codigo": "containers:\n  - name: api\n    image: registry.gitlab.com/qatu/api:1.4.0\n    startupProbe:\n      httpGet: { path: /health, port: 3000 }\n      failureThreshold: 30\n      periodSeconds: 2\n    livenessProbe:\n      httpGet: { path: /health, port: 3000 }\n      periodSeconds: 10\n      failureThreshold: 3\n    readinessProbe:\n      httpGet: { path: /ready, port: 3000 }  # comprueba la BD\n      periodSeconds: 5"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Autorreparación en acción",
+				"texto": "Si la API se bloquea, la liveness falla 3 veces seguidas (unos 30 s con esta configuración) y el `kubelet` reinicia el contenedor:",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ kubectl describe pod qatu-api-7d9f",
+								"Warning  Unhealthy  Liveness probe failed: HTTP probe failed with statuscode: 500",
+								"Normal   Killing    Container api failed liveness probe, will be restarted",
+								"$ kubectl get pod qatu-api-7d9f",
+								"NAME           READY  STATUS   RESTARTS",
+								"qatu-api-7d9f  1/1    Running  1"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Sondas mal configuradas",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "livenessProbe:\n  httpGet: { path: /ready }\n# /ready consulta la base de datos",
+						"bien": "livenessProbe:\n  httpGet: { path: /health }  # solo el proceso\nreadinessProbe:\n  httpGet: { path: /ready }   # dependencias",
+						"explicacion": "Si la liveness depende de la base de datos, una caída de la BD reinicia **todos** los Pods en bucle sin arreglar nada."
+					},
+					{
+						"mal": "livenessProbe:\n  initialDelaySeconds: 0\n  failureThreshold: 1\n# la app tarda 40 s en arrancar",
+						"bien": "startupProbe:\n  failureThreshold: 30\n  periodSeconds: 2",
+						"explicacion": "Una liveness estricta mata la aplicación antes de que termine de arrancar. La startup probe le da tiempo."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Función de Readiness Probe",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "La base de datos se cae y todos los Pods de la API se reinician en bucle. ¿Qué error de configuración es probable?",
+					"opciones": [
+						"La readinessProbe comprueba la base de datos",
+						"La livenessProbe comprueba la base de datos",
+						"Falta la startupProbe",
+						"El Service es de tipo ClusterIP"
+					],
+					"correcta": 1,
+					"explicacion": "La liveness solo debe comprobar el propio proceso; las dependencias se comprueban en la readiness."
+				}
+			}
+		]
+	},
+	{
+		"id": "L169",
+		"zona": 8,
+		"sala": "z8_santuario_pod",
+		"orden": 169,
+		"nivel": "intermedio",
+		"titulo": "Límites de recursos: Requests y Limits",
+		"resumen": "Definir memoria y CPU garantizada (requests) y tope máximo permitido (limits) para evitar contención.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Gestión de capacidad",
+				"texto": "En un clúster multiinquilino, cada contenedor debe declarar:\n\n• **Requests (Recursos Garantizados):** cantidad mínima de CPU y RAM que el nodo debe tener libre para programar el Pod (ej. `250m` de CPU, `128Mi` de RAM).\n• **Limits (Límite Máximo):** tope absoluto. Si supera el límite de CPU, el proceso es ralentizado (throttling); si supera el de memoria RAM, el kernel lo finaliza inmediatamente (OOMKilled)."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Declaración de límites",
+				"texto": "`m` son milésimas de CPU (`250m` = un cuarto de núcleo) y `Mi` son mebibytes. El scheduler usa los **requests** para decidir el nodo; los **limits** los aplica el kernel:",
+				"lenguaje": "texto",
+				"codigo": "containers:\n  - name: api\n    image: registry.gitlab.com/qatu/api:1.4.0\n    resources:\n      requests:\n        cpu: 250m\n        memory: 128Mi\n      limits:\n        cpu: \"1\"\n        memory: 256Mi"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Estabilidad del clúster",
+				"texto": "Al superar el límite de memoria, el contenedor termina y Kubernetes lo reinicia; el motivo queda registrado:",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ kubectl get pod qatu-api-7d9f",
+								"NAME           READY  STATUS     RESTARTS",
+								"qatu-api-7d9f  0/1    OOMKilled  3",
+								"$ kubectl top pod qatu-api-7d9f",
+								"NAME           CPU(cores)  MEMORY(bytes)",
+								"qatu-api-7d9f  210m        254Mi"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Recursos mal declarados",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "resources: {}   # sin requests ni limits",
+						"bien": "resources:\n  requests: { cpu: 250m, memory: 128Mi }\n  limits:   { memory: 256Mi }",
+						"explicacion": "Sin requests el scheduler no sabe cuánto necesita el Pod, y sin límites un fallo de memoria puede afectar a todo el nodo."
+					},
+					{
+						"mal": "requests: { memory: 1Gi }\n# la app usa 150Mi",
+						"bien": "requests: { memory: 180Mi }\n# medido con kubectl top y un margen",
+						"explicacion": "Pedir de más reserva capacidad que nadie usa: caben menos Pods por nodo y el clúster cuesta más."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Efecto de superar el límite de memoria",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Qué usa el scheduler de Kubernetes para decidir en qué nodo cabe un Pod?",
+					"opciones": [
+						"Los limits",
+						"Los requests",
+						"El número de réplicas",
+						"La etiqueta de la imagen"
+					],
+					"correcta": 1,
+					"explicacion": "El scheduler reserva capacidad según los requests; los limits los aplica el kernel en ejecución."
+				}
+			}
+		]
+	}
+]

@@ -1,0 +1,214 @@
+[
+	{
+		"id": "L55",
+		"zona": 5,
+		"sala": "z5_compuerta",
+		"orden": 55,
+		"nivel": "intermedio",
+		"titulo": "Nunca confíes en los datos del usuario",
+		"resumen": "La validación en el cliente mejora la experiencia, pero cualquiera puede saltársela. Toda entrada debe validarse de nuevo en el servidor antes de usarla.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "La regla de oro",
+				"texto": "Todo lo que llega desde el navegador puede haber sido **modificado**: el usuario controla su equipo. Puede editar el HTML con DevTools, quitar `required`, cambiar el `value` de un campo oculto o enviar una petición directamente sin usar tu formulario.\n\nPor eso distinguimos:\n\n• [[Validación en el cliente|validacion_en_cliente]]: HTML (`required`, `pattern`) y JavaScript. Da mensajes inmediatos. **No es seguridad.**\n• [[Validación en el servidor|validacion_en_servidor]]: el programa del servidor comprueba cada dato antes de guardarlo o usarlo. **Es obligatoria.**"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Saltarse la validación",
+				"texto": "El formulario limita la cantidad con `max=\"10\"` y el precio va en un campo oculto. Una petición editada a mano puede enviar otros valores sin pasar por el navegador.",
+				"lenguaje": "html",
+				"codigo": "<input type=\"number\" name=\"cantidad\" max=\"10\">\n<input type=\"hidden\" name=\"precio\" value=\"120\">",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "POST",
+								"url": "/carrito",
+								"cabeceras": [
+									"Content-Type: application/x-www-form-urlencoded"
+								],
+								"cuerpo": "cantidad=-5&precio=0"
+							}
+						},
+						{
+							"error": "Si el servidor confía en estos valores, el pedido se guarda con precio 0."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Qué comprobar en el servidor",
+				"texto": "• **Tipo y formato**: que la cantidad sea un entero, el correo tenga formato de correo.\n• **Rango y longitud**: cantidad entre 1 y 10, nombre de máximo 100 caracteres.\n• **Lista permitida** (allowlist): la región debe ser una de las existentes.\n• **Datos de negocio**: el precio se lee de la base de datos, **nunca** del formulario.\n• **Permisos**: que el usuario pueda realizar esa acción.\n\nSi algo falla, el servidor rechaza la petición (por ejemplo con un código 400) y no procesa los datos."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Suficiente?",
+				"pregunta": {
+					"enunciado": "Un formulario valida con required y pattern, y además con JavaScript. ¿Hace falta validar en el servidor?",
+					"opciones": [
+						"No, ya está validado dos veces",
+						"Sí, porque cualquiera puede enviar peticiones sin pasar por esas validaciones",
+						"Solo si el formulario usa GET",
+						"Solo en formularios de pago"
+					],
+					"correcta": 1,
+					"explicacion": "La validación del cliente se puede desactivar o evitar enviando la petición directamente. El servidor siempre debe comprobar los datos."
+				}
+			}
+		]
+	},
+	{
+		"id": "L56",
+		"zona": 5,
+		"sala": "z5_compuerta",
+		"orden": 56,
+		"nivel": "intermedio",
+		"titulo": "Escapar caracteres peligrosos",
+		"resumen": "Mostrar texto del usuario como HTML permite inyectar scripts (XSS). Hay que escapar caracteres como < > & \" ' o insertar el texto con textContent en lugar de innerHTML.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Datos que se convierten en código",
+				"texto": "Imagina que una reseña se muestra tal cual en la página. Si alguien escribe `<script>…</script>` o `<img src=x onerror=\"…\">`, el navegador lo interpretaría como **HTML y JavaScript**, y ese código se ejecutaría en el navegador de cada visitante.\n\nEste ataque se llama [[XSS|xss]] (Cross-Site Scripting). Puede robar sesiones, modificar la página o hacer acciones en nombre de la víctima."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Escapar la salida",
+				"texto": "[[Escapar|escapado]] es sustituir los caracteres con significado especial por sus **entidades HTML**, para que se muestren como texto:\n\n• `<` → `&lt;`\n• `>` → `&gt;`\n• `&` → `&amp;`\n• `\"` → `&quot;`\n• `'` → `&#39;`\n\nLos motores de plantillas modernos (React, Angular, Vue, Razor, Jinja) escapan por defecto. En JavaScript, `textContent` inserta texto sin interpretarlo; `innerHTML` interpreta el HTML.",
+				"lenguaje": "js",
+				"codigo": "const resena = '<img src=x onerror=\"robar()\">';\n\n// Peligroso: el navegador crea la imagen y ejecuta onerror\ncaja.innerHTML = resena;\n\n// Seguro: se muestra como texto literal\ncaja.textContent = resena;"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Texto escapado",
+				"lenguaje": "html",
+				"codigo": "<p>&lt;script&gt;alert('hola')&lt;/script&gt;</p>",
+				"vista": {
+					"pestana": "Reseñas",
+					"bloques": [
+						{
+							"h2": "Reseñas del poncho"
+						},
+						{
+							"p": "<script>alert('hola')</script>"
+						},
+						{
+							"nota": "Se ve como texto: el navegador no lo ejecuta."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores frecuentes",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "lista.innerHTML += `<li>${comentario}</li>`;",
+						"bien": "const li = document.createElement('li');\nli.textContent = comentario;\nlista.append(li);",
+						"explicacion": "Construir HTML concatenando texto del usuario abre la puerta a XSS. Crea el elemento y asigna el texto con `textContent`."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Mostrar un comentario",
+				"pregunta": {
+					"enunciado": "¿Qué forma de mostrar un comentario de usuario evita que se ejecute HTML o JavaScript incluido en él?",
+					"opciones": [
+						"elemento.innerHTML = comentario",
+						"elemento.textContent = comentario",
+						"document.write(comentario)",
+						"elemento.outerHTML = comentario"
+					],
+					"correcta": 1,
+					"explicacion": "`textContent` trata el valor como texto plano; los demás interpretan el contenido como HTML."
+				}
+			}
+		]
+	},
+	{
+		"id": "L57",
+		"zona": 5,
+		"sala": "z5_compuerta",
+		"orden": 57,
+		"nivel": "intermedio",
+		"titulo": "CSRF: peticiones falsificadas",
+		"resumen": "En un ataque CSRF, una web maliciosa hace que el navegador de la víctima envíe una petición a un sitio donde tiene la sesión iniciada. Se previene con tokens CSRF y cookies SameSite.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Aprovechar la sesión de otro",
+				"texto": "Cuando inicias sesión, el sitio guarda una [[cookie]] con tu identificador de sesión. El navegador la **envía automáticamente** en cada petición a ese sitio.\n\n[[CSRF|csrf]] (Cross-Site Request Forgery) aprovecha ese comportamiento: una página maliciosa contiene un formulario oculto que apunta a `qatu.com` y se envía solo. El navegador adjunta tu cookie, y el servidor cree que **tú** hiciste la compra o cambiaste tu correo."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El ataque paso a paso",
+				"lenguaje": "html",
+				"codigo": "<!-- En sitio-malicioso.com -->\n<form action=\"https://qatu.com/cuenta/email\" method=\"post\">\n  <input type=\"hidden\" name=\"email\" value=\"atacante@mail.com\">\n</form>\n<script>document.forms[0].submit();</script>",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Víctima",
+									"Sitio malicioso",
+									"qatu.com"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "Visita la página"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "Formulario oculto"
+									},
+									{
+										"de": 0,
+										"a": 2,
+										"texto": "POST con su cookie",
+										"error": true
+									},
+									{
+										"de": 2,
+										"a": 2,
+										"texto": "Cambia el correo"
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Defensa: token CSRF",
+				"texto": "El servidor genera un [[token CSRF|token_csrf]]: un valor aleatorio ligado a la sesión que incluye en cada formulario. Al recibir la petición, comprueba que el token coincide. La página maliciosa **no puede leer** ese token, así que su petición se rechaza.\n\nOtras defensas complementarias: cookies con `SameSite=Lax` o `Strict` (lo verás con Fetch), comprobar la cabecera `Origin` y **no** modificar datos con peticiones GET.",
+				"lenguaje": "html",
+				"codigo": "<form action=\"/cuenta/email\" method=\"post\">\n  <input type=\"hidden\" name=\"csrf_token\" value=\"9f2c7a1e84b3\">\n  <input type=\"email\" name=\"email\">\n  <button>Guardar</button>\n</form>"
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Identifica la defensa",
+				"pregunta": {
+					"enunciado": "¿Por qué un token CSRF impide el ataque?",
+					"opciones": [
+						"Porque cifra la contraseña del usuario",
+						"Porque el sitio malicioso no conoce el token secreto que el servidor espera",
+						"Porque bloquea las cookies del navegador",
+						"Porque convierte el POST en GET"
+					],
+					"correcta": 1,
+					"explicacion": "El navegador envía la cookie automáticamente, pero el token va en el formulario legítimo y el atacante no puede obtenerlo; sin token válido, el servidor rechaza la petición."
+				}
+			}
+		]
+	}
+]

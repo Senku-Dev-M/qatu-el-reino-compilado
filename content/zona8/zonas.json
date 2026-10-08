@@ -1,0 +1,24 @@
+[
+	{
+		"id": "z8",
+		"zona": 8,
+		"semana": 8,
+		"nombre": "Puerto de Contenedores",
+		"tema": "CI/CD, Docker, Docker Compose, Kubernetes y orquestación de contenedores",
+		"salas": [
+			"z8_muelle",
+			"z8_darsena_docker",
+			"z8_astillero_compose",
+			"z8_santuario_pod",
+			"z8_gruas_cicd",
+			"z8_hangar_k8s",
+			"z8_faro_swarm"
+		],
+		"habilidad": "contenedor",
+		"jefe": "kubernetes",
+		"fragmentos": [
+			"z8_astillero_compose:fragmento",
+			"z8_hangar_k8s:fragmento"
+		]
+	}
+]

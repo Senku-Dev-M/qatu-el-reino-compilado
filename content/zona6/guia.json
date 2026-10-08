@@ -1,0 +1,94 @@
+[
+	{
+		"id": "z6_vestibulo", "nombre": "Vestíbulo del Índice",
+		"intro": [
+			"Bienvenido al Archivo Paginado. Soy El Manual. Esta semana estudiaremos operaciones avanzadas de API: cómo pedir solo los datos necesarios y cómo servirlos rápido.",
+			"En los Ríos Asíncronos aprendiste a pedir datos con fetch. Pero ¿qué pasa cuando la colección tiene cincuenta mil registros?",
+			"En este vestíbulo veremos por qué filtrar, ordenar y paginar, cómo se expresan con parámetros de consulta y las dos formas de paginar: offset/limit y cursor.",
+			"Llévate el mapa del estante: el archivo tiene muchas galerías."
+		],
+		"recordatorio": "Primero se filtra, después se ordena y al final se pagina. Offset salta registros; el cursor continúa desde el último visto.",
+		"cierre": [
+			"Bien. Ya sabes por qué una API no debe devolverlo todo, cómo se piden filtros y orden y qué ventajas tiene cada tipo de paginación.",
+			"Siguiente sala: las Estanterías de OData. Veremos un estándar que define estas consultas para cualquier API."
+		]
+	},
+	{
+		"id": "z6_estanteria", "nombre": "Estanterías de OData",
+		"intro": [
+			"Las Estanterías de OData. Aquí estudiaremos un estándar para consultar APIs: qué es OData, $filter y el resto de opciones de consulta.",
+			"Fíjate en la estantería que sube hacia la salida. Es una colección paginada: solo existen las baldas de la página actual, tres por página.",
+			"Sube por la página 1 y, en el primer pilar, usa el atril para pedir la página 2. Así hasta la salida: $top=3 y $skip=3, $skip=6…"
+		],
+		"recordatorio": "OData usa palabras en los filtros: eq, ne, gt, ge, lt, le. Página n de tamaño t: $top=t y $skip=(n−1)×t.",
+		"cierre": [
+			"Muy bien. Ya puedes escribir consultas OData con $filter, $orderby, $top, $skip, $select, $expand y $count.",
+			"Siguiente sala: el Catálogo JSON:API. Veremos otra especificación, muy usada, y recibirás una habilidad."
+		]
+	},
+	{
+		"id": "z6_catalogo", "nombre": "Catálogo JSON:API",
+		"intro": [
+			"El Catálogo JSON:API. Aquí estudiaremos esta especificación: su formato de documento, cómo reduce peticiones y datos, y cómo filtra, ordena y pagina.",
+			"En el pedestal espera la Caché. Con ella guardas tu posición con un tiempo de vida y vuelves a ella antes de que caduque.",
+			"Más adelante hay una palanca que abre la cámara del fragmento solo dos segundos. Guarda la caché junto a la compuerta, vuelve a la palanca y restaura."
+		],
+		"recordatorio": "JSON:API: type, id, attributes, relationships. include evita peticiones; fields reduce datos; sort con - es descendente.",
+		"cierre": [
+			"Excelente. Ya conoces JSON:API y cómo expresa include, fields, sort, filter y page.",
+			"Siguiente sala: la Galería de Páginas. Pasamos a la interfaz: botones de paginación y scroll infinito."
+		]
+	},
+	{
+		"id": "z6_galeria", "nombre": "Galería de Páginas",
+		"intro": [
+			"La Galería de Páginas. Hasta ahora vimos la paginación desde la API; aquí la veremos desde la interfaz del usuario.",
+			"Estudiaremos los controles de paginación por número, el scroll infinito y cómo elegir entre ambos.",
+			"Para cruzar los fosos, cada tramo de puente es una página de tres cuadros. Usa el atril de cada pilar para cargar la página siguiente."
+		],
+		"recordatorio": "Paginación: ubicación y URLs compartibles. Scroll infinito: exploración continua, pero memoria creciente y pie inalcanzable.",
+		"cierre": [
+			"Perfecto. Ya sabes diseñar la navegación por resultados y cubrir los estados de carga, vacío y error.",
+			"Siguiente sala: el Sótano del Rendimiento. Veremos cómo hacer que una API responda más rápido."
+		]
+	},
+	{
+		"id": "z6_sotano", "nombre": "Sótano del Rendimiento",
+		"intro": [
+			"El Sótano del Rendimiento. Aquí abajo están las máquinas que hacen rápida a una API.",
+			"Veremos logging asíncrono, compresión de respuestas con gzip y connection pooling.",
+			"La palanca abre la compuerta del fondo solo segundo y medio. Nadie corre tan rápido: guarda la caché junto a la compuerta, vuelve a la palanca y restaura."
+		],
+		"recordatorio": "Logs en cola, no en la petición. Content-Encoding: gzip para texto y JSON. Un pool reutiliza conexiones abiertas.",
+		"cierre": [
+			"Muy bien. Ya conoces tres técnicas de rendimiento que no dependen de comprar un servidor más grande.",
+			"Siguiente sala: la Bóveda de la Caché. La técnica más potente, y la más delicada."
+		]
+	},
+	{
+		"id": "z6_boveda", "nombre": "Bóveda de la Caché",
+		"intro": [
+			"La Bóveda de la Caché. Todo aquí guarda copias: por eso es tan rápida y, a veces, tan equivocada.",
+			"Estudiaremos las estrategias de caché, dónde puede vivir, cómo se invalida con sus riesgos y el patrón Flyweight.",
+			"La palanca bajo la pasarela abre la compuerta de arriba durante dos segundos y medio. Sube primero, guarda la caché junto a la compuerta y baja a tirar de la palanca."
+		],
+		"recordatorio": "Cache-aside: mira la caché, si falla lee la fuente y guarda. Cache-Control private o no-store para datos personales. Invalida al cambiar los datos.",
+		"cierre": [
+			"Excelente. Ya sabes cachear, dónde hacerlo y qué puede salir mal, y cómo compartir datos repetidos con Flyweight.",
+			"Última sala: el Pasillo de los Middlewares. Veremos cómo se organizan todas estas tareas en el servidor."
+		]
+	},
+	{
+		"id": "z6_pasillo", "nombre": "Pasillo de los Middlewares",
+		"intro": [
+			"El Pasillo de los Middlewares. Cada compuerta es un eslabón de la cadena por la que pasa una petición.",
+			"Veremos qué es un middleware y cómo fluye la petición, los tipos de middleware y sus ventajas y casos de uso.",
+			"Las dos primeras compuertas se abren con su palanca y quedan abiertas, como un middleware que llama a next(). La del controlador solo se abre un instante."
+		],
+		"recordatorio": "Un middleware recibe (req, res, next): modifica, responde o llama a next(). El orden de registro es el orden de ejecución.",
+		"cierre": [
+			"Has terminado la Semana 6: filtrado, ordenamiento y paginación, OData, JSON:API, scroll infinito, rendimiento, caché y middlewares.",
+			"Al fondo espera el Scroll Infinito: una lista que nunca deja de cargar. Tendrás que paginarla y pedirle exactamente los datos correctos."
+		]
+	}
+]

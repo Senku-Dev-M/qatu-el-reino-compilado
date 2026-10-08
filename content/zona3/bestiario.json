@@ -1,0 +1,37 @@
+[
+	{
+		"id": "etiqueta_sin_cerrar", "zona": 3, "nombre": "Etiqueta Sin Cerrar", "derrotas_requeridas": 5,
+		"descripcion": "Un rastrero que olvidó cerrarse. Por donde pasa deja un rastro que daña.",
+		"leccion": "Error real: escribir <p>Texto sin su </p>. El navegador aplica reglas de corrección automáticas y puede meter el contenido siguiente dentro del elemento abierto, cambiando la estructura y los estilos. Solución: cierra cada elemento y valida tu HTML (por ejemplo con el validador del W3C)."
+	},
+	{
+		"id": "selector_universal", "zona": 3, "nombre": "Selector Universal *", "derrotas_requeridas": 4,
+		"descripcion": "Cuelga del techo y ataca a todo lo que tiene debajo.",
+		"leccion": "El selector * aplica una regla a todos los elementos del documento. Es útil para reinicios globales como * { box-sizing: border-box; }, pero reglas como * { color: red; } afectan a todo y obligan a escribir selectores más específicos para corregirlas."
+	},
+	{
+		"id": "alt_ausente", "zona": 3, "nombre": "Alt Ausente", "derrotas_requeridas": 4,
+		"descripcion": "Casi invisible en la oscuridad. Solo la luz, o tenerlo muy cerca, lo revela.",
+		"leccion": "Una <img> sin atributo alt no ofrece información a los lectores de pantalla ni muestra texto si la imagen falla. Escribe alt con una descripción breve del contenido; si la imagen es solo decorativa, usa alt=\"\" para que los lectores la ignoren."
+	},
+	{
+		"id": "listener_fantasma", "zona": 3, "nombre": "Listener Fantasma", "derrotas_requeridas": 3,
+		"descripcion": "Si no lo eliminas a tiempo, se duplica.",
+		"leccion": "Llamar a addEventListener varias veces para el mismo evento registra varias funciones: la acción se ejecuta varias veces y se consume memoria. Registra el listener una sola vez o quítalo con removeEventListener pasando la misma referencia de función."
+	},
+	{
+		"id": "nodo_zombi", "zona": 3, "nombre": "Nodo Zombi", "derrotas_requeridas": 3,
+		"descripcion": "Lo derribas... y vuelve a levantarse.",
+		"leccion": "display: none (o una clase que lo aplique) oculta un elemento, pero el nodo sigue en el DOM: querySelector lo encuentra y sus listeners siguen registrados. Para eliminarlo del documento usa elemento.remove()."
+	},
+	{
+		"id": "nodo_huerfano", "zona": 3, "nombre": "El Nodo Huérfano", "derrotas_requeridas": 1, "jefe": true,
+		"descripcion": "Se desprendió del árbol, pero algo lo sigue sujetando.",
+		"leccion": "Si eliminas un nodo del DOM con remove() pero una variable de JavaScript todavía guarda una referencia a él, el recolector de basura no puede liberar esa memoria (fuga de memoria). Tras eliminar un nodo, quita sus listeners y asigna null a las variables que lo referencian si ya no las necesitas."
+	},
+	{
+		"id": "conflicto_merge", "zona": 0, "nombre": "Conflicto de Merge", "derrotas_requeridas": 1, "especial": true,
+		"descripcion": "Tu propia sombra, nacida donde caíste. Guarda los Bits que perdiste.",
+		"leccion": "En Git, un conflicto de merge ocurre cuando dos ramas modifican las mismas líneas de un archivo. Git marca la zona con <<<<<<<, ======= y >>>>>>>; debes editar el archivo para quedarte con el código correcto, borrar las marcas y hacer commit."
+	}
+]

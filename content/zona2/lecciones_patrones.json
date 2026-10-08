@@ -1,0 +1,269 @@
+[
+	{
+		"id": "L149",
+		"zona": 2,
+		"sala": "z2_terraza_mv",
+		"orden": 149,
+		"nivel": "inicial",
+		"titulo": "Patrón MVC (Modelo-Vista-Controlador)",
+		"resumen": "El patrón clásico de diseño que separa datos, presentación y captura de eventos del usuario.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Los tres componentes de MVC",
+				"texto": "El patrón [[mvc]] nació en Smalltalk (Trygve Reenskaug, 1979) y fundamentó la arquitectura web:\n\n• **Modelo (Model):** representa el estado, datos y reglas de negocio del dominio.\n• **Vista (View):** renderiza la interfaz gráfica y muestra datos del modelo al usuario.\n• **Controlador (Controller):** recibe las interacciones del usuario (clics, teclas, peticiones HTTP), ejecuta acciones sobre el modelo y selecciona la vista a renderizar."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Flujo en MVC",
+				"texto": "En **ASP.NET Core MVC** el controlador recibe la petición, pide los datos al modelo y elige la vista que los presentará:",
+				"lenguaje": "js",
+				"codigo": "public class ProductosController : Controller {\n  private readonly CatalogoService _catalogo;\n  public ProductosController(CatalogoService c) => _catalogo = c;\n\n  // GET /productos/detalle/42\n  public async Task<IActionResult> Detalle(int id) {\n    var producto = await _catalogo.Buscar(id);      // Modelo\n    if (producto is null) return NotFound();\n    return View(producto);                          // Vista Detalle.cshtml\n  }\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El ciclo de una petición",
+				"texto": "La vista nunca consulta datos por su cuenta: recibe del controlador el modelo ya preparado.",
+				"vista": {
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Usuario",
+									"Controlador",
+									"Modelo",
+									"Vista"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "GET /productos/detalle/42"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "Buscar(42)"
+									},
+									{
+										"de": 2,
+										"a": 1,
+										"texto": "producto"
+									},
+									{
+										"de": 1,
+										"a": 3,
+										"texto": "View(producto)"
+									},
+									{
+										"de": 3,
+										"a": 0,
+										"texto": "HTML de la ficha"
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Controladores y vistas que hacen de más",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "public IActionResult Comprar(int id) {\n  var p = _db.Productos.Find(id);\n  if (p.Stock < 1) ...\n  p.Stock--; _db.SaveChanges();\n  var comision = p.Precio * 0.08m;\n  ...\n}",
+						"bien": "public async Task<IActionResult> Comprar(int id) {\n  var resultado = await _ventas.Comprar(id, UsuarioId);\n  return View(resultado);\n}",
+						"explicacion": "Un controlador gordo acumula reglas de negocio y acceso a datos. El controlador coordina; las reglas viven en el modelo y sus servicios."
+					},
+					{
+						"mal": "@{ var reseñas = new QatuDbContext().Resenas.ToList(); }",
+						"bien": "@model DetalleProductoVm\n@foreach (var r in Model.Resenas) { ... }",
+						"explicacion": "Si la vista consulta la base de datos, deja de ser solo presentación y no se puede probar ni reutilizar.",
+						"lenguaje": "html"
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Rol del Controlador",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "En MVC, ¿qué componente decide qué vista se muestra después de procesar una petición?",
+					"opciones": [
+						"El modelo",
+						"La vista",
+						"El controlador",
+						"La base de datos"
+					],
+					"correcta": 2,
+					"explicacion": "El controlador recibe la entrada, trabaja con el modelo y selecciona la vista con los datos preparados."
+				}
+			}
+		]
+	},
+	{
+		"id": "L150",
+		"zona": 2,
+		"sala": "z2_terraza_mv",
+		"orden": 150,
+		"nivel": "intermedio",
+		"titulo": "Patrón MVP (Modelo-Vista-Presentador)",
+		"resumen": "Evolución de MVC donde la Vista es pasiva y el Presentador actúa como mediador estricto para facilitar pruebas.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "¿Cómo funciona MVP?",
+				"texto": "El patrón [[mvp]] (popularizado por Taligent e IBM en 1996) transforma la Vista en una interfaz pasiva:\n\n• **Vista (Passive View):** solo implementa métodos visuales sencillos (`mostrarProductos`, `mostrarError`) definidos en una interfaz `IProductosView`.\n• **[[presenter]]:** contiene toda la lógica de presentación. Escucha eventos de la vista, consulta el modelo y actualiza la vista llamando a su interfaz.\n• **Modelo:** datos del dominio.\n\n**Gran ventaja:** el Presentador no depende de componentes gráficos concretos, permitiendo probar el 100% de la lógica de interfaz con pruebas unitarias."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Interfaz de la vista pasiva",
+				"texto": "En TypeScript la vista pasiva es una **interfaz**. El presentador solo conoce esa interfaz y el modelo, nunca el DOM:",
+				"lenguaje": "js",
+				"codigo": "interface ProductosView {\n  mostrarProductos(lista: Producto[]): void;\n  mostrarError(mensaje: string): void;\n  onBuscar(handler: (texto: string) => void): void;\n}\n\nclass ProductosPresenter {\n  constructor(private view: ProductosView, private api: CatalogoApi) {\n    view.onBuscar((texto) => this.buscar(texto));\n  }\n\n  async buscar(texto: string) {\n    if (texto.trim().length < 2) return this.view.mostrarError('Escribe al menos 2 letras');\n    this.view.mostrarProductos(await this.api.buscar(texto));\n  }\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Pruebas sin interfaz gráfica",
+				"texto": "Como la vista es una interfaz, la prueba usa una vista falsa que solo **registra** lo que el presentador le pide:",
+				"lenguaje": "js",
+				"codigo": "test('pide al menos 2 letras', async () => {\n  const vista = { mostrarProductos: jest.fn(), mostrarError: jest.fn(), onBuscar: jest.fn() };\n  const presenter = new ProductosPresenter(vista, apiFalsa);\n\n  await presenter.buscar('p');\n\n  expect(vista.mostrarError).toHaveBeenCalledWith('Escribe al menos 2 letras');\n});",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ npm test",
+								"  ✓ pide al menos 2 letras (3 ms)",
+								"Tests: 1 passed"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Romper la vista pasiva",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "async buscar(texto: string) {\n  const lista = await this.api.buscar(texto);\n  document.querySelector('#lista')!.innerHTML = pintar(lista);\n}",
+						"bien": "async buscar(texto: string) {\n  this.view.mostrarProductos(await this.api.buscar(texto));\n}",
+						"explicacion": "Si el presentador toca el DOM ya no se puede probar sin navegador, que era la gran ventaja de MVP."
+					},
+					{
+						"mal": "// en la vista\nmostrarProductos(lista) {\n  const baratos = lista.filter((p) => p.precio < 20);\n  ...\n}",
+						"bien": "// en la vista\nmostrarProductos(lista) {\n  this.lista.innerHTML = lista.map(tarjeta).join('');\n}",
+						"explicacion": "Filtrar o decidir es lógica de presentación: pertenece al presentador. La vista pasiva solo pinta lo que recibe."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Diferencia MVC vs MVP",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Por qué en MVP se puede probar toda la lógica de presentación sin navegador?",
+					"opciones": [
+						"Porque el presentador genera HTML con cadenas",
+						"Porque el presentador habla con la vista a través de una interfaz que la prueba puede simular",
+						"Porque MVP no tiene vista",
+						"Porque las pruebas se ejecutan dentro del DOM"
+					],
+					"correcta": 1,
+					"explicacion": "Al depender solo de la interfaz de la vista, la prueba le pasa una vista falsa y verifica qué se le pidió."
+				}
+			}
+		]
+	},
+	{
+		"id": "L151",
+		"zona": 2,
+		"sala": "z2_terraza_mv",
+		"orden": 151,
+		"nivel": "intermedio",
+		"titulo": "Patrón MVVM (Modelo-Vista-ViewModel)",
+		"resumen": "Patrón creado por Microsoft que utiliza Data Binding bidireccional para desacoplar la vista del estado de presentación.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Los tres pilares de MVVM",
+				"texto": "El patrón [[mvvm]] (John Gossman, Microsoft, 2005) nació para WPF y está en la base de frameworks como Knockout, Angular y Vue:\n\n• **Modelo (Model):** datos del dominio y lógica de negocio.\n• [[viewmodel]]: el estado de la pantalla y sus acciones. Expone propiedades observables y comandos **sin conocer** qué controles visuales existen.\n• **Vista (View):** plantilla (HTML o XAML) que se enlaza de forma declarativa al ViewModel mediante [[data_binding]]."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "ViewModel reactivo en TypeScript",
+				"texto": "Un ViewModel con la Composition API de Vue: estado observable (`ref`), valores derivados (`computed`) y comandos (funciones). No contiene ni una línea de DOM:",
+				"lenguaje": "js",
+				"codigo": "export function useCarritoViewModel(api: CarritoApi) {\n  const items = ref<Item[]>([]);\n  const cupon = ref('');\n\n  const total = computed(() =>\n    items.value.reduce((s, i) => s + i.precio * i.cantidad, 0));\n\n  async function aplicarCupon() {\n    items.value = await api.aplicarCupon(cupon.value);\n  }\n\n  return { items, cupon, total, aplicarCupon };\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Enlace declarativo en la vista",
+				"texto": "La vista solo **declara** enlaces: cuando `total` cambia, el texto se actualiza solo.",
+				"lenguaje": "html",
+				"codigo": "<template>\n  <li v-for=\"item in vm.items\" :key=\"item.id\">\n    {{ item.nombre }} × {{ item.cantidad }}\n  </li>\n  <input v-model=\"vm.cupon\" placeholder=\"Cupón\">\n  <button @click=\"vm.aplicarCupon\">Aplicar</button>\n  <p>Total: {{ vm.total }}</p>\n</template>",
+				"vista": {
+					"bloques": [
+						{
+							"ul": [
+								"Poncho × 2",
+								"Chullo × 1"
+							]
+						},
+						{
+							"campo": {
+								"etiqueta": "Cupón",
+								"tipo": "text",
+								"valor": "QATU10"
+							}
+						},
+						{
+							"boton": "Aplicar"
+						},
+						{
+							"p": "Total: 62.00"
+						}
+					],
+					"pestana": "qatu.com/carrito"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "ViewModels que conocen la vista",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "async function aplicarCupon() {\n  const codigo = (document.getElementById('cupon') as HTMLInputElement).value;\n  ...\n}",
+						"bien": "const cupon = ref('');\nasync function aplicarCupon() {\n  items.value = await api.aplicarCupon(cupon.value);\n}",
+						"explicacion": "Si el ViewModel lee el DOM, depende de una vista concreta y no se puede probar ni reutilizar. El valor llega por binding."
+					},
+					{
+						"mal": "<p>Total: {{ vm.items.reduce((s, i) => s + i.precio * i.cantidad, 0) }}</p>",
+						"bien": "<p>Total: {{ vm.total }}</p>",
+						"explicacion": "Los cálculos en la plantilla no se prueban y se duplican. Los valores derivados se exponen como `computed` en el ViewModel.",
+						"lenguaje": "html"
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Rol del ViewModel",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Un ViewModel de MVVM lee el cupón con document.getElementById('cupon').value. ¿Qué problema tiene?",
+					"opciones": [
+						"Ninguno, es la forma recomendada",
+						"Depende de una vista concreta y deja de poder probarse de forma aislada",
+						"Es más rápido que usar binding",
+						"Obliga a usar SSR"
+					],
+					"correcta": 1,
+					"explicacion": "El ViewModel no conoce los controles: el valor debe llegarle por data binding."
+				}
+			}
+		]
+	}
+]

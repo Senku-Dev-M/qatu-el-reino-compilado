@@ -1,0 +1,9 @@
+[
+	{
+		"id": "promesa", "zona": 5, "nombre": "Promesa",
+		"descripcion": "Activa fuentes de promesa: quedan pendientes unos instantes y, al cumplirse, levantan plataformas de agua durante un tiempo. Algunas se rechazan, y algunas encadenan otras con .then o .catch.",
+		"leccion": "Una Promise representa un resultado futuro. Empieza en pending y termina en fulfilled (con un valor) o rejected (con un error). then() se ejecuta al cumplirse y catch() al rechazarse. Lo estudias en el Manantial de las Promesas.",
+		"control": "promesa",
+		"instruccion": "Acércate a una fuente de promesa y pulsa [%s] para activarla"
+	}
+]

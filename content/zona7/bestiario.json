@@ -1,0 +1,27 @@
+[
+	{
+		"id": "token_robado", "zona": 7, "nombre": "Ladrón de Tokens", "derrotas_requeridas": 4,
+		"descripcion": "Se lanza sobre ti y se lleva el access token. Huye con él colgado del cuello.",
+		"leccion": "Un token portador vale para cualquiera que lo tenga: por eso viaja solo por HTTPS, nunca en la URL y con caducidad corta. Si se filtra, el daño dura hasta que expira; guarda el refresh en una cookie HttpOnly y revócalo al detectar un robo."
+	},
+	{
+		"id": "fuerza_bruta", "zona": 7, "nombre": "Fuerza Bruta", "derrotas_requeridas": 4,
+		"descripcion": "Prueba combinaciones sin descansar. Entre ráfaga y ráfaga queda al descubierto.",
+		"leccion": "Un ataque de fuerza bruta prueba contraseñas hasta acertar. Defensas: hash lento con sal (bcrypt, Argon2), límite de intentos y retardo progresivo, bloqueo temporal, MFA y contraseñas largas. El límite de peticiones (429) también frena los intentos automáticos."
+	},
+	{
+		"id": "escalada_privilegios", "zona": 7, "nombre": "Escalada de Privilegios", "derrotas_requeridas": 4,
+		"descripcion": "Empieza como usuario corriente y, si tarda en caer, se corona a sí mismo administrador.",
+		"leccion": "La escalada de privilegios ocurre cuando un usuario obtiene permisos que no le corresponden: confiar en un campo «rol» enviado por el cliente, no comprobar la propiedad del recurso o exponer endpoints administrativos sin control. El servidor debe derivar el rol del token validado y comprobar cada acción sobre cada recurso."
+	},
+	{
+		"id": "portero_403", "zona": 7, "nombre": "Portero 403", "derrotas_requeridas": 3,
+		"descripcion": "Sabe perfectamente quién eres. Y aun así no te deja pasar de frente.",
+		"leccion": "403 Forbidden significa autenticado pero sin permiso; no se arregla volviendo a iniciar sesión. Reintentar o renovar el token ante un 403 solo genera bucles: hay que pedir el alcance adecuado o aceptar que esa acción no está permitida."
+	},
+	{
+		"id": "impostor_implicito", "zona": 7, "nombre": "El Impostor Implícito", "derrotas_requeridas": 1, "jefe": true,
+		"descripcion": "Reparte tokens en la barra de direcciones y se disfraza de respuestas que nadie pidió.",
+		"leccion": "El flujo implícito devolvía el access token en el fragmento de la URL, donde queda expuesto al historial, al Referer y a cualquier script. Hoy se usa Authorization Code con PKCE y se comprueba el parámetro state para descartar respuestas que no correspondan a la petición iniciada."
+	}
+]

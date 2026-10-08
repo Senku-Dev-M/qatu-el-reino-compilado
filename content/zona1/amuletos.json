@@ -1,0 +1,18 @@
+[
+	{
+		"id": "circuit_breaker",
+		"zona": 1,
+		"nombre": "Circuit Breaker",
+		"coste": 2,
+		"efecto": "Evita daño consecutivo al fallar llamadas de red.",
+		"leccion": "L120"
+	},
+	{
+		"id": "api_cache",
+		"zona": 1,
+		"nombre": "Caché de Respuestas",
+		"coste": 1,
+		"efecto": "Reduce el coste de energía de los ataques especiales.",
+		"leccion": "L131"
+	}
+]

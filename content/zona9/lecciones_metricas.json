@@ -1,0 +1,227 @@
+[
+	{
+		"id": "L197",
+		"zona": 9,
+		"sala": "z9_galeria_metricas",
+		"orden": 197,
+		"nivel": "intermedio",
+		"titulo": "Monitoreo continuo por capas",
+		"resumen": "El monitoreo continuo vigila la aplicación, la infraestructura y la red con métricas, logs, trazas y alertas.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Aplicación, infraestructura y red",
+				"texto": "El [[monitoreo continuo|monitoreo_continuo]] vigila el sistema en producción de forma permanente, en tres capas:\n\n• **Aplicación:** latencia, errores por endpoint, pedidos por minuto, excepciones.\n• **Infraestructura:** CPU, memoria y disco de nodos y contenedores, reinicios de Pods.\n• **Red:** disponibilidad de los endpoints, latencia entre servicios, certificados a punto de caducar.\n\nPara observarlo se combinan **métricas** (series numéricas), **logs** (eventos) y **trazas** (el recorrido de una petición entre servicios)."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Métricas con Prometheus",
+				"texto": "La API expone métricas y **Prometheus** las recoge periódicamente; **Grafana** las muestra en paneles. Esta consulta PromQL calcula el p95 de latencia de los últimos 5 minutos:",
+				"lenguaje": "js",
+				"codigo": "const client = require('prom-client');\nconst duracion = new client.Histogram({\n  name: 'http_request_duration_seconds',\n  help: 'Duración de las peticiones',\n  labelNames: ['ruta', 'estado'],\n});\napp.get('/metrics', async (req, res) => res.send(await client.register.metrics()));\n\n// PromQL en Grafana:\n// histogram_quantile(0.95,\n//   sum(rate(http_request_duration_seconds_bucket[5m])) by (le))"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Una alerta que avisa antes que los usuarios",
+				"vista": {
+					"bloques": [
+						{
+							"panel": {
+								"titulo": "Alertas",
+								"pestanas": [
+									"Alertas",
+									"Paneles",
+									"Explorar"
+								],
+								"lineas": [
+									"[FIRING]  API p95 > 500 ms durante 5 min (aplicación)",
+									"[PENDING] worker-2 con memoria > 90% (infraestructura)",
+									"[OK]      certificado de qatu.com: caduca en 54 días (red)"
+								]
+							}
+						}
+					],
+					"pestana": "Grafana"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Monitoreo que no sirve",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Alertar por cada error 500 aislado\n(cientos de avisos al día).",
+						"bien": "Alertar si la tasa de 5xx supera el 1%\ndurante 5 minutos.",
+						"explicacion": "El exceso de alertas hace que el equipo las ignore. Se alerta por síntomas sostenidos que afectan a usuarios."
+					},
+					{
+						"mal": "console.log('error en pago')",
+						"bien": "logger.error({ pedidoId, traceId, codigo: 'PAGO_RECHAZADO' },\n  'error en pago');",
+						"explicacion": "Un log sin contexto no permite encontrar la petición afectada. Los logs estructurados se filtran y se correlacionan con la traza."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Observabilidad y Trazabilidad Distribuida",
+				"pregunta": {
+					"enunciado": "El certificado HTTPS de qatu.com está a punto de caducar. ¿En qué capa del monitoreo continuo debe detectarse?",
+					"opciones": [
+						"Aplicación",
+						"Infraestructura",
+						"Red",
+						"Ninguna, no se monitorea"
+					],
+					"correcta": 2,
+					"explicacion": "La disponibilidad de endpoints, la latencia entre servicios y los certificados pertenecen a la capa de red."
+				}
+			}
+		]
+	},
+	{
+		"id": "L198",
+		"zona": 9,
+		"sala": "z9_galeria_metricas",
+		"orden": 198,
+		"nivel": "intermedio",
+		"titulo": "Pruebas continuas y métricas DORA",
+		"resumen": "Las pruebas continuas ejecutan la suite adecuada en cada etapa del pipeline; las métricas DORA miden el resultado.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Automatizadas frente a continuas",
+				"texto": "Las **pruebas automatizadas** son pruebas que ejecuta una máquina. Las [[pruebas continuas|pruebas_continuas]] (continuous testing) van más allá: ejecutan **automáticamente la suite adecuada en cada etapa** del pipeline, de modo que cada cambio recibe una evaluación de riesgo antes de avanzar.\n\n• Commit: unitarias y análisis estático (segundos).\n• Merge request: integración y contratos (minutos).\n• Staging: E2E, rendimiento y DAST.\n• Producción: monitoreo continuo y smoke tests."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Una prueba por etapa",
+				"lenguaje": "texto",
+				"codigo": "stages: [commit, integracion, staging, produccion]\n\nunitarias:    { stage: commit,      script: npm test }\nsast:         { stage: commit,      script: semgrep scan --error }\ncontratos:    { stage: integracion, script: npm run pact:verify }\ne2e:          { stage: staging,     script: npm run e2e -- --browser=firefox }\ncarga:        { stage: staging,     script: k6 run carga-catalogo.js }\nsmoke:        { stage: produccion,  script: curl -f https://qatu.com/health }"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Cómo se mide el resultado: métricas DORA",
+				"texto": "Las cuatro **métricas DORA** miden si el proceso de entrega funciona: frecuencia de despliegue, tiempo de entrega de un cambio (del commit a producción), tasa de fallos de los cambios y tiempo de recuperación ante un incidente.",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Métrica DORA",
+									"Qatu hace 3 meses",
+									"Qatu hoy"
+								],
+								"filas": [
+									[
+										"Frecuencia de despliegue",
+										"1 por semana",
+										"3 por día"
+									],
+									[
+										"Tiempo de entrega",
+										"4 días",
+										"2 horas"
+									],
+									[
+										"Tasa de fallos de cambios",
+										"22%",
+										"6%"
+									],
+									[
+										"Tiempo de recuperación",
+										"5 horas",
+										"25 minutos"
+									]
+								],
+								"resaltar": 2
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Automatizar no es lo mismo que probar continuamente",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Suite E2E automatizada que alguien lanza\na mano antes de cada release.",
+						"bien": "La suite corre sola en la etapa de staging\nde cada pipeline y bloquea si falla.",
+						"explicacion": "Tener pruebas automatizadas no basta: en pruebas continuas se ejecutan sin intervención en cada cambio y deciden si avanza."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Métricas DORA de Alto Rendimiento",
+				"pregunta": {
+					"enunciado": "El equipo tiene pruebas E2E automatizadas, pero las lanza alguien a mano antes de cada release. ¿Qué le falta para hablar de pruebas continuas?",
+					"opciones": [
+						"Escribir más pruebas manuales",
+						"Que se ejecuten solas en la etapa correspondiente de cada pipeline y bloqueen si fallan",
+						"Cambiar Selenium por Playwright",
+						"Aumentar la cobertura al 100%"
+					],
+					"correcta": 1,
+					"explicacion": "Las pruebas continuas se integran en cada etapa del pipeline sin intervención humana."
+				}
+			}
+		]
+	},
+	{
+		"id": "L199",
+		"zona": 9,
+		"sala": "z9_galeria_metricas",
+		"orden": 199,
+		"nivel": "intermedio",
+		"titulo": "Ingeniería del Caos y Resiliencia en Producción",
+		"resumen": "Experimentación controlada para identificar debilidades antes de que causen caídas del sistema.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Principios del Chaos Engineering",
+				"texto": "La ingeniería del caos inyecta fallos de forma deliberada en entornos de producción controlados (apagar instancias aleatorias, inyectar latencia de red, simular caídas de bases de datos) para verificar que los mecanismos de failover, circuit breakers y auto-recovery funcionen según lo diseñado."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Chaos Monkey y Resiliencia Activa",
+				"texto": "Nacido en Netflix, Chaos Monkey demostró que la única forma de garantizar alta disponibilidad es asumir que cualquier componente fallará en cualquier momento y diseñar arquitecturas tolerantes a fallos desde el primer día."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Un experimento controlado",
+				"lenguaje": "texto",
+				"texto": "Un experimento de caos se diseña como un experimento científico: hipótesis, alcance limitado, métrica observada y forma de detenerlo.",
+				"codigo": "Hipótesis: si cae 1 de los 3 Pods de la API,\n           el p95 del checkout sigue < 400 ms.\nAlcance:   solo el namespace de staging; 10 minutos.\nAcción:    kubectl delete pod -l app=qatu-api --field-selector ...\nObservar:  latencia p95, tasa de 5xx, tiempo de recreación.\nAbortar:   si la tasa de 5xx supera el 2%."
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Caos sin control",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Apagar servidores al azar en producción\nsin monitoreo ni plan para detenerlo.",
+						"bien": "Empezar en staging, con alcance pequeño,\nmétricas visibles y condición de aborto.",
+						"explicacion": "La ingeniería del caos es experimentación **controlada**: sin observabilidad no se aprende nada y solo se provoca una caída."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Ingeniería del Caos y Resiliencia en Producción",
+				"pregunta": {
+					"enunciado": "¿Qué elemento es imprescindible antes de ejecutar un experimento de ingeniería del caos?",
+					"opciones": [
+						"Apagar el monitoreo para no generar alertas",
+						"Una hipótesis, métricas observables y una condición para abortar",
+						"Ejecutarlo directamente en producción sin avisar",
+						"Desactivar las réplicas"
+					],
+					"correcta": 1,
+					"explicacion": "Sin hipótesis ni observabilidad no se aprende nada; sin condición de aborto, el experimento se convierte en un incidente."
+				}
+			}
+		]
+	}
+]

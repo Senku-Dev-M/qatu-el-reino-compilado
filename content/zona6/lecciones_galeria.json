@@ -1,0 +1,92 @@
+[
+	{
+		"id": "L82", "zona": 6, "sala": "z6_galeria", "orden": 82, "nivel": "inicial",
+		"titulo": "Paginación por número de página",
+		"resumen": "Los controles de paginación muestran botones Anterior/Siguiente y números de página. Dan control y ubicación al usuario y permiten URLs compartibles (?page=3), pero exigen clics y cortan la exploración.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Controles de paginación",
+				"texto": "En la interfaz, los [[controles de paginación|controles_de_paginacion]] permiten moverse entre bloques de resultados. Los elementos habituales:\n\n• Botones **Anterior** y **Siguiente**, desactivados en los extremos.\n• **Números de página**, con la actual resaltada y puntos suspensivos cuando hay muchas.\n• Indicador «Mostrando 21–40 de 312».\n• Selector de **tamaño de página** (20, 50, 100).",
+				"vista": {"pestana": "Tienda Qatu", "bloques": [{"nota": "Mostrando 21–40 de 312 productos"}, {"paginacion": {"estilo": "numeros", "actual": 2, "total": 16}}, {"paginacion": {"estilo": "anterior_siguiente", "actual": 2, "total": 16}}]}
+			},
+			{
+				"tipo": "concepto", "titulo": "Ventajas y desventajas",
+				"texto": "**Ventajas**\n• El usuario sabe **dónde está** y cuánto queda.\n• Puede **volver** a una página concreta y compartir la URL (`/productos?page=3`).\n• El pie de página siempre es accesible.\n• Buena para buscadores (SEO) y para tareas de búsqueda o comparación.\n\n**Desventajas**\n• Cada página requiere un **clic** y una espera.\n• Interrumpe la exploración casual, sobre todo en móvil.\n• Con offset, las páginas lejanas pueden ser lentas."
+			},
+			{
+				"tipo": "sintaxis", "titulo": "La página en la URL",
+				"texto": "Guardar la página en la URL hace que recargar, compartir y usar el botón «atrás» funcionen. `history.pushState` cambia la URL sin recargar.",
+				"lenguaje": "js",
+				"codigo": "async function irAPagina(numero) {\n  const url = new URL(location);\n  url.searchParams.set('page', numero);\n  history.pushState({}, '', url);\n\n  const r = await fetch(`/api/productos?page=${numero}&size=20`);\n  pintarLista(await r.json());\n}"
+			},
+			{
+				"tipo": "comprueba", "titulo": "¿Cuándo conviene?",
+				"pregunta": {
+					"enunciado": "En un panel de administración, el usuario busca un pedido concreto y quiere volver a él después. ¿Qué es más adecuado?",
+					"opciones": ["Scroll infinito", "Paginación por número con la página en la URL", "Mostrar todos los pedidos a la vez", "Cargar pedidos al azar"],
+					"correcta": 1,
+					"explicacion": "La paginación numerada da ubicación y URLs a las que se puede volver, algo clave en tareas de búsqueda."
+				}
+			}
+		]
+	},
+	{
+		"id": "L83", "zona": 6, "sala": "z6_galeria", "orden": 83, "nivel": "intermedio",
+		"titulo": "Scroll infinito",
+		"resumen": "El scroll infinito carga la siguiente página cuando el usuario se acerca al final de la lista, normalmente vigilando un elemento centinela con IntersectionObserver. Facilita explorar, pero dificulta volver a un punto, alcanzar el pie de página y consume cada vez más memoria.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Cargar al llegar al final",
+				"texto": "Con [[scroll infinito|scroll_infinito]] no hay botones: cuando el usuario se acerca al final de la lista, la página pide el siguiente bloque y lo **añade** debajo. Es típico de redes sociales y catálogos de imágenes.\n\nEn el servidor sigue siendo paginación (a menudo por cursor); lo que cambia es **cuándo** se pide la siguiente página."
+			},
+			{
+				"tipo": "sintaxis", "titulo": "IntersectionObserver y centinela",
+				"texto": "En lugar de escuchar cada evento `scroll`, se coloca un **elemento centinela** al final de la lista y un [[IntersectionObserver|intersection_observer]] avisa cuando entra en pantalla. Hay que evitar peticiones duplicadas mientras una está en curso y dejar de observar cuando no hay más datos.",
+				"lenguaje": "js",
+				"codigo": "let siguiente = '/api/productos?limit=20';\nlet cargando = false;\n\nconst observer = new IntersectionObserver(async ([entrada]) => {\n  if (!entrada.isIntersecting || cargando || !siguiente) return;\n  cargando = true;\n  const doc = await (await fetch(siguiente)).json();\n  agregarTarjetas(doc.data);\n  siguiente = doc.links.next;\n  if (!siguiente) observer.disconnect();\n  cargando = false;\n});\n\nobserver.observe(document.querySelector('#centinela'));"
+			},
+			{
+				"tipo": "concepto", "titulo": "Ventajas y desventajas",
+				"texto": "**Ventajas**\n• Exploración continua sin clics; natural en móvil.\n• Aumenta el tiempo de navegación en contenido para descubrir.\n\n**Desventajas**\n• El **pie de página** se aleja cada vez que se carga más.\n• Es difícil **volver** al mismo punto (al pulsar «atrás» o recargar).\n• El DOM crece sin límite: más **memoria** y peor rendimiento si no se virtualiza la lista.\n• Menos sensación de control y más difícil para lectores de pantalla y buscadores."
+			},
+			{
+				"tipo": "comprueba", "titulo": "La herramienta adecuada",
+				"pregunta": {
+					"enunciado": "¿Por qué se prefiere IntersectionObserver a un listener del evento scroll para detectar el final de la lista?",
+					"opciones": ["Porque carga todas las páginas de golpe", "Porque avisa solo cuando el centinela entra en pantalla, sin calcular posiciones en cada evento scroll", "Porque funciona sin JavaScript", "Porque elimina la necesidad de paginar en el servidor"],
+					"correcta": 1,
+					"explicacion": "El navegador calcula la intersección de forma eficiente y llama al callback solo cuando cambia la visibilidad del centinela."
+				}
+			}
+		]
+	},
+	{
+		"id": "L84", "zona": 6, "sala": "z6_galeria", "orden": 84, "nivel": "intermedio",
+		"titulo": "Paginación o scroll infinito: cómo elegir",
+		"resumen": "La paginación encaja con tareas de búsqueda y comparación; el scroll infinito, con exploración de contenido. El botón «Cargar más» es un punto intermedio. Siempre hay que mostrar estados de carga, de lista vacía y de error.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Criterios",
+				"texto": "**Paginación** cuando…\n• el usuario **busca** algo concreto o compara resultados (tiendas con filtros, tablas, administración);\n• necesita volver a una posición o compartirla;\n• el pie de página contiene enlaces importantes.\n\n**Scroll infinito** cuando…\n• el objetivo es **explorar** un flujo sin un final claro (fotos, noticias, publicaciones);\n• se usa sobre todo en móvil;\n• el orden es cronológico o por relevancia y no importa la posición exacta."
+			},
+			{
+				"tipo": "resultado", "titulo": "El punto intermedio: «Cargar más»",
+				"texto": "Un [[botón «Cargar más»|cargar_mas]] añade la siguiente página a la lista, como el scroll infinito, pero solo cuando el usuario lo pide: el pie de página sigue accesible y el usuario controla cuánto carga.",
+				"vista": {"pestana": "Tienda Qatu", "bloques": [{"tabla": {"columnas": ["Producto", "Precio"], "filas": [["Gorro de alpaca", "35"], ["Chalina", "58"], ["Manta", "120"]]}}, {"paginacion": {"estilo": "cargar_mas"}}, {"nota": "Mostrando 3 de 14"}]}
+			},
+			{
+				"tipo": "concepto", "titulo": "Estados que siempre hay que cubrir",
+				"texto": "Elijas lo que elijas, la interfaz debe dar retroalimentación:\n\n• **Cargando**: indicador o tarjetas de esqueleto mientras llega la página.\n• **Sin resultados**: mensaje claro si el filtro no devuelve nada, con opción de limpiar filtros.\n• **Error**: aviso y botón de reintentar si la petición falla.\n• **Fin de la lista**: indicar que no hay más elementos.\n\nY al cambiar un filtro u orden, se vuelve a la **página 1**: la página 7 de otro filtro puede no existir."
+			},
+			{
+				"tipo": "comprueba", "titulo": "Elige el diseño",
+				"pregunta": {
+					"enunciado": "Una tienda con filtros de categoría y precio quiere que los clientes comparen productos y compartan el enlace de lo que ven. ¿Qué diseño es más adecuado?",
+					"opciones": ["Scroll infinito sin cambiar la URL", "Paginación con página, filtros y orden en la URL", "Cargar los 50 000 productos al abrir la página", "Un único botón que carga productos aleatorios"],
+					"correcta": 1,
+					"explicacion": "Comparar y compartir son tareas de búsqueda: la paginación con el estado en la URL permite volver exactamente al mismo resultado."
+				}
+			}
+		]
+	}
+]

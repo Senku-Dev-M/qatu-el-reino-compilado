@@ -1,0 +1,10 @@
+[
+	{
+		"id": "crown_master",
+		"zona": 10,
+		"nombre": "Corona del Arquitecto Qatu",
+		"coste": 1,
+		"efecto": "Restaura la vitalidad completa y sella el software con 100% de fiabilidad.",
+		"leccion": "L205"
+	}
+]

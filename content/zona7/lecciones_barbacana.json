@@ -1,0 +1,176 @@
+[
+	{
+		"id": "L98",
+		"zona": 7,
+		"sala": "z7_barbacana",
+		"orden": 98,
+		"nivel": "intermedio",
+		"titulo": "OAuth 2.0: delegar el acceso",
+		"resumen": "OAuth 2.0 es un framework de autorización: permite que una aplicación acceda a recursos en nombre del usuario sin conocer su contraseña. Define cuatro roles y emite tokens con un alcance limitado.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El problema que resuelve",
+				"texto": "Una aplicación necesita leer tus pedidos de Qatu. La forma ingenua sería pedirte tu usuario y contraseña de Qatu: tendría acceso **total** y para siempre.\n\n[[OAuth 2.0|oauth2]] (RFC 6749) evita eso: tú te autenticas **solo** ante Qatu y Qatu emite a esa aplicación un **token** con permisos limitados y caducidad.\n\nOAuth 2.0 es un framework de **autorización**, no de autenticación: no dice quién eres (para eso está OIDC, en la Capilla)."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Los cuatro roles",
+				"texto": "• [[Propietario del recurso|resource_owner]]: la persona usuaria (tú).\n• [[Cliente|cliente_oauth]]: la aplicación que quiere acceder (web, móvil o servidor).\n• [[Servidor de autorización|servidor_de_autorizacion]]: quien autentica al usuario y emite tokens (`/authorize` y `/token`).\n• [[Servidor de recursos|servidor_de_recursos]]: la API que guarda los datos y valida el token.\n\nLos clientes se dividen en **confidenciales** (un backend que puede guardar un secreto) y **públicos** (SPA o app móvil, donde cualquier secreto sería visible)."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El intercambio, a grandes rasgos",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Usuario",
+									"Cliente",
+									"Servidor de autorización",
+									"API"
+								],
+								"ancho": 640,
+								"pasos": [
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "solicita autorización"
+									},
+									{
+										"de": 2,
+										"a": 0,
+										"texto": "pide credenciales y consentimiento"
+									},
+									{
+										"de": 0,
+										"a": 2,
+										"texto": "acepta"
+									},
+									{
+										"de": 2,
+										"a": 1,
+										"texto": "access token (scope limitado)"
+									},
+									{
+										"de": 1,
+										"a": 3,
+										"texto": "Authorization: Bearer …"
+									},
+									{
+										"de": 3,
+										"a": 1,
+										"texto": "200 OK"
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Qué es y qué no es",
+				"pregunta": {
+					"enunciado": "¿Cuál es el propósito principal de OAuth 2.0?",
+					"opciones": [
+						"Cifrar las contraseñas en la base de datos",
+						"Permitir que una aplicación acceda a recursos en nombre del usuario, con permisos limitados y sin conocer su contraseña",
+						"Sustituir a HTTPS",
+						"Guardar sesiones en el servidor"
+					],
+					"correcta": 1,
+					"explicacion": "Es un framework de autorización delegada basado en tokens con alcance y caducidad."
+				}
+			}
+		]
+	},
+	{
+		"id": "L99",
+		"zona": 7,
+		"sala": "z7_barbacana",
+		"orden": 99,
+		"nivel": "intermedio",
+		"titulo": "Access token y refresh token",
+		"resumen": "El access token es una credencial portadora de vida corta que se envía en cada petición con su scope. El refresh token, de vida larga, sirve solo ante el servidor de autorización para obtener nuevos access tokens sin volver a autenticarse.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El access token",
+				"texto": "El [[access token|access_token]] es la credencial que la API exige. Características:\n\n• Es **portador** (bearer): quien lo tenga, entra. Por eso viaja siempre por HTTPS.\n• Tiene un [[scope|scope]] (alcance): qué operaciones permite (`productos:leer`, `pedidos:escribir`).\n• **Caduca pronto**, normalmente entre 5 y 60 minutos: si lo roban, el daño está acotado.\n\nEs justo lo que llevas en esta zona: un token con alcance y cuenta atrás que los arcos lectores comprueban."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "El refresh token",
+				"texto": "El [[refresh token|refresh_token]] **no sirve para llamar a la API**: solo se presenta en el endpoint `/token` del servidor de autorización para obtener un access token nuevo. Dura mucho más (días o semanas), así que se guarda con especial cuidado.\n\nAsí el usuario no vuelve a escribir su contraseña cada pocos minutos.",
+				"lenguaje": "texto",
+				"codigo": "POST /token\nContent-Type: application/x-www-form-urlencoded\n\ngrant_type=refresh_token&refresh_token=def50200a4f1…&client_id=tienda-web",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"peticion": {
+								"estado": "200 OK",
+								"respuesta": "{\n  \"access_token\": \"eyJhbGciOi…\",\n  \"token_type\": \"Bearer\",\n  \"expires_in\": 900,\n  \"refresh_token\": \"def50200b7c2…\",\n  \"scope\": \"productos:leer pedidos:escribir\"\n}"
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Diferencias, en corto",
+				"texto": "**Access token**\n• Se envía a la API en cada petición.\n• Vida corta (minutos) y alcance limitado.\n• Si lo roban, el acceso caduca solo.\n\n**Refresh token**\n• Se envía únicamente al servidor de autorización.\n• Vida larga (días o semanas).\n• Solo sirve para pedir access tokens nuevos.\n• Si lo roban, el acceso puede prolongarse: hay que poder **revocarlo**.\n\nBuena práctica: **rotación** del refresh token (cada renovación entrega uno nuevo e invalida el anterior) con detección de reutilización.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"",
+									"Access token",
+									"Refresh token"
+								],
+								"filas": [
+									[
+										"Se envía a",
+										"la API",
+										"solo al /token"
+									],
+									[
+										"Vida",
+										"minutos",
+										"días"
+									],
+									[
+										"Uso",
+										"cada petición",
+										"renovar"
+									]
+								],
+								"resaltar": 1
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Cuál se envía",
+				"pregunta": {
+					"enunciado": "Tu SPA llama a GET /api/pedidos. ¿Qué token debe enviar?",
+					"opciones": [
+						"El refresh token, que dura más",
+						"El access token, en la cabecera Authorization",
+						"Los dos",
+						"El ID token"
+					],
+					"correcta": 1,
+					"explicacion": "La API solo acepta el access token; el refresh token únicamente se usa contra el servidor de autorización."
+				}
+			}
+		]
+	}
+]

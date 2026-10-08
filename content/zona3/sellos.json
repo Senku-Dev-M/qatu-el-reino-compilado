@@ -1,0 +1,120 @@
+[
+	{
+		"id": "S1", "zona": 3, "nombre": "Sello de la Estructura",
+		"lecciones": ["L04", "L06", "L08"],
+		"pista": "Recuerda: el documento empieza por <!DOCTYPE html>; lo último que abres es lo primero que cierras; los atributos van en la etiqueta de apertura.",
+		"retos": [
+			{
+				"tipo": "ordenar", "lenguaje": "html",
+				"enunciado": "Construye un documento HTML válido eligiendo las líneas en el orden correcto.",
+				"lineas": ["<!DOCTYPE html>", "<html>", "<head>", "<title>Qatu</title>", "</head>", "<body>", "<h1>Bienvenido</h1>", "</body>", "</html>"],
+				"explicacion": "Primero la declaración, luego `<html>` que envuelve `<head>` (con el título) y `<body>` (con el contenido visible). Cada elemento se cierra en orden inverso.",
+				"vista": {"pestana": "Qatu", "bloques": [{"h1": "Bienvenido"}]}
+			},
+			{
+				"tipo": "completar", "lenguaje": "html",
+				"enunciado": "Completa el atributo que falta para que la imagen sea accesible.",
+				"codigo": "<img src=\"poncho.jpg\" ___=\"Poncho rojo tejido\">",
+				"opciones": ["alt", "href", "title", "class"],
+				"correcta": 0,
+				"explicacion": "`alt` describe la imagen para lectores de pantalla y se muestra si la imagen no carga.",
+				"vista": {"pestana": "Tienda", "bloques": [{"img": "Poncho rojo tejido"}]}
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "html",
+				"enunciado": "Una de estas líneas rompe el anidamiento. Encuéntrala.",
+				"lineas": ["<ul>", "  <li>Mantas</li>", "  <li><strong>Ponchos</li></strong>", "</ul>"],
+				"correcta": 2,
+				"corregida": "  <li><strong>Ponchos</strong></li>",
+				"explicacion": "`<strong>` se abrió dentro de `<li>`, así que debe cerrarse antes que `</li>`."
+			},
+			{
+				"tipo": "completar", "lenguaje": "html",
+				"enunciado": "Completa la etiqueta para crear un enlace a la tienda.",
+				"codigo": "<a ___=\"tienda.html\">Ir a la tienda</a>",
+				"opciones": ["src", "href", "alt", "link"],
+				"correcta": 1,
+				"explicacion": "El destino de un enlace se indica con el atributo `href`.",
+				"vista": {"pestana": "Qatu", "bloques": [{"a": "Ir a la tienda"}]}
+			}
+		]
+	},
+	{
+		"id": "S2", "zona": 3, "nombre": "Sello de la Caja",
+		"lecciones": ["L11", "L12", "L14"],
+		"pista": "Clases con punto (.), ids con almohadilla (#). Cada declaración es propiedad: valor; y el padding es interior, el margin exterior.",
+		"retos": [
+			{
+				"tipo": "completar", "lenguaje": "css",
+				"enunciado": "Completa el selector para que la regla afecte a todos los elementos con class=\"oferta\".",
+				"codigo": "___ {\n  background-color: #ffe08a;\n}",
+				"opciones": ["oferta", ".oferta", "#oferta", "<oferta>"],
+				"correcta": 1,
+				"explicacion": "Las clases se seleccionan con un punto delante del nombre.",
+				"vista": {"pestana": "Tienda", "bloques": [{"p": "Manta de lana"}, {"texto": {"valor": "Poncho: 20% de descuento", "fondo": "#ffe08a", "tamano": 20, "padding": 6}}]}
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "css",
+				"enunciado": "El título no cambia de tamaño ni de color. ¿Qué línea tiene el error?",
+				"lineas": ["h1 {", "  color: #8b1e1e", "  font-size: 32px;", "}"],
+				"correcta": 1,
+				"corregida": "  color: #8b1e1e;",
+				"explicacion": "Falta el punto y coma. Sin él, el navegador junta las dos declaraciones en una inválida y descarta ambas."
+			},
+			{
+				"tipo": "elegir", "lenguaje": "css",
+				"enunciado": "Quieres que el fondo del botón rodee más al texto (que el botón sea más «gordo»). ¿Qué declaración añades?",
+				"codigo": ".boton {\n  background-color: #5a3e1b;\n}",
+				"opciones": ["margin: 16px;", "padding: 16px;", "border: 16px;", "width: 16px;"],
+				"correcta": 1,
+				"explicacion": "El padding es el espacio interior, y el color de fondo se extiende por él. El margin solo separa la caja de las demás."
+			},
+			{
+				"tipo": "ordenar", "lenguaje": "texto",
+				"enunciado": "Ordena las capas del modelo de cajas desde el interior hacia el exterior.",
+				"lineas": ["contenido", "padding", "border", "margin"],
+				"explicacion": "El contenido está en el centro; el padding lo rodea por dentro del borde; el margin queda fuera del borde y separa la caja de las demás.",
+				"vista": {"pestana": "Modelo de cajas", "bloques": [{"caja": {"contenido": "contenido", "ancho": 160, "alto": 40, "padding": 16, "borde": 4, "margin": 20}}]}
+			}
+		]
+	},
+	{
+		"id": "S3", "zona": 3, "nombre": "Sello del Inspector",
+		"lecciones": ["L17", "L20", "L25"],
+		"pista": "Seleccionar con querySelector (con # o . como en CSS), registrar con addEventListener('tipo', función) sin paréntesis, y leer los errores de la consola.",
+		"retos": [
+			{
+				"tipo": "completar", "lenguaje": "js",
+				"enunciado": "Completa el tipo de evento para que el mensaje aparezca al hacer clic en el botón.",
+				"codigo": "const boton = document.querySelector('#comprar');\nboton.addEventListener(___, () => {\n  console.log('Producto añadido');\n});",
+				"opciones": ["'click'", "'onclick'", "click()", "'submit'"],
+				"correcta": 0,
+				"explicacion": "El tipo se pasa como texto y sin el prefijo `on`: `'click'`.",
+				"vista": {"pestana": "Tienda", "bloques": [{"boton": "Comprar"}, {"consola": ["Producto añadido"]}]}
+			},
+			{
+				"tipo": "encontrar_error", "lenguaje": "js",
+				"enunciado": "La consola muestra «Cannot read properties of null». El botón en el HTML es <button id=\"comprar\">. ¿Qué línea falla?",
+				"lineas": ["const boton = document.querySelector('comprar');", "boton.addEventListener('click', anadir);", "function anadir() {", "  console.log('Añadido');", "}"],
+				"correcta": 0,
+				"corregida": "const boton = document.querySelector('#comprar');",
+				"explicacion": "Sin `#`, `querySelector` busca una etiqueta `<comprar>`, devuelve `null` y la línea siguiente falla."
+			},
+			{
+				"tipo": "ordenar", "lenguaje": "js",
+				"enunciado": "Ordena el código: seleccionar el título, escuchar el clic y cambiar su texto.",
+				"lineas": ["const titulo = document.querySelector('h1');", "titulo.addEventListener('click', () => {", "  titulo.textContent = 'Qatu restaurada';", "});"],
+				"explicacion": "Primero se selecciona el elemento, después se registra el listener y dentro de la función se modifica el DOM.",
+				"vista": {"pestana": "Qatu", "bloques": [{"h1": "Qatu restaurada"}]}
+			},
+			{
+				"tipo": "elegir", "lenguaje": "js",
+				"enunciado": "Esta línea hace que el mensaje aparezca al cargar la página y nunca al hacer clic. ¿Cuál es la corrección?",
+				"codigo": "boton.addEventListener('click', avisar());",
+				"opciones": ["boton.addEventListener('click', avisar);", "boton.addEventListener(click, avisar());", "boton.addEventListener('onclick', avisar());", "boton.addEventListener('click', 'avisar');"],
+				"correcta": 0,
+				"explicacion": "Con paréntesis la función se ejecuta en el momento de registrar. Hay que pasar la función por su nombre para que se ejecute al hacer clic."
+			}
+		]
+	}
+]

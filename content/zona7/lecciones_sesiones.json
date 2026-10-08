@@ -1,0 +1,200 @@
+[
+	{
+		"id": "L113",
+		"zona": 7,
+		"sala": "z7_sesiones",
+		"orden": 113,
+		"nivel": "intermedio",
+		"titulo": "Dónde guardar los tokens en el frontend",
+		"resumen": "LocalStorage es accesible desde JavaScript, así que un XSS puede robar el token. Las cookies HttpOnly no las lee JavaScript, pero viajan solas y exigen protección CSRF. Hoy se prefiere el access token en memoria y el refresh en cookie HttpOnly.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Las dos opciones clásicas",
+				"texto": "• [[LocalStorage|localstorage]]: fácil de usar y el token se envía a mano en `Authorization`. Pero **cualquier** script de la página puede leerlo: un XSS (recuerda la Compuerta de Seguridad) se lleva la sesión. Además persiste hasta que se borra.\n• [[Cookie HttpOnly|cookie_httponly]]: el navegador la guarda y la envía sola; JavaScript **no** puede leerla, así que un XSS no la extrae. A cambio, al viajar automáticamente aparece el riesgo de **CSRF**, que se mitiga con `SameSite=Lax` o `Strict` y, si hace falta, un token anti-CSRF.\n\nSiempre con `Secure` (solo HTTPS) y con el alcance de dominio y ruta más estrecho posible."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Comparación",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"",
+									"LocalStorage",
+									"Cookie HttpOnly"
+								],
+								"filas": [
+									[
+										"Lo lee JavaScript",
+										"sí (riesgo con XSS)",
+										"no"
+									],
+									[
+										"Se envía solo",
+										"no (cabecera manual)",
+										"sí (riesgo CSRF)"
+									],
+									[
+										"Mitigación",
+										"evitar XSS, tokens cortos",
+										"SameSite + Secure"
+									],
+									[
+										"Entre dominios",
+										"sencillo",
+										"requiere configuración"
+									]
+								],
+								"resaltar": 2
+							}
+						},
+						{
+							"nota": "Ninguna opción es segura por sí sola: depende de qué ataque te preocupa más."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "La recomendación actual",
+				"texto": "Para una SPA:\n\n1. **Access token en memoria** (una variable del módulo): si hay XSS, al menos no queda guardado y desaparece al recargar.\n2. **Refresh token en cookie HttpOnly + Secure + SameSite**, emitida por el backend.\n3. Al arrancar la aplicación, se pide un access token nuevo con esa cookie (renovación silenciosa).\n\nUna variante frecuente es el patrón **BFF** (Backend For Frontend): el navegador solo maneja una cookie de sesión y es el backend quien guarda los tokens y llama a la API."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige el almacenamiento",
+				"pregunta": {
+					"enunciado": "Tu principal preocupación es que un script inyectado robe la sesión. ¿Qué opción reduce ese riesgo?",
+					"opciones": [
+						"Guardar el token en LocalStorage",
+						"Guardar el refresh en una cookie HttpOnly y el access en memoria",
+						"Guardar el token en la URL",
+						"Guardar el token en sessionStorage"
+					],
+					"correcta": 1,
+					"explicacion": "HttpOnly impide que JavaScript lea la cookie; el access token en memoria no queda almacenado."
+				}
+			}
+		]
+	},
+	{
+		"id": "L114",
+		"zona": 7,
+		"sala": "z7_sesiones",
+		"orden": 114,
+		"nivel": "intermedio",
+		"titulo": "El refresh token en el frontend",
+		"resumen": "Con access tokens cortos, la aplicación renueva en segundo plano cuando faltan segundos para caducar o cuando la API responde 401. El refresh se rota en cada uso y su reutilización delata un robo.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Renovación silenciosa",
+				"texto": "Si el access token dura 15 minutos, la aplicación necesita renovarlo sin molestar al usuario. Esa [[renovación silenciosa|renovacion_silenciosa]] se dispara de dos formas:\n\n• **Proactiva**: un temporizador renueva poco antes de `exp`.\n• **Reactiva**: un interceptor detecta un `401`, renueva y **reintenta** la petición una sola vez.\n\nComo en la Muralla: si varias peticiones fallan a la vez, todas esperan a la misma renovación en curso."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Interceptor de 401",
+				"lenguaje": "js",
+				"codigo": "async function api(url, opciones = {}) {\n  let r = await fetch(url, conToken(opciones));\n  if (r.status === 401) {\n    const ok = await renovarUnaVez();     // usa la cookie HttpOnly\n    if (!ok) { irALogin(); return r; }\n    r = await fetch(url, conToken(opciones));   // un solo reintento\n  }\n  return r;\n}",
+				"texto": "Un único reintento evita bucles infinitos cuando el problema no es la caducidad sino la falta de permisos."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Seguridad del refresh",
+				"texto": "El refresh token es la pieza más delicada del frontend:\n\n• [[Rotación|rotacion_de_refresh]]: cada renovación devuelve un refresh nuevo e invalida el anterior.\n• **Detección de reutilización**: si llega un refresh ya usado, el servidor asume robo y revoca **toda** la familia de tokens de esa sesión.\n• Guárdalo en cookie **HttpOnly**, nunca en LocalStorage.\n• Ligadura al cliente (`client_id`, a veces dispositivo) y caducidad absoluta: aunque se renueve, la sesión no dura para siempre.\n• El cierre de sesión debe **revocarlo** en el servidor, no solo borrarlo en el navegador."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Reutilización detectada",
+				"pregunta": {
+					"enunciado": "El servidor recibe un refresh token que ya se había canjeado. ¿Qué es lo correcto?",
+					"opciones": [
+						"Emitir otro access token: el usuario puede haber recargado",
+						"Revocar toda la familia de tokens de esa sesión y exigir un nuevo inicio de sesión",
+						"Ignorar la petición sin responder",
+						"Alargar la caducidad del token"
+					],
+					"correcta": 1,
+					"explicacion": "Con rotación, un refresh repetido indica que alguien copió el token: se revoca la sesión entera."
+				}
+			}
+		]
+	},
+	{
+		"id": "L115",
+		"zona": 7,
+		"sala": "z7_sesiones",
+		"orden": 115,
+		"nivel": "intermedio",
+		"titulo": "Sesión en el servidor frente a JWT",
+		"resumen": "La sesión guarda el estado en el servidor: es fácil de revocar, pero necesita almacenamiento compartido. El JWT es autocontenido y escala sin estado, pero no se puede revocar antes de que expire salvo con una lista de revocación.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Sesión en el servidor",
+				"texto": "Con [[sesión|sesion_servidor]], el servidor crea un registro (en memoria, Redis o base de datos) y entrega al navegador una cookie con su identificador. En cada petición busca la sesión y sabe quién eres.\n\n• **A favor**: revocar es inmediato (borras la sesión), el identificador no lleva datos y se puede cambiar el contenido en cualquier momento.\n• **En contra**: hay que guardar y compartir ese estado entre todas las instancias del servidor."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "JWT autocontenido",
+				"texto": "Con JWT, el token lleva dentro los datos y la firma. El servidor no guarda nada: valida la firma y confía en el contenido hasta `exp`.\n\n• **A favor**: sin estado, escala bien y sirve entre servicios y dominios distintos.\n• **En contra**: **no se puede revocar** antes de que expire, salvo manteniendo una lista de revocación (que reintroduce estado). Además el token es más grande y viaja en cada petición.\n\nPor eso los access tokens JWT duran poco: la caducidad corta es el sustituto de la revocación."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Cuándo elegir cada uno",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Situación",
+									"Encaja mejor"
+								],
+								"filas": [
+									[
+										"Aplicación web clásica de un solo backend",
+										"sesión con cookie"
+									],
+									[
+										"API consumida por SPA, móvil y servicios",
+										"JWT de vida corta"
+									],
+									[
+										"Necesitas expulsar a un usuario al instante",
+										"sesión (o JWT + lista de revocación)"
+									],
+									[
+										"Varios servicios sin estado compartido",
+										"JWT"
+									]
+								],
+								"resaltar": 1
+							}
+						},
+						{
+							"nota": "Muchas aplicaciones combinan: sesión en el navegador (patrón BFF) y JWT entre servicios."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Revocar ya",
+				"pregunta": {
+					"enunciado": "Detectas una cuenta comprometida y quieres cortarle el acceso inmediatamente. ¿Qué enfoque lo permite sin trucos añadidos?",
+					"opciones": [
+						"JWT de 24 horas",
+						"Sesión en el servidor: se borra y el acceso termina",
+						"JWT firmado con RS256",
+						"Guardar el JWT en LocalStorage"
+					],
+					"correcta": 1,
+					"explicacion": "El estado vive en el servidor, así que eliminar la sesión corta el acceso al instante; con JWT habría que esperar a `exp` o mantener una lista de revocación."
+				}
+			}
+		]
+	}
+]

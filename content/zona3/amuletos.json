@@ -1,0 +1,17 @@
+[
+	{
+		"id": "box_model", "zona": 3, "nombre": "Box Model", "coste": 1,
+		"efecto": "Aumenta un 40 % el tiempo de invulnerabilidad tras recibir daño.",
+		"leccion": "Referencia: margin es el espacio exterior de una caja. Aumentarlo separa el elemento de sus vecinos sin cambiar su tamaño interior."
+	},
+	{
+		"id": "semantica", "zona": 3, "nombre": "Semántica", "coste": 1,
+		"efecto": "Marca en el mapa las lecciones sin estudiar y los sellos de la zona.",
+		"leccion": "Referencia: los elementos semánticos (header, nav, main, article, footer) describen la función de cada parte. Buscadores y lectores de pantalla los usan para orientarse, igual que este amuleto te orienta en el mapa. Otorgado al estudiar 6 lecciones."
+	},
+	{
+		"id": "delegacion", "zona": 3, "nombre": "Delegación de Eventos", "coste": 2,
+		"efecto": "El Event Listener alcanza nodos un 50 % más lejanos.",
+		"leccion": "Referencia: la delegación de eventos consiste en registrar un único listener en un elemento padre y usar event.target para saber qué hijo se pulsó. Funciona porque la mayoría de eventos se propagan hacia arriba por el árbol (bubbling)."
+	}
+]

@@ -1,0 +1,12 @@
+[
+	{
+		"id": "gzip", "zona": 6, "nombre": "Gzip", "coste": 1,
+		"efecto": "El Hotfix consume un tercio menos de Energía de Compilación.",
+		"leccion": "Referencia: gzip comprime el cuerpo de las respuestas y reduce los bytes transferidos entre un 70 % y un 90 % en texto y JSON. Este amuleto comprime el coste de curarte. Se guarda tras el Sello del Rendimiento, en el Sótano."
+	},
+	{
+		"id": "cdn", "zona": 6, "nombre": "CDN", "coste": 2,
+		"efecto": "La Caché dura el doble antes de caducar.",
+		"leccion": "Referencia: una CDN guarda copias del contenido en servidores cercanos al usuario y las sirve durante su max-age sin consultar el origen. Este amuleto alarga el tiempo de vida de tu caché."
+	}
+]

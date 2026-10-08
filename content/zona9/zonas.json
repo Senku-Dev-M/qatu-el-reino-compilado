@@ -1,0 +1,24 @@
+[
+	{
+		"id": "z9",
+		"zona": 9,
+		"semana": 9,
+		"nombre": "Laboratorio de Pruebas y Seguridad",
+		"tema": "Testing unitario, pirámide de pruebas, Selenium/Playwright, TDD, OWASP Top 10, DevSecOps y seguridad web",
+		"salas": [
+			"z9_vestibulo_qa",
+			"z9_sala_piramide",
+			"z9_camara_selenium",
+			"z9_santuario_inspector",
+			"z9_bunker_owasp",
+			"z9_torre_monitoreo",
+			"z9_galeria_metricas"
+		],
+		"habilidad": "inspector",
+		"jefe": "regresion",
+		"fragmentos": [
+			"z9_camara_selenium:fragmento",
+			"z9_bunker_owasp:fragmento"
+		]
+	}
+]

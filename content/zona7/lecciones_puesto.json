@@ -1,0 +1,211 @@
+[
+	{
+		"id": "L95",
+		"zona": 7,
+		"sala": "z7_puesto",
+		"orden": 95,
+		"nivel": "inicial",
+		"titulo": "Autenticación y autorización",
+		"resumen": "Autenticar es comprobar quién eres; autorizar es comprobar qué puedes hacer. Primero se autentica y después se autoriza. En HTTP, 401 indica que falta autenticación y 403 que falta permiso.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Dos preguntas distintas",
+				"texto": "• [[Autenticación|autenticacion]] (AuthN): **¿quién eres?** Se comprueba con algo que sabes (contraseña), algo que tienes (un móvil, una llave) o algo que eres (huella).\n• [[Autorización|autorizacion]] (AuthZ): **¿qué puedes hacer?** Se comprueba con roles, permisos o políticas.\n\nEl orden importa: primero se autentica y luego se autoriza. Un usuario autenticado puede seguir sin permiso para borrar un producto ajeno."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "401 y 403",
+				"texto": "En una API se distinguen con dos [[códigos de estado|codigo_de_estado]]:\n\n• **401 Unauthorized**: no hay credenciales o no son válidas. Falta autenticación (el nombre del código es confuso).\n• **403 Forbidden**: se sabe quién eres, pero no tienes permiso.\n\nLos arcos lectores de esta ciudadela muestran exactamente eso.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "DELETE",
+								"url": "/api/productos/12",
+								"estado": "401 Unauthorized",
+								"respuesta": "{ \"error\": \"Falta el token\" }"
+							}
+						},
+						{
+							"peticion": {
+								"metodo": "DELETE",
+								"url": "/api/productos/12",
+								"cabeceras": [
+									"Authorization: Bearer eyJhbGciOi…"
+								],
+								"estado": "403 Forbidden",
+								"respuesta": "{ \"error\": \"Ese producto es de otro vendedor\" }"
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Dónde se decide",
+				"texto": "La interfaz puede **ocultar** botones al usuario que no debería usarlos, pero eso es comodidad, no seguridad: como viste en la Compuerta de Seguridad, cualquiera puede llamar a la API directamente.\n\nLa decisión real se toma **en el servidor**, en cada petición: comprobar el token, identificar al usuario y verificar que puede hacer esa acción sobre ese recurso concreto."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige el código",
+				"pregunta": {
+					"enunciado": "Un usuario con sesión válida intenta abrir el panel de administración sin ser administrador. ¿Qué responde la API?",
+					"opciones": [
+						"401 Unauthorized",
+						"403 Forbidden",
+						"404 Not Found",
+						"500 Internal Server Error"
+					],
+					"correcta": 1,
+					"explicacion": "Está autenticado, así que el problema es de permisos: 403."
+				}
+			}
+		]
+	},
+	{
+		"id": "L96",
+		"zona": 7,
+		"sala": "z7_puesto",
+		"orden": 96,
+		"nivel": "intermedio",
+		"titulo": "Métodos de autenticación",
+		"resumen": "Contraseñas (siempre con hash), factores adicionales (MFA), certificados y biometría. En APIs REST: HTTP Basic, API keys, tokens Bearer, cookies de sesión y mTLS.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Factores",
+				"texto": "Los métodos se agrupan por **factores**:\n\n• **Algo que sabes**: contraseña o PIN. En el servidor nunca se guarda la contraseña, sino su **hash** con un algoritmo lento y con sal (bcrypt, scrypt, Argon2).\n• **Algo que tienes**: código de una app (TOTP), llave física (FIDO2/WebAuthn), certificado.\n• **Algo que eres**: huella o rostro, normalmente en el dispositivo.\n\nCombinar dos o más es la [[autenticación multifactor|mfa]] (MFA): aunque roben la contraseña, falta el segundo factor."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "En una API REST",
+				"texto": "• [[HTTP Basic|http_basic]]: usuario y contraseña codificados en base64 en cada petición. Solo con HTTPS y en casos muy simples.\n• [[API key|api_key]]: clave fija que identifica a una **aplicación**, no a una persona.\n• [[Token Bearer|bearer_token]]: el método habitual; se envía en `Authorization: Bearer <token>`. Es lo que emite OAuth 2.0.\n• **Cookie de sesión**: el servidor guarda la sesión y el navegador envía la cookie (viste sus riesgos con CSRF).\n• **mTLS**: cliente y servidor se autentican con certificados; común entre servicios.",
+				"lenguaje": "texto",
+				"codigo": "Authorization: Basic YW5hOnMzY3JldA==\nX-API-Key: 8f14e45fceea167a\nAuthorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9…"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores frecuentes",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Guardar la contraseña en la base de datos (o cifrada de forma reversible)",
+						"bien": "Guardar solo el hash con bcrypt/Argon2 y sal por usuario",
+						"explicacion": "Si se filtra la base de datos, los hashes lentos evitan que las contraseñas se recuperen en bloque."
+					},
+					{
+						"mal": "Usar una API key para identificar al usuario que compra",
+						"bien": "API key para la aplicación; token del usuario (OAuth) para sus acciones",
+						"explicacion": "Una API key no dice **quién** es la persona ni sus permisos, y suele ser compartida."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Identifica el método",
+				"pregunta": {
+					"enunciado": "La cabecera dice Authorization: Bearer eyJhbGciOi… ¿Qué método se está usando?",
+					"opciones": [
+						"HTTP Basic",
+						"Un token portador (Bearer), como los de OAuth 2.0",
+						"Una API key",
+						"Autenticación con certificado (mTLS)"
+					],
+					"correcta": 1,
+					"explicacion": "El esquema `Bearer` indica un token portador: quien lo presenta obtiene acceso."
+				}
+			}
+		]
+	},
+	{
+		"id": "L97",
+		"zona": 7,
+		"sala": "z7_puesto",
+		"orden": 97,
+		"nivel": "intermedio",
+		"titulo": "Autorización: RBAC y ABAC",
+		"resumen": "RBAC concede permisos según el rol del usuario (comprador, vendedor, administrador). ABAC decide con políticas sobre atributos del usuario, del recurso, de la acción y del contexto. Muchas APIs combinan ambos.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "RBAC: permisos por rol",
+				"texto": "En [[RBAC|rbac]] (Role-Based Access Control) cada usuario tiene uno o varios **roles** y cada rol agrupa **permisos**:\n\n• `comprador`: ver productos, comprar, comentar.\n• `vendedor`: además, crear y editar **sus** productos.\n• `admin`: todo, incluidas tareas administrativas.\n\nEs simple de entender y de auditar. Su límite: los permisos que dependen del **caso concreto** («solo el dueño de este producto») no caben en el rol; hacen falta comprobaciones adicionales."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "ABAC: políticas sobre atributos",
+				"texto": "En [[ABAC|abac]] (Attribute-Based Access Control) la decisión es una **política** que combina atributos:\n\n• Del **usuario**: rol, departamento, antigüedad, país.\n• Del **recurso**: dueño, categoría, estado.\n• De la **acción**: leer, editar, borrar.\n• Del **contexto**: hora, dispositivo, dirección IP.\n\nEjemplo: «un vendedor puede editar un producto **si** es su dueño **y** el producto no está en un pedido en curso». Es mucho más expresivo, pero más difícil de escribir y de auditar."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "La misma regla, en las dos formas",
+				"lenguaje": "js",
+				"codigo": "// RBAC + comprobación de propiedad\nfunction puedeEditar(usuario, producto) {\n  if (usuario.rol === 'admin') return true;\n  return usuario.rol === 'vendedor' && producto.vendedorId === usuario.id;\n}\n\n// ABAC: política con atributos\nconst politica = {\n  accion: 'editar',\n  recurso: 'producto',\n  condicion: (u, r, ctx) =>\n    (u.rol === 'admin') ||\n    (u.rol === 'vendedor' && r.vendedorId === u.id && r.estado !== 'en_pedido')\n};",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Usuario",
+									"Rol",
+									"Acción",
+									"Recurso",
+									"Decisión"
+								],
+								"filas": [
+									[
+										"Ana",
+										"vendedor",
+										"editar",
+										"producto propio",
+										"permitir"
+									],
+									[
+										"Ana",
+										"vendedor",
+										"editar",
+										"producto de Rosa",
+										"denegar (403)"
+									],
+									[
+										"Rosa",
+										"admin",
+										"editar",
+										"cualquiera",
+										"permitir"
+									],
+									[
+										"Luis",
+										"comprador",
+										"crear",
+										"producto",
+										"denegar (403)"
+									]
+								],
+								"resaltar": 4
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Qué modelo encaja?",
+				"pregunta": {
+					"enunciado": "«Un vendedor puede editar un producto solo si es suyo y solo en horario comercial». ¿Qué modelo lo expresa mejor?",
+					"opciones": [
+						"RBAC puro, con un rol nuevo",
+						"ABAC, porque la decisión depende de atributos del recurso y del contexto",
+						"Ninguno: eso se controla en el frontend",
+						"Una API key por vendedor"
+					],
+					"correcta": 1,
+					"explicacion": "Intervienen el dueño del recurso y la hora: son atributos, no solo el rol."
+				}
+			}
+		]
+	}
+]

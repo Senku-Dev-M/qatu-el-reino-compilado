@@ -1,0 +1,141 @@
+[
+	{
+		"id": "L52", "zona": 5, "sala": "z5_esclusas", "orden": 52, "nivel": "inicial",
+		"titulo": "<input> y sus tipos",
+		"resumen": "El atributo type cambia el control: text, email, password, number, date, checkbox, radio… Los tipos ayudan al teclado móvil y activan validación básica del navegador con atributos como required, min o maxlength.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Un elemento, muchos controles",
+				"texto": "`<input>` es un elemento vacío (sin cierre) cuyo comportamiento depende del [[atributo type|atributo_type]]:\n\n• `text`: texto de una línea (valor por defecto).\n• `email`, `tel`, `url`: texto con formato; en móviles muestran un teclado adecuado.\n• `password`: oculta lo escrito.\n• `number`: solo números, con `min`, `max` y `step`.\n• `date`: selector de fecha.\n• `checkbox`: casilla que se marca o no.\n• `radio`: elegir **una** opción de un grupo con el mismo `name`.\n• `hidden`: dato que se envía sin mostrarse."
+			},
+			{
+				"tipo": "resultado", "titulo": "Tipos en acción",
+				"lenguaje": "html",
+				"codigo": "<input type=\"password\" name=\"clave\">\n<input type=\"number\" name=\"cantidad\" min=\"1\" max=\"10\">\n<input type=\"date\" name=\"entrega\">\n\n<input type=\"radio\" name=\"envio\" value=\"tienda\"> Recoger\n<input type=\"radio\" name=\"envio\" value=\"casa\" checked> A domicilio",
+				"vista": {"pestana": "Compra", "bloques": [{"campo": {"etiqueta": "Contraseña", "tipo": "password", "valor": "qatu2026"}}, {"campo": {"etiqueta": "Cantidad", "tipo": "number", "valor": "2"}}, {"campo": {"etiqueta": "Fecha de entrega", "tipo": "date"}}, {"campo": {"tipo": "radio", "opciones": ["Recoger", "A domicilio"], "valor": "A domicilio"}}]}
+			},
+			{
+				"tipo": "sintaxis", "titulo": "Validación básica del navegador",
+				"texto": "Algunos atributos activan la [[validación HTML|validacion_html]]: el navegador bloquea el envío y muestra un mensaje si no se cumplen.\n\n• `required`: el campo no puede estar vacío.\n• `minlength` / `maxlength`: longitud del texto.\n• `min` / `max`: rango numérico o de fechas.\n• `pattern`: expresión regular que debe cumplir el valor.\n\nEsta validación mejora la experiencia, pero se puede saltar fácilmente (lo verás en la Compuerta de Seguridad).",
+				"lenguaje": "html",
+				"codigo": "<input type=\"email\" name=\"email\" required>\n<input type=\"password\" name=\"clave\" minlength=\"8\" required>",
+				"vista": {"pestana": "Registro", "bloques": [{"campo": {"etiqueta": "Correo", "tipo": "email", "valor": "ana.qatu", "error": "Incluye un signo «@» en la dirección de correo."}}]}
+			},
+			{
+				"tipo": "errores", "titulo": "Errores frecuentes",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<input type=\"radio\" name=\"envio1\" value=\"tienda\">\n<input type=\"radio\" name=\"envio2\" value=\"casa\">",
+						"bien": "<input type=\"radio\" name=\"envio\" value=\"tienda\">\n<input type=\"radio\" name=\"envio\" value=\"casa\">",
+						"explicacion": "Los radio forman un grupo excluyente solo si comparten el mismo `name`."
+					},
+					{
+						"mal": "<input type=\"checkbox\" name=\"regalo\"> Envolver",
+						"bien": "<input type=\"checkbox\" name=\"regalo\" value=\"si\"> Envolver",
+						"explicacion": "Sin `value`, una casilla marcada envía `regalo=on`. Con `value` controlas qué se envía. Si no está marcada, no se envía nada."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba", "titulo": "Elige el tipo",
+				"pregunta": {
+					"enunciado": "Quieres que el usuario elija exactamente una talla entre S, M y L. ¿Qué usas?",
+					"opciones": ["Tres input type=\"checkbox\" con distinto name", "Tres input type=\"radio\" con el mismo name", "Un input type=\"text\"", "Tres input type=\"radio\" con distinto name"],
+					"correcta": 1,
+					"explicacion": "Los botones de radio con el mismo `name` permiten marcar solo una opción del grupo."
+				}
+			}
+		]
+	},
+	{
+		"id": "L53", "zona": 5, "sala": "z5_esclusas", "orden": 53, "nivel": "inicial",
+		"titulo": "<textarea> y <select>",
+		"resumen": "<textarea> recoge texto de varias líneas y su valor va entre las etiquetas. <select> muestra una lista de <option>; se envía el value de la opción elegida.",
+		"paginas": [
+			{
+				"tipo": "sintaxis", "titulo": "Texto largo con <textarea>",
+				"texto": "[[<textarea>|textarea]] es un control para **varias líneas** de texto, como una reseña o un comentario. A diferencia de `<input>`, tiene etiqueta de cierre y el valor inicial va **entre las etiquetas**, no en un atributo `value`. `rows` y `cols` sugieren su tamaño visible.",
+				"lenguaje": "html",
+				"codigo": "<label for=\"resena\">Tu reseña</label>\n<textarea id=\"resena\" name=\"resena\" rows=\"4\"\n          maxlength=\"500\"></textarea>",
+				"vista": {"pestana": "Reseñas", "bloques": [{"campo": {"etiqueta": "Tu reseña", "tipo": "textarea", "valor": "El poncho es muy abrigador.\nLlegó en dos días."}}]}
+			},
+			{
+				"tipo": "sintaxis", "titulo": "Listas con <select>",
+				"texto": "[[<select>|select]] crea una lista desplegable. Cada opción es un [[<option>|option]]: el **texto** es lo que ve el usuario y el `value` es lo que se envía. `selected` marca la opción inicial y `multiple` permite elegir varias. `<optgroup label=\"…\">` agrupa opciones.",
+				"lenguaje": "html",
+				"codigo": "<label for=\"region\">Región</label>\n<select id=\"region\" name=\"region\">\n  <option value=\"\">Elige una región</option>\n  <option value=\"cus\">Cusco</option>\n  <option value=\"pun\" selected>Puno</option>\n</select>",
+				"vista": {"pestana": "Envío", "bloques": [{"campo": {"etiqueta": "Región", "tipo": "select", "valor": "Puno", "abierto": true, "opciones": ["Elige una región", "Cusco", "✓ Puno"]}}, {"nota": "Se envía: region=pun"}]}
+			},
+			{
+				"tipo": "errores", "titulo": "Errores frecuentes",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<textarea name=\"resena\" value=\"Hola\"></textarea>",
+						"bien": "<textarea name=\"resena\">Hola</textarea>",
+						"explicacion": "`<textarea>` no usa el atributo `value`: el contenido inicial va entre las etiquetas."
+					},
+					{
+						"mal": "<select name=\"region\" required>\n  <option>Elige una región</option>",
+						"bien": "<select name=\"region\" required>\n  <option value=\"\">Elige una región</option>",
+						"explicacion": "Sin `value`, se envía el texto «Elige una región» y `required` no lo detecta como vacío. Con `value=\"\"` el navegador exige elegir otra opción."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba", "titulo": "Texto y valor",
+				"pregunta": {
+					"enunciado": "El usuario elige <option value=\"pun\">Puno</option> en un select con name=\"region\". ¿Qué recibe el servidor?",
+					"opciones": ["region=Puno", "region=pun", "pun=Puno", "select=pun"],
+					"correcta": 1,
+					"explicacion": "Se envía el `name` del select con el `value` de la opción elegida; el texto visible no viaja si hay `value`."
+				}
+			}
+		]
+	},
+	{
+		"id": "L54", "zona": 5, "sala": "z5_esclusas", "orden": 54, "nivel": "intermedio",
+		"titulo": "<fieldset>, <legend> y el envío del formulario",
+		"resumen": "<fieldset> agrupa controles relacionados y <legend> les da título. El formulario se envía con un botón de tipo submit; en JavaScript el evento submit permite validarlo o enviarlo sin recargar con preventDefault().",
+		"paginas": [
+			{
+				"tipo": "sintaxis", "titulo": "Agrupar con <fieldset> y <legend>",
+				"texto": "[[<fieldset>|fieldset]] agrupa controles que pertenecen juntos (datos de envío, método de pago) y [[<legend>|legend]] es el título de ese grupo. Los lectores de pantalla anuncian la leyenda al entrar en el grupo, algo especialmente útil con grupos de radio.\n\nLos navegadores aplican **estilos predeterminados** a los controles: bordes, fuentes del sistema y el recuadro del `fieldset`. Se pueden cambiar con CSS, pero cada navegador los dibuja algo distinto.",
+				"lenguaje": "html",
+				"codigo": "<fieldset>\n  <legend>Método de envío</legend>\n  <label><input type=\"radio\" name=\"envio\" value=\"tienda\"> Recoger en tienda</label>\n  <label><input type=\"radio\" name=\"envio\" value=\"casa\"> A domicilio</label>\n</fieldset>",
+				"vista": {"pestana": "Compra", "bloques": [{"fieldset": {"legend": "Método de envío", "campos": [{"tipo": "radio", "opciones": ["Recoger en tienda", "A domicilio"], "valor": "Recoger en tienda"}]}}]}
+			},
+			{
+				"tipo": "concepto", "titulo": "Enviar el formulario",
+				"texto": "El formulario se envía al pulsar un [[botón de envío|boton_submit]] o al pulsar Enter en un campo de texto:\n\n• `<button type=\"submit\">` (dentro de un form, `submit` es el tipo por defecto).\n• `<button type=\"button\">` **no envía**; úsalo para acciones con JavaScript.\n• `<button type=\"reset\">` restablece los valores iniciales.\n\nAntes de enviar, el navegador ejecuta la validación HTML. Si todo es correcto, dispara el [[evento submit|evento_submit]] y realiza la petición."
+			},
+			{
+				"tipo": "sintaxis", "titulo": "Controlar el envío con JavaScript",
+				"texto": "Con [[addEventListener]] puedes escuchar `submit`. Llamar a [[preventDefault()|preventdefault]] cancela el envío normal (y la recarga de la página) para validar o enviar los datos tú mismo. `new FormData(form)` reúne todos los pares `name=valor`.",
+				"lenguaje": "js",
+				"codigo": "const form = document.querySelector('#registro');\n\nform.addEventListener('submit', (event) => {\n  event.preventDefault();\n  const datos = new FormData(form);\n  console.log(datos.get('email'));\n});"
+			},
+			{
+				"tipo": "errores", "titulo": "Errores frecuentes",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<form>\n  <button onclick=\"mostrarAyuda()\">Ayuda</button>\n  <button>Registrarme</button>\n</form>",
+						"bien": "<form>\n  <button type=\"button\" onclick=\"mostrarAyuda()\">Ayuda</button>\n  <button type=\"submit\">Registrarme</button>\n</form>",
+						"explicacion": "Dentro de un formulario, un `<button>` sin `type` es `submit`: el botón de ayuda también enviaría el formulario."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba", "titulo": "Sin recargar",
+				"pregunta": {
+					"enunciado": "Quieres validar los datos con JavaScript antes de enviarlos y evitar que la página se recargue. ¿Qué haces en el listener del evento submit?",
+					"opciones": ["Cambiar el botón a type=\"reset\"", "Llamar a event.preventDefault()", "Quitar el atributo action", "Usar method=\"get\""],
+					"correcta": 1,
+					"explicacion": "`preventDefault()` cancela la acción por defecto del evento `submit`, que es enviar el formulario y navegar a la respuesta."
+				}
+			}
+		]
+	}
+]

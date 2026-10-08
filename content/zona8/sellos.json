@@ -1,0 +1,229 @@
+[
+	{
+		"id": "S22",
+		"zona": 8,
+		"nombre": "Sello de Docker y Multi-Stage",
+		"lecciones": [
+			"L158",
+			"L161",
+			"L162",
+			"L163"
+		],
+		"pista": "Multi-stage separa build de runtime; copiar dependencias primero optimiza la caché de capas de Docker.",
+		"retos": [
+			{
+				"tipo": "elegir",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué ventaja aporta el uso de Multi-Stage Builds en un Dockerfile de producción?",
+				"opciones": [
+					"Aumenta el tamaño del archivo final",
+					"Reduce drásticamente el tamaño de la imagen final copiando únicamente los binarios compilados y descartando el SDK",
+					"Evita el uso de Linux",
+					"Desactiva la red"
+				],
+				"correcta": 1,
+				"explicacion": "Multi-stage produce imágenes mínimas y seguras dejando fuera herramientas de compilación pesadas."
+			},
+			{
+				"tipo": "completar",
+				"lenguaje": "texto",
+				"enunciado": "Completa la instrucción del Dockerfile que copia artefactos generados en la etapa previa de compilación llamada 'builder'.",
+				"codigo": "COPY --___=builder /app/publish .",
+				"opciones": [
+					"from",
+					"source",
+					"stage",
+					"origin"
+				],
+				"correcta": 0,
+				"explicacion": "`--from=builder` indica a Docker que copie archivos desde una etapa de compilación previa."
+			},
+			{
+				"tipo": "encontrar_error",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué línea en este Dockerfile arruina la eficiencia de la caché de Docker?",
+				"lineas": [
+					"FROM node:20-alpine",
+					"WORKDIR /app",
+					"COPY . .",
+					"RUN npm install"
+				],
+				"correcta": 2,
+				"corregida": "COPY package*.json ./\nRUN npm install\nCOPY . .",
+				"explicacion": "Copiar todo el código antes de `npm install` invalida la caché en cada cambio de línea de código."
+			},
+			{
+				"tipo": "ordenar",
+				"lenguaje": "texto",
+				"enunciado": "Ordena las instrucciones recomendadas para un Dockerfile de producción eficiente:",
+				"lineas": [
+					"FROM node:20-alpine",
+					"WORKDIR /app",
+					"COPY package*.json ./",
+					"RUN npm ci --omit=dev",
+					"COPY . .",
+					"CMD [\"node\", \"server.js\"]"
+				],
+				"orden_correcto": [
+					0,
+					1,
+					2,
+					3,
+					4,
+					5
+				],
+				"explicacion": "El orden óptimo aísla dependencias en su propia capa antes de copiar el código fuente."
+			}
+		]
+	},
+	{
+		"id": "S23",
+		"zona": 8,
+		"nombre": "Sello de CI/CD y Pipelines",
+		"lecciones": [
+			"L164",
+			"L170",
+			"L171",
+			"L172"
+		],
+		"pista": "Los pipelines automatizan test, build y deploy; Compose orquesta servicios multicontenedor localmente.",
+		"retos": [
+			{
+				"tipo": "elegir",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué estrategia de despliegue redirige un pequeño porcentaje del tráfico (5%) a la nueva versión para validar métricas antes del despliegue masivo?",
+				"opciones": [
+					"Despliegue Big Bang",
+					"Despliegue Canary (Canario)",
+					"Despliegue Manual",
+					"Despliegue Offline"
+				],
+				"correcta": 1,
+				"explicacion": "El despliegue Canary valida la nueva versión con un subconjunto mínimo de usuarios reales para mitigar riesgos."
+			},
+			{
+				"tipo": "completar",
+				"lenguaje": "texto",
+				"enunciado": "Completa el comando de Docker Compose para arrancar todos los servicios en segundo plano.",
+				"codigo": "$ docker compose ___ -d",
+				"opciones": [
+					"up",
+					"start",
+					"run",
+					"build"
+				],
+				"correcta": 0,
+				"explicacion": "`docker compose up -d` construye, crea y arranca todos los contenedores en modo detached."
+			},
+			{
+				"tipo": "encontrar_error",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué afirmación sobre CI/CD es falsa?",
+				"lineas": [
+					"La Integración Continua ejecuta pruebas automáticas en cada commit.",
+					"Los runners ejecutan los trabajos del pipeline en entornos reproducibles.",
+					"El despliegue continuo requiere siempre una aprobación manual por correo electrónico.",
+					"Las variables secretas protegen tokens y contraseñas en el pipeline."
+				],
+				"correcta": 2,
+				"corregida": "El Despliegue Continuo (Continuous Deployment) automatiza el release a producción sin intervención manual.",
+				"explicacion": "El Despliegue Continuo automatiza la puesta en producción sin aprobaciones manuales intermedias."
+			},
+			{
+				"tipo": "ordenar",
+				"lenguaje": "texto",
+				"enunciado": "Ordena los jobs de un pipeline que publica y despliega la API:",
+				"lineas": [
+					"test: lint y pruebas unitarias sobre el código",
+					"build: construir la imagen Docker",
+					"scan: buscar vulnerabilidades en la imagen construida",
+					"push: publicar la imagen en el registro",
+					"deploy: actualizar el Deployment en Kubernetes"
+				],
+				"orden_correcto": [
+					0,
+					1,
+					2,
+					3,
+					4
+				],
+				"explicacion": "No se puede escanear una imagen que no existe, ni desplegar una que no está publicada; las pruebas van antes de invertir tiempo en construir."
+			}
+		]
+	},
+	{
+		"id": "S24",
+		"zona": 8,
+		"nombre": "Sello de Kubernetes y Orquestación",
+		"lecciones": [
+			"L167",
+			"L168",
+			"L173",
+			"L174",
+			"L175"
+		],
+		"pista": "Los Deployments gestionan réplicas; los Services proporcionan IPs estables; Ingress unifica el enrutamiento HTTP/HTTPS.",
+		"retos": [
+			{
+				"tipo": "elegir",
+				"lenguaje": "texto",
+				"enunciado": "En Kubernetes, ¿qué objeto se encarga de exponer y balancear el tráfico HTTP/HTTPS externo hacia múltiples servicios según el dominio o ruta?",
+				"opciones": [
+					"Un Pod individual",
+					"Un Ingress Controller",
+					"Un archivo Dockerfile",
+					"Un disco duro"
+				],
+				"correcta": 1,
+				"explicacion": "El Ingress Controller enruta el tráfico HTTP/HTTPS entrante hacia los servicios correspondientes del clúster."
+			},
+			{
+				"tipo": "completar",
+				"lenguaje": "texto",
+				"enunciado": "Completa el tipo de sonda de Kubernetes que reinicia un contenedor automáticamente cuando este deja de responder o sufre un bloqueo.",
+				"codigo": "spec:\n  containers:\n  - name: api\n    ___Probe:\n      httpGet:\n        path: /healthz",
+				"opciones": [
+					"liveness",
+					"readiness",
+					"startup",
+					"network"
+				],
+				"correcta": 0,
+				"explicacion": "La Liveness Probe comprueba que la aplicación siga viva y reinicia el pod si la comprobación falla."
+			},
+			{
+				"tipo": "encontrar_error",
+				"lenguaje": "texto",
+				"enunciado": "¿Qué concepto de Kubernetes contiene un error de definición?",
+				"lineas": [
+					"Un Pod es la unidad mínima atómica de cómputo en Kubernetes.",
+					"Un Service ClusterIP expone el servicio directamente a todo internet con IP pública.",
+					"Los Deployments permiten escalar horizontalmente el número de réplicas de pods.",
+					"etcd es el almacén clave-valor distribuido del Control Plane."
+				],
+				"correcta": 1,
+				"corregida": "Un Service ClusterIP es de acceso estrictamente interno dentro del clúster.",
+				"explicacion": "ClusterIP es interno y privado; para tráfico externo se utiliza LoadBalancer, NodePort o Ingress."
+			},
+			{
+				"tipo": "ordenar",
+				"lenguaje": "texto",
+				"enunciado": "Ordena el recorrido de una petición desde internet hasta la API en Kubernetes:",
+				"lineas": [
+					"El Ingress Controller recibe https://api.qatu.com/productos",
+					"La regla del Ingress elige el Service qatu-api",
+					"El Service reenvía la petición a la IP de uno de sus Pods",
+					"El contenedor api de ese Pod procesa la petición"
+				],
+				"orden_correcto": [
+					0,
+					1,
+					2,
+					3,
+					4
+				],
+				"explicacion": "Ingress enruta por host y ruta hacia un Service, que balancea entre los Pods cuyas etiquetas coinciden."
+			}
+		]
+	}
+]

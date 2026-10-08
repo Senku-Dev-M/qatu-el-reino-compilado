@@ -1,0 +1,265 @@
+[
+	{
+		"id": "L179",
+		"zona": 9,
+		"sala": "z9_vestibulo_qa",
+		"orden": 179,
+		"nivel": "inicial",
+		"titulo": "Fundamentos de la Calidad de Software",
+		"resumen": "Verificación frente a validación, coste de los defectos y tipos de prueba de una aplicación web: funcionalidad, usabilidad, compatibilidad, rendimiento y seguridad.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Verificación frente a Validación",
+				"texto": "La [[verificación|verificacion_validacion]] responde: ¿construimos el producto correctamente? (cumple la especificación y los estándares). La **validación** responde: ¿construimos el producto correcto? (resuelve la necesidad real del usuario).\n\nUn carrito que calcula bien el IVA pero cuyo botón de pago nadie encuentra **pasa la verificación y falla la validación**."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "La Ley del Coste Exponencial del Defecto",
+				"texto": "Detectar un fallo en la fase de diseño o pruebas unitarias cuesta hasta 100 veces menos que corregirlo cuando ya ha llegado a producción. El enfoque **Shift-Left Testing** traslada las pruebas automáticas al inicio del ciclo de desarrollo para detectar anomalías antes de que se propaguen."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Tipos de prueba de una aplicación web",
+				"texto": "Una aplicación web se prueba en varias dimensiones. Cada tipo responde una pregunta distinta:",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Tipo",
+									"Pregunta",
+									"Ejemplo en Qatu"
+								],
+								"filas": [
+									[
+										"Funcionalidad",
+										"¿hace lo que debe?",
+										"el cupón descuenta el 10%"
+									],
+									[
+										"Usabilidad",
+										"¿se entiende y usa con facilidad?",
+										"5 usuarios compran sin ayuda"
+									],
+									[
+										"Compatibilidad",
+										"¿funciona en todo navegador y dispositivo?",
+										"checkout en Chrome, Firefox, Safari y móvil"
+									],
+									[
+										"Rendimiento",
+										"¿aguanta la carga?",
+										"500 compras por minuto"
+									],
+									[
+										"Seguridad",
+										"¿resiste ataques?",
+										"no se puede pagar 0 editando la petición"
+									]
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores al planificar las pruebas",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Probar el checkout solo en Chrome\nen el portátil del desarrollador.",
+						"bien": "Matriz de compatibilidad: Chrome, Firefox,\nSafari y Edge, en escritorio y móvil.",
+						"explicacion": "Cada navegador tiene su motor y sus diferencias de CSS y JavaScript. La [[prueba cross-browser|prueba_compatibilidad]] detecta lo que en un solo navegador no aparece."
+					},
+					{
+						"mal": "Dejar todas las pruebas para la última\nsemana antes de la entrega.",
+						"bien": "Probar desde el primer commit\n(shift-left): unitarias y CI desde el inicio.",
+						"explicacion": "Un defecto detectado en producción cuesta muchas veces más que uno detectado mientras se escribe el código."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Fundamentos de la Calidad de Software",
+				"pregunta": {
+					"enunciado": "El checkout calcula bien los impuestos, pero en las pruebas con usuarios nadie encuentra el botón de pago. ¿Qué falló?",
+					"opciones": [
+						"La verificación",
+						"La validación (y la usabilidad)",
+						"La prueba de carga",
+						"La compatibilidad"
+					],
+					"correcta": 1,
+					"explicacion": "El producto cumple la especificación (verificación) pero no resuelve bien la necesidad del usuario (validación)."
+				}
+			}
+		]
+	},
+	{
+		"id": "L180",
+		"zona": 9,
+		"sala": "z9_vestibulo_qa",
+		"orden": 180,
+		"nivel": "inicial",
+		"titulo": "La Pirámide de Pruebas",
+		"resumen": "Estructura piramidal para optimizar velocidad, cobertura y estabilidad de pruebas.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Niveles de la Pirámide",
+				"texto": "La [[pirámide de pruebas|piramide_pruebas]] ordena las pruebas por cantidad, velocidad y coste:\n\n1. **Base, unitarias:** prueban funciones y clases aisladas, en milisegundos y sin red ni base de datos.\n2. **Centro, integración:** prueban la colaboración entre módulos: API con base de datos, servicio con repositorio.\n3. **Cúspide, end-to-end (E2E):** simulan al usuario completo en un navegador real. Son las más lentas y frágiles."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "El antipatrón del cucurucho de helado",
+				"texto": "Confiar exclusivamente en pruebas manuales o E2E genera suites lentas de horas, frágiles ante cambios mínimos de interfaz y costosas de depurar. La base debe absorber la mayor carga de aserciones."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Una suite sana para Qatu",
+				"texto": "Cuantas más pruebas en la base, antes llega la respuesta al desarrollador:",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Nivel",
+									"Cantidad",
+									"Tiempo total",
+									"Qué detecta"
+								],
+								"filas": [
+									[
+										"E2E (Selenium)",
+										"15",
+										"6 min",
+										"flujos rotos de punta a punta"
+									],
+									[
+										"Integración",
+										"120",
+										"90 s",
+										"errores entre API y BD"
+									],
+									[
+										"Unitarias",
+										"900",
+										"8 s",
+										"reglas de negocio mal calculadas"
+									]
+								],
+								"resaltar": 0
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Una pirámide invertida",
+				"lenguaje": "texto",
+				"errores": [
+					{
+						"mal": "Validar el cálculo de descuentos\ncon 40 pruebas E2E en el navegador.",
+						"bien": "40 pruebas unitarias del cálculo\n+ 1 prueba E2E del flujo de compra.",
+						"explicacion": "Una regla de negocio se prueba mejor donde vive. El E2E solo confirma que las piezas están conectadas."
+					},
+					{
+						"mal": "La suite completa tarda 45 minutos;\nlos desarrolladores dejan de ejecutarla.",
+						"bien": "Unitarias en cada commit (segundos);\nE2E en el pipeline antes de desplegar.",
+						"explicacion": "Una suite que nadie ejecuta no protege. La velocidad determina cuándo se puede ejecutar cada nivel."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: La Pirámide de Pruebas",
+				"pregunta": {
+					"enunciado": "Una regla de descuento tiene 12 casos. ¿Dónde conviene probar esos casos?",
+					"opciones": [
+						"En 12 pruebas E2E con Selenium",
+						"En pruebas unitarias del cálculo",
+						"Solo en pruebas manuales antes de publicar",
+						"En una prueba de carga"
+					],
+					"correcta": 1,
+					"explicacion": "Las reglas de negocio se prueban en la base de la pirámide: rápido y sin navegador."
+				}
+			}
+		]
+	},
+	{
+		"id": "L181",
+		"zona": 9,
+		"sala": "z9_vestibulo_qa",
+		"orden": 181,
+		"nivel": "inicial",
+		"titulo": "Anatomía de una Prueba: Patrón AAA",
+		"resumen": "Estructuración estándar de casos de prueba con Arrange, Act y Assert.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Arrange, Act, Assert",
+				"texto": "- **Arrange (Organizar)**: Prepara el estado inicial, objetos y dependencias necesarias.\n- **Act (Actuar)**: Ejecuta el método o comportamiento específico bajo prueba.\n- **Assert (Afirmar)**: Verifica que el resultado obtenido coincide con la expectativa calculada."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "AAA en una prueba con Jest",
+				"lenguaje": "js",
+				"texto": "Los comentarios marcan las tres fases. Cada prueba verifica **un** comportamiento y su nombre lo describe:",
+				"codigo": "test('calcula el total con 18% de impuesto', () => {\n  // Arrange\n  const carrito = new Carrito();\n  carrito.agregarItem({ precio: 100, cantidad: 1 });\n\n  // Act\n  const total = carrito.calcularTotalConImpuesto(0.18);\n\n  // Assert\n  expect(total).toBe(118);\n});"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Lo que muestra el terminal",
+				"texto": "Si el Assert falla, Jest enseña el valor esperado y el recibido, y la línea exacta:",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ npx jest carrito",
+								" FAIL  src/carrito.test.js",
+								"  ✕ calcula el total con 18% de impuesto (3 ms)",
+								"    Expected: 118",
+								"    Received: 100.18",
+								"      at Object.<anonymous> (src/carrito.test.js:10:17)"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Pruebas difíciles de leer",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "test('carrito', () => {\n  c.agregarItem(a); expect(c.total()).toBe(10);\n  c.quitarItem(a); expect(c.total()).toBe(0);\n  c.aplicarCupon('X'); expect(c.total()).toBe(0);\n});",
+						"bien": "test('suma el precio al agregar', ...);\ntest('resta el precio al quitar', ...);\ntest('un cupón no deja el total negativo', ...);",
+						"explicacion": "Varias fases Act mezcladas en una prueba ocultan cuál falló. Un comportamiento por prueba, con un nombre que lo diga."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Anatomía de una Prueba: Patrón AAA",
+				"pregunta": {
+					"enunciado": "En una prueba AAA, ¿en qué fase se llama al método que se quiere probar?",
+					"opciones": [
+						"Arrange",
+						"Act",
+						"Assert",
+						"After"
+					],
+					"correcta": 1,
+					"explicacion": "Arrange prepara, Act ejecuta el comportamiento y Assert comprueba el resultado."
+				}
+			}
+		]
+	}
+]

@@ -1,0 +1,92 @@
+[
+	{
+		"id": "z2_mvvm",
+		"termino": "MVVM (Model-View-ViewModel)",
+		"leccion": "L137",
+		"definicion": "Patrón de arquitectura que separa la lógica de presentación mediante enlace de datos."
+	},
+	{
+		"id": "z2_clean",
+		"termino": "Clean Architecture",
+		"leccion": "L152",
+		"definicion": "Arquitectura en capas concéntricas con regla de dependencias hacia el interior."
+	},
+	{
+		"id": "z2_spa",
+		"termino": "SPA (Single Page Application)",
+		"leccion": "L143",
+		"definicion": "Aplicación web que carga un único documento HTML y actualiza la vista dinámicamente."
+	},
+	{
+		"id": "cliente_servidor",
+		"termino": "Cliente-Servidor",
+		"leccion": "L138",
+		"definicion": "Arquitectura distribuida que reparte tareas entre proveedores y demandantes."
+	},
+	{
+		"id": "mpa",
+		"termino": "MPA (Multi-Page Application)",
+		"leccion": "L140",
+		"definicion": "Aplicación web tradicional donde cada ruta recarga una página HTML."
+	},
+	{
+		"id": "spa",
+		"termino": "SPA (Single Page Application)",
+		"leccion": "L143",
+		"definicion": "Aplicación web que actualiza dinámicamente una sola página."
+	},
+	{
+		"id": "csr",
+		"termino": "CSR (Client-Side Rendering)",
+		"leccion": "L144",
+		"definicion": "Renderizado del DOM ejecutado en el navegador del cliente."
+	},
+	{
+		"id": "ssr",
+		"termino": "SSR (Server-Side Rendering)",
+		"leccion": "L144",
+		"definicion": "Renderizado de la vista ejecutado en el servidor antes de enviar."
+	},
+	{
+		"id": "data_binding",
+		"termino": "Data Binding",
+		"leccion": "L146",
+		"definicion": "Sincronización automática de datos entre el modelo y la vista."
+	},
+	{
+		"id": "mvc",
+		"termino": "MVC (Model-View-Controller)",
+		"leccion": "L149",
+		"definicion": "Patrón que separa Modelo, Vista y Controlador."
+	},
+	{
+		"id": "mvp",
+		"termino": "MVP (Model-View-Presenter)",
+		"leccion": "L150",
+		"definicion": "Patrón donde el Presentador orquesta la vista desacoplada."
+	},
+	{
+		"id": "presenter",
+		"termino": "Presenter",
+		"leccion": "L150",
+		"definicion": "Componente mediador entre la vista y el modelo en MVP."
+	},
+	{
+		"id": "mvvm",
+		"termino": "MVVM (Model-View-ViewModel)",
+		"leccion": "L151",
+		"definicion": "Patrón que utiliza ViewModel y Data Binding reactivo."
+	},
+	{
+		"id": "viewmodel",
+		"termino": "ViewModel",
+		"leccion": "L151",
+		"definicion": "Transforma y expone datos del modelo adaptados a la vista."
+	},
+	{
+		"id": "clean_architecture",
+		"termino": "Clean Architecture",
+		"leccion": "L152",
+		"definicion": "Arquitectura en capas con regla de dependencias inward."
+	}
+]

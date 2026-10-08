@@ -1,0 +1,121 @@
+[
+	{
+		"id": "L49", "zona": 5, "sala": "z5_embarcadero", "orden": 49, "nivel": "inicial",
+		"titulo": "Qué es un formulario web",
+		"resumen": "Un formulario (<form>) reúne controles para que el usuario escriba o elija datos y los envíe. Un programa en el servidor, indicado en action, recibe y procesa esos datos.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Recoger datos del usuario",
+				"texto": "Hasta ahora las páginas solo **mostraban** información. Un [[formulario]] permite lo contrario: que el usuario **envíe** datos al sitio. Iniciar sesión, registrarse, buscar un producto o dejar una reseña son formularios.\n\nEn HTML se crea con el elemento `<form>`. Dentro van los **controles**: campos de texto, casillas, listas desplegables y un botón para enviar."
+			},
+			{
+				"tipo": "concepto", "titulo": "¿Quién procesa los datos?",
+				"texto": "El navegador **no guarda ni valida definitivamente** los datos: los envía a un [[servidor]]. Allí un [[script del servidor|script_del_servidor]] (un programa escrito en Node.js, PHP, Python, Java, C#…) los recibe, los comprueba, los guarda en una base de datos y responde con una página o un mensaje.\n\nEl atributo [[action|atributo_action]] del formulario indica la **URL** del servidor que recibirá los datos. Si se omite, se envían a la misma página."
+			},
+			{
+				"tipo": "resultado", "titulo": "Un formulario mínimo",
+				"lenguaje": "html",
+				"codigo": "<form action=\"/buscar\">\n  <label for=\"q\">Buscar producto</label>\n  <input id=\"q\" name=\"q\">\n  <button type=\"submit\">Buscar</button>\n</form>",
+				"vista": {"pestana": "Tienda Qatu", "bloques": [{"campo": {"etiqueta": "Buscar producto", "placeholder": ""}}, {"campo": {"tipo": "submit", "valor": "Buscar"}}]}
+			},
+			{
+				"tipo": "resultado", "titulo": "El recorrido completo",
+				"texto": "1. El usuario rellena el formulario y pulsa **Buscar**.\n2. El navegador empaqueta los datos y hace una [[petición HTTP|peticion_http]] a la URL de `action`.\n3. El script del servidor procesa los datos.\n4. El servidor devuelve una respuesta (por ejemplo, la página de resultados) y el navegador la muestra.",
+				"vista": {"sin_navegador": true, "bloques": [{"secuencia": {"actores": ["Navegador", "Servidor"], "pasos": [{"de": 0, "a": 1, "texto": "Envía datos a /buscar"}, {"de": 1, "a": 1, "texto": "Procesa y consulta la base de datos"}, {"de": 1, "a": 0, "texto": "Responde con resultados"}]}}]}
+			},
+			{
+				"tipo": "comprueba", "titulo": "¿Dónde se procesan?",
+				"pregunta": {
+					"enunciado": "¿Qué indica el atributo action de un <form>?",
+					"opciones": ["El estilo del botón de envío", "La URL del servidor que recibirá los datos", "El tipo de dato de cada campo", "Si el formulario es obligatorio"],
+					"correcta": 1,
+					"explicacion": "`action` es la dirección a la que el navegador envía los datos; allí un programa del servidor los procesa."
+				}
+			}
+		]
+	},
+	{
+		"id": "L50", "zona": 5, "sala": "z5_embarcadero", "orden": 50, "nivel": "inicial",
+		"titulo": "Cómo viajan los datos: GET y POST",
+		"resumen": "Con method=\"get\" los datos viajan en la URL (query string); con method=\"post\" viajan en el cuerpo de la petición. GET para consultar, POST para crear o modificar y para datos sensibles.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "El atributo method",
+				"texto": "El atributo `method` del formulario decide **cómo** se envían los datos. Los dos valores posibles en HTML son `get` (por defecto) y `post`.\n\nCada dato viaja como un par `nombre=valor`. El nombre sale del atributo `name` de cada control (lo verás en la siguiente lección)."
+			},
+			{
+				"tipo": "resultado", "titulo": "GET: datos en la URL",
+				"texto": "Con [[GET|metodo_get]] los datos se añaden al final de la URL después de `?`, separados por `&`. Esa parte se llama [[query string|query_string]]. Es visible, queda en el historial y se puede guardar como marcador.",
+				"lenguaje": "html",
+				"codigo": "<form action=\"/buscar\" method=\"get\">\n  <input name=\"q\" value=\"poncho\">\n  <input name=\"color\" value=\"rojo\">\n</form>",
+				"vista": {"sin_navegador": true, "bloques": [{"peticion": {"metodo": "GET", "url": "/buscar?q=poncho&color=rojo", "cabeceras": ["Host: qatu.com"]}}]}
+			},
+			{
+				"tipo": "resultado", "titulo": "POST: datos en el cuerpo",
+				"texto": "Con [[POST|metodo_post]] los datos van en el [[cuerpo de la petición|cuerpo_de_la_peticion]], no en la URL. No quedan en el historial ni en los marcadores. **Ojo:** no es cifrado; para proteger los datos en tránsito hace falta HTTPS.",
+				"lenguaje": "html",
+				"codigo": "<form action=\"/registro\" method=\"post\">\n  <input name=\"email\" value=\"ana@qatu.com\">\n  <input name=\"clave\" type=\"password\">\n</form>",
+				"vista": {"sin_navegador": true, "bloques": [{"peticion": {"metodo": "POST", "url": "/registro", "cabeceras": ["Content-Type: application/x-www-form-urlencoded"], "cuerpo": "email=ana%40qatu.com&clave=••••••"}}]}
+			},
+			{
+				"tipo": "concepto", "titulo": "Cuándo usar cada uno",
+				"texto": "**GET**\n• Consultar o filtrar datos sin cambiar nada: búsquedas, filtros del catálogo, paginación.\n• La URL resultante se puede compartir.\n• Tiene límite práctico de longitud de URL.\n\n**POST**\n• Crear o modificar información: registro, compra, publicar una reseña.\n• Datos sensibles (contraseñas) o grandes (archivos).\n• Si recargas la página, el navegador avisa de que se reenviarán los datos."
+			},
+			{
+				"tipo": "comprueba", "titulo": "Elige el método",
+				"pregunta": {
+					"enunciado": "Un formulario de inicio de sesión envía correo y contraseña. ¿Qué método corresponde?",
+					"opciones": ["GET, porque es más rápido", "POST, para que los datos no aparezcan en la URL ni en el historial", "Cualquiera, es igual", "GET con los datos cifrados en la URL"],
+					"correcta": 1,
+					"explicacion": "Con POST los datos viajan en el cuerpo y no quedan en la URL. Además, el sitio debe usar HTTPS para cifrarlos en tránsito."
+				}
+			}
+		]
+	},
+	{
+		"id": "L51", "zona": 5, "sala": "z5_embarcadero", "orden": 51, "nivel": "inicial",
+		"titulo": "Controles, el atributo name y <label>",
+		"resumen": "Cada control necesita name para enviarse. <label> describe el control y se asocia con for/id, lo que mejora la accesibilidad y amplía la zona de clic.",
+		"paginas": [
+			{
+				"tipo": "concepto", "titulo": "Controles y name",
+				"texto": "Un [[control de formulario|control_de_formulario]] es cualquier elemento donde el usuario introduce o elige datos: `<input>`, `<textarea>`, `<select>`, `<button>`.\n\nEl atributo [[name|atributo_name]] es la **clave** con la que viaja el dato. Un control **sin name no se envía**, aunque el usuario haya escrito en él. El atributo `id` sirve para CSS, JavaScript y para asociar etiquetas; no sustituye a `name`."
+			},
+			{
+				"tipo": "sintaxis", "titulo": "Asociar una etiqueta",
+				"texto": "[[<label>|label]] muestra el texto que describe un control. Se asocia de dos formas:\n\n• Con `for` igual al `id` del control.\n• Envolviendo el control dentro de `<label>`.\n\nAl hacer clic en la etiqueta, el foco pasa al control, y los lectores de pantalla leen la etiqueta al llegar al campo. Un `placeholder` **no sustituye** a `<label>`: desaparece al escribir.",
+				"lenguaje": "html",
+				"codigo": "<label for=\"correo\">Correo electrónico</label>\n<input id=\"correo\" name=\"email\" type=\"email\">\n\n<label>\n  <input type=\"checkbox\" name=\"boletin\">\n  Quiero recibir ofertas\n</label>"
+			},
+			{
+				"tipo": "resultado", "titulo": "El resultado",
+				"vista": {"pestana": "Registro", "bloques": [{"campo": {"etiqueta": "Correo electrónico", "valor": "ana@qatu.com"}}, {"campo": {"tipo": "checkbox", "opciones": ["Quiero recibir ofertas"], "valor": "Quiero recibir ofertas"}}, {"nota": "Se envía: email=ana@qatu.com&boletin=on"}]}
+			},
+			{
+				"tipo": "errores", "titulo": "Errores frecuentes",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<input id=\"email\" type=\"email\">",
+						"bien": "<input id=\"email\" name=\"email\" type=\"email\">",
+						"explicacion": "Sin `name`, el servidor nunca recibe el correo."
+					},
+					{
+						"mal": "<label for=\"correo\">Correo</label>\n<input id=\"email\" name=\"email\">",
+						"bien": "<label for=\"email\">Correo</label>\n<input id=\"email\" name=\"email\">",
+						"explicacion": "`for` debe coincidir exactamente con el `id` del control; si no, la etiqueta no queda asociada."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba", "titulo": "¿Qué se envía?",
+				"pregunta": {
+					"enunciado": "Un formulario tiene <input id=\"ciudad\" value=\"Cusco\"> sin atributo name. ¿Qué recibe el servidor de ese campo?",
+					"opciones": ["ciudad=Cusco", "id=ciudad", "Nada: sin name el control no se envía", "Un error 404"],
+					"correcta": 2,
+					"explicacion": "Solo se envían los controles con `name`; el `id` no se usa como clave del dato."
+				}
+			}
+		]
+	}
+]

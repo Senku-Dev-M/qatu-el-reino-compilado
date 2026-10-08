@@ -1,0 +1,17 @@
+[
+	{
+		"id": "mapa", "tienda": "depuradora", "tipo": "flag", "flag": "tienda:mapa", "precio": 40,
+		"nombre": "Mapa del Bosque",
+		"descripcion": "Muestra las salas que visitaste y las que las rodean. Consúltalo manteniendo {map}."
+	},
+	{
+		"id": "box_model", "tienda": "depuradora", "tipo": "amuleto", "flag": "tienda:box_model", "precio": 120,
+		"nombre": "Amuleto Box Model",
+		"descripcion": "El margen que te protege de lo que te rodea. Más invulnerabilidad tras recibir daño."
+	},
+	{
+		"id": "fragmento", "tienda": "depuradora", "tipo": "fragmento", "flag": "tienda:fragmento", "precio": 200,
+		"nombre": "Fragmento de máscara",
+		"descripcion": "Reúne dos fragmentos para obtener una máscara más de vida."
+	}
+]

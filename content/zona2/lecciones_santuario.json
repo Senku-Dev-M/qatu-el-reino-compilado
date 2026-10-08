@@ -1,0 +1,228 @@
+[
+	{
+		"id": "L146",
+		"zona": 2,
+		"sala": "z2_santuario_binding",
+		"orden": 146,
+		"nivel": "inicial",
+		"titulo": "Concepto de Data Binding",
+		"resumen": "El enlace de datos sincroniza automáticamente los valores del modelo con los elementos visuales de la vista.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "¿Qué es Data Binding?",
+				"texto": "El [[data_binding]] conecta las propiedades de un objeto de datos (Modelo/ViewModel) con los elementos de la interfaz de usuario:\n\n• **Unidireccional (One-Way):** cuando el modelo cambia, la vista se actualiza automáticamente.\n• **Bidireccional (Two-Way):** cuando el modelo cambia, la vista se actualiza; y cuando el usuario escribe en un input, el modelo se actualiza de forma automática e inmediata."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Binding bidireccional en formularios",
+				"texto": "En **Vue**, `v-model` enlaza el campo en los dos sentidos y `{{ }}` muestra el valor en un sentido. No hace falta escribir ningún manejador de eventos:",
+				"lenguaje": "html",
+				"codigo": "<script setup>\nimport { ref } from 'vue';\nconst busqueda = ref('');\n</script>\n\n<template>\n  <input v-model=\"busqueda\" placeholder=\"Buscar productos\">\n  <p>Buscando: {{ busqueda }}</p>\n</template>"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Lo que el binding hace por ti",
+				"texto": "Sin data binding habría que sincronizar a mano en los dos sentidos. Esto es exactamente lo que `v-model` escribe por ti:",
+				"lenguaje": "js",
+				"codigo": "let busqueda = '';\nconst input = document.querySelector('input');\nconst salida = document.querySelector('p');\n\ninput.addEventListener('input', () => {   // vista -> modelo\n  busqueda = input.value;\n  salida.textContent = `Buscando: ${busqueda}`; // modelo -> vista\n});",
+				"vista": {
+					"bloques": [
+						{
+							"campo": {
+								"etiqueta": "Buscar productos",
+								"tipo": "text",
+								"valor": "poncho"
+							}
+						},
+						{
+							"p": "Buscando: poncho"
+						}
+					],
+					"pestana": "qatu.com"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores con el binding",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<input :value=\"busqueda\">\n<!-- al escribir, busqueda no cambia -->",
+						"bien": "<input v-model=\"busqueda\">",
+						"explicacion": "`:value` es un enlace **unidireccional**: la vista muestra el modelo, pero lo que escribe el usuario no vuelve al modelo."
+					},
+					{
+						"mal": "<!-- componente hijo -->\n<input v-model=\"props.cantidad\">",
+						"bien": "<!-- componente hijo -->\n<input :value=\"props.cantidad\"\n       @input=\"emit('update:cantidad', $event.target.value)\">",
+						"explicacion": "Las props pertenecen al componente padre. El hijo no las modifica: emite un evento para que el padre actualice su estado."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Binding bidireccional",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Con <input :value=\"busqueda\"> en Vue, el usuario escribe y la variable no cambia. ¿Por qué?",
+					"opciones": [
+						"Porque :value es un enlace unidireccional (modelo -> vista)",
+						"Porque falta un <form>",
+						"Porque Vue no admite inputs",
+						"Porque busqueda debe ser un número"
+					],
+					"correcta": 0,
+					"explicacion": "Para que lo escrito vuelva al modelo hace falta v-model, que añade el sentido vista -> modelo."
+				}
+			}
+		]
+	},
+	{
+		"id": "L147",
+		"zona": 2,
+		"sala": "z2_santuario_binding",
+		"orden": 147,
+		"nivel": "intermedio",
+		"titulo": "Reactividad y ciclo de actualización",
+		"resumen": "Cómo los frameworks detectan cambios mediante proxies, observadores o signals para re-renderizar eficientemente.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Mecanismos de reactividad",
+				"texto": "Para saber cuándo actualizar la pantalla, los frameworks usan tres estrategias:\n\n• **Proxies y getters/setters (Vue, MobX):** interceptan lecturas y escrituras de propiedades para saber qué depende de qué.\n• **Comparación de Virtual DOM (React):** cada cambio de estado vuelve a ejecutar el componente, compara el árbol virtual nuevo con el anterior y aplica al DOM real solo las diferencias (reconciliation).\n• **Signals (Angular 16+, SolidJS, Preact):** valores reactivos que registran quién los lee; al cambiar, actualizan únicamente lo que depende de ellos, sin volver a ejecutar el componente completo."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Signals reactivos",
+				"texto": "Con las signals de Angular, `computed` deriva valores y `effect` reacciona a los cambios. Una signal se **lee llamándola** como función:",
+				"lenguaje": "js",
+				"codigo": "import { signal, computed, effect } from '@angular/core';\n\nconst precio = signal(25);\nconst cantidad = signal(1);\nconst total = computed(() => precio() * cantidad());\n\neffect(() => console.log('Total:', total()));\n\ncantidad.set(3);   // total se recalcula y el effect vuelve a ejecutarse"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Actualización quirúrgica",
+				"texto": "Solo se recalcula lo que depende de `cantidad`. Cambiar otra signal que `total` no lee no provoca ningún trabajo.",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"Total: 25",
+								"> cantidad.set(3)",
+								"Total: 75"
+							]
+						}
+					],
+					"pestana": "DevTools · Console"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Cambios que la reactividad no detecta",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "// React\ncarrito.push(producto);\nsetCarrito(carrito);   // misma referencia: no se vuelve a pintar",
+						"bien": "// React\nsetCarrito([...carrito, producto]);   // array nuevo",
+						"explicacion": "React compara referencias. Si se modifica el mismo array, el estado parece igual y la vista no se actualiza."
+					},
+					{
+						"mal": "<p>Total: {{ total }}</p>   <!-- Angular con signals -->",
+						"bien": "<p>Total: {{ total() }}</p>",
+						"explicacion": "Una signal es una función: sin paréntesis se muestra la función, no su valor, y no se registra la dependencia."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Ventaja de las Signals",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "En React se hace carrito.push(p) y después setCarrito(carrito), pero la vista no cambia. ¿Por qué?",
+					"opciones": [
+						"Porque push es asíncrono",
+						"Porque React compara referencias y el array es el mismo objeto",
+						"Porque falta un effect",
+						"Porque setCarrito solo acepta números"
+					],
+					"correcta": 1,
+					"explicacion": "Hay que crear un array nuevo, por ejemplo setCarrito([...carrito, p]), para que React detecte el cambio."
+				}
+			}
+		]
+	},
+	{
+		"id": "L148",
+		"zona": 2,
+		"sala": "z2_santuario_binding",
+		"orden": 148,
+		"nivel": "intermedio",
+		"titulo": "Placeholders y carga progresiva",
+		"resumen": "Estrategias de interfaz para gestionar estados asíncronos y latencia de red de forma transparente.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Estados de la interfaz",
+				"texto": "Toda vista conectada a datos remotos atraviesa 4 estados clave:\n\n**1. Idle / Inicial:** antes de disparar la petición.\n**2. Loading / Carga:** mostrando placeholders o skeletons reactivos.\n**3. Success / Éxito:** renderizando los datos recibidos.\n**4. Error / Fallo:** mostrando mensajes de error claros con opción de reintentar."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Un estado explícito por caso",
+				"lenguaje": "js",
+				"texto": "Modelar los cuatro estados con una sola variable impide combinaciones imposibles, como estar «cargando» y «con error» a la vez:",
+				"codigo": "let estado = { tipo: 'inicial' };\n\nasync function cargarCatalogo() {\n  estado = { tipo: 'cargando' };      render();\n  try {\n    const r = await fetch('/api/productos');\n    if (!r.ok) throw new Error(r.status);\n    estado = { tipo: 'exito', datos: await r.json() };\n  } catch (e) {\n    estado = { tipo: 'error', mensaje: 'No se pudo cargar el catálogo' };\n  }\n  render();\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Componente resiliente en Qatu",
+				"texto": "En el estado de error la interfaz explica qué pasó y ofrece **Reintentar**, en lugar de quedarse en blanco o con un spinner infinito.",
+				"vista": {
+					"bloques": [
+						{
+							"h2": "Catálogo"
+						},
+						{
+							"error": "No se pudo cargar el catálogo. Revisa tu conexión."
+						},
+						{
+							"boton": "Reintentar"
+						}
+					],
+					"pestana": "qatu.com/catalogo"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Estados olvidados",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "fetch('/api/productos')\n  .then((r) => r.json())\n  .then(pintarLista);",
+						"bien": "fetch('/api/productos')\n  .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })\n  .then(pintarLista)\n  .catch(() => mostrarError('No se pudo cargar'));",
+						"explicacion": "Si solo se programa el caso de éxito, un fallo de red deja la pantalla congelada sin explicación."
+					},
+					{
+						"mal": "if (datos.length === 0) mostrarSpinner();",
+						"bien": "if (datos.length === 0) mostrarVacio('No hay productos en esta categoría');",
+						"explicacion": "Una lista vacía es un **éxito** sin resultados, no una carga. Mostrar un spinner hace creer que algo sigue pendiente."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Gestión de estados",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "La petición del catálogo devuelve una lista vacía. ¿Qué debería mostrar la interfaz?",
+					"opciones": [
+						"Un spinner hasta que haya productos",
+						"Un mensaje de «sin resultados»",
+						"Un mensaje de error de red",
+						"Nada, la pantalla en blanco"
+					],
+					"correcta": 1,
+					"explicacion": "Una lista vacía es una respuesta exitosa: corresponde al estado vacío, no al de carga ni al de error."
+				}
+			}
+		]
+	}
+]

@@ -1,0 +1,12 @@
+[
+	{
+		"id": "timeout", "zona": 5, "nombre": "Timeout", "coste": 1,
+		"efecto": "Las plataformas de las promesas cumplidas duran un 60 % más.",
+		"leccion": "Referencia: un timeout es el tiempo máximo que se espera una operación antes de darla por fallida. Con fetch se implementa con AbortController o AbortSignal.timeout(ms). Este amuleto amplía la espera antes de que la plataforma desaparezca."
+	},
+	{
+		"id": "async_await", "zona": 5, "nombre": "Async/Await", "coste": 2,
+		"efecto": "El Hotfix se completa un 35 % más rápido.",
+		"leccion": "Referencia: async/await permite escribir código asíncrono en orden, sin anidar callbacks, y lanzar operaciones independientes en paralelo con Promise.all para terminar antes. Otorgado al abrir la compuerta Promise.all del Observatorio."
+	}
+]

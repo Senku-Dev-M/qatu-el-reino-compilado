@@ -1,0 +1,457 @@
+[
+	{
+		"id": "L10",
+		"zona": 3,
+		"sala": "z3_claro",
+		"orden": 10,
+		"nivel": "inicial",
+		"titulo": "Qué es CSS y cómo se conecta al HTML",
+		"resumen": "CSS define la presentación. Se escribe normalmente en un archivo .css enlazado desde el head con <link>.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Separar estructura y presentación",
+				"texto": "[[CSS]] (Cascading Style Sheets, hojas de estilo en cascada) controla cómo se ven los elementos: colores, tamaños, márgenes, tipografías y posiciones.\n\nLa idea clave es **separar responsabilidades**: el HTML dice qué es cada cosa y el CSS dice cómo se ve. Así puedes cambiar el diseño completo de un sitio sin tocar su contenido."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Tres formas de añadir CSS",
+				"texto": "**1. Archivo externo (recomendado):** una [[hoja de estilos|hoja_de_estilos]] `estilos.css` enlazada desde `<head>` con `<link>`. Un mismo archivo sirve para todas las páginas.\n**2. Etiqueta `<style>`** dentro de `<head>`: útil para pruebas rápidas.\n**3. Atributo `style`** en un elemento: afecta solo a ese elemento y es difícil de mantener.",
+				"lenguaje": "html",
+				"codigo": "<!-- 1. Archivo externo -->\n<link rel=\"stylesheet\" href=\"estilos.css\">\n\n<!-- 2. Dentro del documento -->\n<style>\n  h1 { color: darkred; }\n</style>\n\n<!-- 3. En línea -->\n<p style=\"color: gray;\">Nota</p>"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El mismo HTML con estilos",
+				"texto": "El HTML no cambia; solo se añade el archivo CSS. El navegador aplica las reglas y el título pasa a verse centrado y de otro color.",
+				"lenguaje": "css",
+				"codigo": "/* estilos.css */\nh1 {\n  color: #8b1e1e;\n  text-align: center;\n}",
+				"vista": {
+					"pestana": "Qatu",
+					"bloques": [
+						{
+							"texto": {
+								"valor": "Mercado de Qatu",
+								"tamano": 34,
+								"color": "#8b1e1e",
+								"negrita": true,
+								"alineacion": "center"
+							}
+						},
+						{
+							"p": "Productos del reino."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Enlaces que no funcionan",
+				"lenguaje": "html",
+				"errores": [
+					{
+						"mal": "<link href=\"estilos.css\">",
+						"bien": "<link rel=\"stylesheet\" href=\"estilos.css\">",
+						"explicacion": "Sin `rel=\"stylesheet\"` el navegador no sabe que el archivo es una hoja de estilos y no lo aplica."
+					},
+					{
+						"mal": "<body>\n  <link rel=\"stylesheet\" href=\"estilos.css\">\n</body>",
+						"bien": "<head>\n  <link rel=\"stylesheet\" href=\"estilos.css\">\n</head>",
+						"explicacion": "`<link>` pertenece a `<head>`: es información sobre el documento, no contenido visible."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "La forma recomendada",
+				"pregunta": {
+					"enunciado": "Tienes un sitio con 20 páginas que deben compartir los mismos colores. ¿Cuál es la mejor forma de añadir el CSS?",
+					"opciones": [
+						"Un atributo style en cada elemento",
+						"Una etiqueta <style> copiada en cada página",
+						"Un archivo .css enlazado con <link> en cada página",
+						"Escribir los colores dentro de <title>"
+					],
+					"correcta": 2,
+					"explicacion": "Un archivo externo se escribe una vez y se enlaza en todas las páginas. Cambiar un color en ese archivo lo cambia en todo el sitio."
+				}
+			}
+		]
+	},
+	{
+		"id": "L11",
+		"zona": 3,
+		"sala": "z3_claro",
+		"orden": 11,
+		"nivel": "inicial",
+		"titulo": "Anatomía de una regla CSS",
+		"resumen": "Una regla tiene un selector y un bloque de declaraciones. Cada declaración es propiedad: valor; y termina en punto y coma.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Partes de una regla",
+				"texto": "Un archivo CSS es una lista de [[reglas CSS|regla_css]]. Cada regla tiene:\n\n• Un [[selector]]: indica **a qué elementos** se aplica (por ejemplo, a todos los `p`).\n• Un bloque entre llaves `{ }` con una o varias [[declaraciones|declaracion]].\n\nCada declaración tiene una [[propiedad]] (qué cambias), dos puntos `:`, un [[valor]] (cómo lo cambias) y termina en `;`."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Leer una regla",
+				"texto": "Esta regla se lee: «a todos los párrafos, ponles texto de color gris oscuro y tamaño de 18 píxeles».\n\n• Selector: `p`\n• Declaración 1: propiedad `color`, valor `#333333`\n• Declaración 2: propiedad `font-size`, valor `18px`",
+				"lenguaje": "css",
+				"codigo": "p {\n  color: #333333;\n  font-size: 18px;\n}",
+				"vista": {
+					"pestana": "Qatu",
+					"bloques": [
+						{
+							"texto": {
+								"valor": "Este párrafo tiene 18 px y color gris oscuro.",
+								"tamano": 18,
+								"color": "#333333"
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Varios selectores a la vez",
+				"texto": "Si varios elementos comparten estilos, separa sus selectores con **comas**. Así evitas repetir código.",
+				"lenguaje": "css",
+				"codigo": "h1, h2, h3 {\n  font-family: Georgia, serif;\n  color: #5a3e1b;\n}"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores de sintaxis",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": "p {\n  color: red\n  font-size: 18px;\n}",
+						"bien": "p {\n  color: red;\n  font-size: 18px;\n}",
+						"explicacion": "Falta `;` después de `red`. El navegador lee `red font-size: 18px` como un valor inválido y descarta **ambas** declaraciones."
+					},
+					{
+						"mal": "p {\n  color = red;\n}",
+						"bien": "p {\n  color: red;\n}",
+						"explicacion": "Entre propiedad y valor van dos puntos `:`, no un signo igual."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Identifica la parte",
+				"pregunta": {
+					"enunciado": "En la regla  h1 { color: gold; }  ¿qué es «color»?",
+					"opciones": [
+						"El selector",
+						"La propiedad",
+						"El valor",
+						"La regla completa"
+					],
+					"correcta": 1,
+					"explicacion": "`h1` es el selector, `color` la propiedad y `gold` el valor. Juntos, `color: gold;` forman una declaración."
+				}
+			}
+		]
+	},
+	{
+		"id": "L12",
+		"zona": 3,
+		"sala": "z3_claro",
+		"orden": 12,
+		"nivel": "inicial",
+		"titulo": "Selectores: tipo, clase e id",
+		"resumen": "El selector de tipo afecta a todos los elementos de una etiqueta, el de clase (.nombre) a los que tengan esa clase y el de id (#nombre) a un único elemento.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Tres selectores básicos",
+				"texto": "• **Selector de tipo** (`p`, `h1`, `li`): selecciona **todos** los elementos con esa etiqueta.\n• **Selector de [[clase]]** (`.oferta`): selecciona los elementos con el atributo `class=\"oferta\"`. Muchos elementos pueden compartir una clase.\n• **Selector de [[id|id_html]]** (`#carrito`): selecciona el elemento con `id=\"carrito\"`. Un id debe ser **único** en la página.\n\nTambién existe el [[selector universal|selector_universal]] `*`, que selecciona **todos** los elementos."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Clases en acción",
+				"texto": "Solo el segundo párrafo tiene `class=\"oferta\"`, así que solo él recibe el fondo amarillo y la negrita.",
+				"lenguaje": "html",
+				"codigo": "<p>Manta de lana</p>\n<p class=\"oferta\">Poncho: 20% de descuento</p>\n\n<style>\n  .oferta {\n    background-color: #ffe08a;\n    font-weight: bold;\n  }\n</style>",
+				"vista": {
+					"pestana": "Tienda",
+					"bloques": [
+						{
+							"p": "Manta de lana"
+						},
+						{
+							"texto": {
+								"valor": "Poncho: 20% de descuento",
+								"fondo": "#ffe08a",
+								"negrita": true,
+								"tamano": 20,
+								"padding": 6
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "id y selector universal",
+				"texto": "`#carrito` solo afecta al elemento con ese id. La regla con `*` se usa a menudo al inicio del CSS para reiniciar márgenes de todo el documento; úsala con cuidado porque afecta a **todo**.",
+				"lenguaje": "css",
+				"codigo": "#carrito {\n  border: 2px solid green;\n}\n\n* {\n  margin: 0;\n}"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Punto, almohadilla y nombres",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": "oferta {\n  color: red;\n}",
+						"bien": ".oferta {\n  color: red;\n}",
+						"explicacion": "Sin el punto, CSS busca una etiqueta llamada `<oferta>`, que no existe. Las clases se seleccionan con `.`."
+					},
+					{
+						"mal": "<p class=\".oferta\">Poncho</p>",
+						"bien": "<p class=\"oferta\">Poncho</p>",
+						"explicacion": "El punto solo se escribe en el CSS. En el atributo `class` va el nombre sin punto."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige el selector",
+				"pregunta": {
+					"enunciado": "Quieres destacar todos los productos en oferta, que tienen class=\"oferta\". ¿Qué selector usas?",
+					"opciones": [
+						"oferta",
+						"#oferta",
+						".oferta",
+						"*"
+					],
+					"correcta": 2,
+					"explicacion": "Las clases se seleccionan con un punto: `.oferta`. `#oferta` buscaría un id, que además debe ser único."
+				}
+			}
+		]
+	},
+	{
+		"id": "L13",
+		"zona": 3,
+		"sala": "z3_claro",
+		"orden": 13,
+		"nivel": "inicial",
+		"titulo": "Propiedades básicas de texto y color",
+		"resumen": "color, background-color, font-size, font-family y text-align son las primeras propiedades que necesitas para dar estilo al texto.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Las más usadas",
+				"texto": "• `color`: color del **texto**.\n• `background-color`: color de **fondo** del elemento.\n• `font-size`: tamaño de letra. Unidades comunes: `px` (píxeles) y `rem` (relativo al tamaño base de la página).\n• `font-family`: tipografía. Se da una lista de alternativas por si la primera no está instalada.\n• `text-align`: alineación: `left`, `center`, `right`.\n\nLos colores pueden escribirse por nombre (`red`) o en hexadecimal (`#8b1e1e`)."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Una tarjeta de producto",
+				"lenguaje": "css",
+				"codigo": ".titulo {\n  color: #ffffff;\n  background-color: #5a3e1b;\n  font-size: 28px;\n  font-family: Georgia, serif;\n  text-align: center;\n}",
+				"vista": {
+					"pestana": "Tienda",
+					"bloques": [
+						{
+							"texto": {
+								"valor": "Poncho de alpaca",
+								"color": "#ffffff",
+								"fondo": "#5a3e1b",
+								"tamano": 28,
+								"alineacion": "center",
+								"padding": 10
+							}
+						},
+						{
+							"p": "Tejido a mano en el reino de Qatu."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Confusiones típicas",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": ".titulo {\n  font-color: white;\n}",
+						"bien": ".titulo {\n  color: white;\n}",
+						"explicacion": "`font-color` no existe. El color del texto se cambia con `color`."
+					},
+					{
+						"mal": ".titulo {\n  font-size: 28;\n}",
+						"bien": ".titulo {\n  font-size: 28px;\n}",
+						"explicacion": "Los tamaños necesitan unidad (`px`, `rem`, `%`). Un número sin unidad se ignora."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Fondo o texto",
+				"pregunta": {
+					"enunciado": "Quieres que un párrafo tenga fondo negro y letras blancas. ¿Qué pareja de propiedades usas?",
+					"opciones": [
+						"color: black; background-color: white;",
+						"background-color: black; color: white;",
+						"font-color: white; background: black;",
+						"text-align: black; color: white;"
+					],
+					"correcta": 1,
+					"explicacion": "`background-color` controla el fondo y `color` el texto."
+				}
+			}
+		]
+	},
+	{
+		"id": "L14",
+		"zona": 3,
+		"sala": "z3_claro",
+		"orden": 14,
+		"nivel": "intermedio",
+		"titulo": "El modelo de cajas",
+		"resumen": "Todo elemento es una caja con cuatro capas: contenido, padding, borde y margen.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Cuatro capas",
+				"texto": "Para CSS, cada elemento es un rectángulo formado por capas, de dentro hacia fuera ([[modelo de cajas|modelo_de_cajas]]):\n\n**1. Contenido:** el texto o la imagen. Su tamaño se controla con `width` y `height`.\n**2. [[Padding|padding]]:** espacio **interior** entre el contenido y el borde. Tiene el color de fondo del elemento.\n**3. [[Border|border]]:** la línea que rodea el padding.\n**4. [[Margin|margin]]:** espacio **exterior** que separa la caja de las demás. Es transparente."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Visualiza las capas",
+				"texto": "Este diagrama muestra la caja que genera la regla: contenido en azul, padding en verde, borde oscuro y margen en naranja (así lo dibujan también las herramientas del navegador).",
+				"lenguaje": "css",
+				"codigo": ".tarjeta {\n  width: 180px;\n  padding: 16px;\n  border: 4px solid #333;\n  margin: 20px;\n}",
+				"vista": {
+					"pestana": "Tarjeta",
+					"bloques": [
+						{
+							"caja": {
+								"contenido": "Poncho",
+								"ancho": 180,
+								"alto": 50,
+								"padding": 16,
+								"borde": 4,
+								"margin": 20
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Valores por lado",
+				"texto": "`padding` y `margin` aceptan uno, dos o cuatro valores:\n\n• `padding: 10px;` → 10 px en los cuatro lados.\n• `padding: 10px 20px;` → 10 arriba/abajo, 20 izquierda/derecha.\n• `padding: 5px 10px 15px 20px;` → arriba, derecha, abajo, izquierda (sentido de las agujas del reloj).\n\nTambién puedes usar lados concretos: `margin-top`, `padding-left`…",
+				"lenguaje": "css",
+				"codigo": ".aviso {\n  padding: 10px 20px;\n  margin-bottom: 24px;\n  border: 1px solid #c0392b;\n}"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Padding frente a margin",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": ".boton {\n  margin: 12px;\n}",
+						"bien": ".boton {\n  padding: 12px;\n}",
+						"explicacion": "Si quieres que el botón sea más grande y el fondo rodee más el texto, necesitas `padding` (interior). `margin` solo lo aleja de los demás elementos."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Orden de las capas",
+				"pregunta": {
+					"enunciado": "Del interior al exterior, ¿cuál es el orden correcto de las capas de una caja?",
+					"opciones": [
+						"Margen, borde, padding, contenido",
+						"Contenido, padding, borde, margen",
+						"Contenido, margen, borde, padding",
+						"Padding, contenido, borde, margen"
+					],
+					"correcta": 1,
+					"explicacion": "Contenido → padding (interior) → borde → margen (exterior)."
+				}
+			}
+		]
+	},
+	{
+		"id": "L15",
+		"zona": 3,
+		"sala": "z3_claro",
+		"orden": 15,
+		"nivel": "intermedio",
+		"titulo": "box-sizing y centrar una caja",
+		"resumen": "Por defecto width solo mide el contenido. Con box-sizing: border-box incluye padding y borde. margin: 0 auto centra horizontalmente una caja con ancho definido.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "¿Cuánto mide realmente una caja?",
+				"texto": "Por defecto (`box-sizing: content-box`), `width` define **solo el contenido**. El ancho real es:\n\n`width + padding izquierdo + padding derecho + borde izquierdo + borde derecho`\n\nUna caja con `width: 200px`, `padding: 20px` y `border: 5px` ocupa en realidad **250 px**. Esto sorprende a casi todos al empezar."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "border-box",
+				"texto": "Con [[box-sizing: border-box|box_sizing]], `width` incluye el padding y el borde: la caja mide exactamente lo que escribes y el contenido se ajusta dentro. Por eso muchos proyectos aplican esta regla a todos los elementos al inicio del CSS.",
+				"lenguaje": "css",
+				"codigo": "* {\n  box-sizing: border-box;\n}\n\n.tarjeta {\n  width: 200px;   /* mide 200px en total */\n  padding: 20px;\n  border: 5px solid #333;\n}"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Centrar horizontalmente",
+				"texto": "Para centrar un elemento de bloque dentro de su contenedor necesitas dos cosas: un **ancho definido** y márgenes laterales automáticos. `margin: 0 auto` significa 0 arriba y abajo, y `auto` a los lados: el navegador reparte el espacio sobrante por igual.",
+				"lenguaje": "css",
+				"codigo": ".contenedor {\n  width: 300px;\n  margin: 0 auto;\n  background-color: #dfe8f5;\n}",
+				"vista": {
+					"pestana": "Centrado",
+					"bloques": [
+						{
+							"texto": {
+								"valor": "Caja de 300 px centrada",
+								"fondo": "#dfe8f5",
+								"alineacion": "center",
+								"tamano": 20,
+								"padding": 12
+							}
+						},
+						{
+							"nota": "El espacio libre a izquierda y derecha es el mismo."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Por qué no se centra",
+				"lenguaje": "css",
+				"errores": [
+					{
+						"mal": ".contenedor {\n  margin: 0 auto;\n}",
+						"bien": ".contenedor {\n  width: 300px;\n  margin: 0 auto;\n}",
+						"explicacion": "Sin `width`, un bloque ocupa todo el ancho disponible, así que no queda espacio que repartir y no se ve centrado."
+					},
+					{
+						"mal": ".contenedor {\n  text-align: center;\n}",
+						"bien": ".contenedor {\n  width: 300px;\n  margin: 0 auto;\n}",
+						"explicacion": "`text-align: center` centra el **texto** dentro de la caja, no la caja dentro de su contenedor."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Calcula el ancho",
+				"pregunta": {
+					"enunciado": "Sin box-sizing: border-box, una caja tiene width: 100px, padding: 10px y border: 2px. ¿Cuánto mide de ancho en total?",
+					"opciones": [
+						"100px",
+						"112px",
+						"124px",
+						"120px"
+					],
+					"correcta": 2,
+					"explicacion": "100 (contenido) + 10 + 10 (padding a ambos lados) + 2 + 2 (borde a ambos lados) = **124 px**."
+				}
+			}
+		]
+	}
+]

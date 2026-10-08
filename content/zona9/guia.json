@@ -1,0 +1,89 @@
+[
+	{
+		"id": "z9_vestibulo_qa",
+		"nombre": "Vestíbulo de Calidad",
+		"intro": [
+			"Bienvenido al Laboratorio de Pruebas y Seguridad.",
+			"Aquí aprenderás la pirámide de pruebas y el patrón AAA."
+		],
+		"recordatorio": "Shift-Left Testing traslada la detección de defectos al inicio del ciclo de desarrollo.",
+		"cierre": [
+			"Fundamentos comprendidos.",
+			"Avanza a la Sala de la Pirámide."
+		]
+	},
+	{
+		"id": "z9_sala_piramide",
+		"nombre": "Sala de la Pirámide",
+		"intro": [
+			"Pruebas unitarias ultrarrápidas, dobles de prueba y TDD."
+		],
+		"recordatorio": "El ciclo TDD sigue estrictamente: Red (falla) -> Green (pasa) -> Refactor (mejora).",
+		"cierre": [
+			"Pruebas unitarias dominadas.",
+			"Entra a la Cámara de Selenium."
+		]
+	},
+	{
+		"id": "z9_camara_selenium",
+		"nombre": "Cámara de Selenium y E2E",
+		"intro": [
+			"Automatización de navegadores reales con Playwright y eliminación de flaky tests."
+		],
+		"recordatorio": "El auto-waiting reactivo previene condiciones de carrera en interfaces asíncronas.",
+		"cierre": [
+			"Flujos E2E estables.",
+			"Sigue al Santuario del Inspector."
+		]
+	},
+	{
+		"id": "z9_santuario_inspector",
+		"nombre": "Santuario del Prisma Inspector",
+		"intro": [
+			"Auditoría profunda: métricas de cobertura de ramas y testing mutacional con Stryker.",
+			"Recoge el Inspector junto a la entrada y pulsa {inspector} en la plataforma central: la lente revela la aserción oculta."
+		],
+		"recordatorio": "Recoge el Inspector junto a la entrada y pulsa {inspector} en la plataforma central: la lente revela la aserción oculta. El Mutation Score mide la efectividad real de los tests matando mutantes de código.",
+		"cierre": [
+			"Prisma Inspector adquirido.",
+			"Avanza al Búnker OWASP."
+		]
+	},
+	{
+		"id": "z9_bunker_owasp",
+		"nombre": "Búnker OWASP",
+		"intro": [
+			"Defensa contra el OWASP Top 10: Inyecciones SQL, XSS, CSRF y cabeceras de seguridad."
+		],
+		"recordatorio": "Los Prepared Statements tratan los parámetros como datos literales, haciendo imposible el SQLi.",
+		"cierre": [
+			"Vulnerabilidades neutralizadas.",
+			"Asciende a la Torre de Monitoreo."
+		]
+	},
+	{
+		"id": "z9_torre_monitoreo",
+		"nombre": "Torre de Monitoreo DevSecOps",
+		"intro": [
+			"Integración de SAST, DAST y análisis de dependencias (SCA/SBOM) en el pipeline.",
+			"La barrera WAF solo se abre cuando se verifica su aserción oculta: sube a la plataforma central y pulsa {inspector}."
+		],
+		"recordatorio": "La barrera WAF solo se abre cuando se verifica su aserción oculta: sube a la plataforma central y pulsa {inspector}. SAST analiza código estático y DAST prueba la aplicación en ejecución.",
+		"cierre": [
+			"Pipeline seguro.",
+			"Entra a la Galería de Métricas."
+		]
+	},
+	{
+		"id": "z9_galeria_metricas",
+		"nombre": "Galería de Métricas y Resiliencia",
+		"intro": [
+			"Observabilidad con OpenTelemetry, métricas DORA y Chaos Engineering."
+		],
+		"recordatorio": "Las 4 métricas DORA miden velocidad y estabilidad de entrega en equipos de alto rendimiento.",
+		"cierre": [
+			"Todo el laboratorio dominado.",
+			"¡Enfréntate a La Regresión!"
+		]
+	}
+]

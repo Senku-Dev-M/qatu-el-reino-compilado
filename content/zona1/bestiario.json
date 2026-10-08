@@ -1,0 +1,42 @@
+[
+	{
+		"id": "error_500",
+		"zona": 1,
+		"nombre": "Error 500 (Excepción Interna)",
+		"descripcion": "Un residuo inestable del servidor. Al colisionar o recibir daño, detona fragmentos de stack trace.",
+		"leccion": "Un error 500 indica una excepción no controlada en el servidor. Debe capturarse con middlewares globales para devolver respuestas JSON estructuradas.",
+		"derrotas_requeridas": 3
+	},
+	{
+		"id": "lock_pesimista",
+		"zona": 1,
+		"nombre": "Bloqueo Pesimista",
+		"descripcion": "Guardián blindado con cerrojo de base de datos. Es invulnerable a ataques frontales hasta ser flanqueado con REST Dash.",
+		"leccion": "El bloqueo pesimista bloquea un registro en la BD impidiendo lecturas/escrituras concurrentes hasta finalizar la transacción. Provoca contención si las transacciones son largas.",
+		"derrotas_requeridas": 3
+	},
+	{
+		"id": "over_fetcher",
+		"zona": 1,
+		"nombre": "Sobrecarga de Payload",
+		"descripcion": "Monstruo pesado que dispara proyectiles de datos redundantes que ralentizan al jugador.",
+		"leccion": "El over-fetching ocurre cuando un endpoint devuelve más datos de los necesarios. Se mitiga con DTOs específicos, GraphQL o proyecciones selectivas.",
+		"derrotas_requeridas": 2
+	},
+	{
+		"id": "stateless_drone",
+		"zona": 1,
+		"nombre": "Dron Sin Estado",
+		"descripcion": "Dron volador de patrulla que ejecuta patrones fijos sin conservar memoria de trayectorias pasadas.",
+		"leccion": "La arquitectura REST es sin estado (stateless): cada petición debe contener toda la información necesaria para ser procesada de forma independiente.",
+		"derrotas_requeridas": 4
+	},
+	{
+		"id": "monolito",
+		"zona": 1,
+		"nombre": "El Monolito",
+		"descripcion": "La colosal estructura que sostiene las Ruinas del Backend. Conecta todas las funciones en un único bloque rígido e hiperacoplado.",
+		"leccion": "Una arquitectura monolítica agrupa toda la lógica en una sola unidad desplegable. Facilita el inicio pero dificulta el escalado independiente y aumenta el acoplamiento.",
+		"derrotas_requeridas": 1
+	}
+]

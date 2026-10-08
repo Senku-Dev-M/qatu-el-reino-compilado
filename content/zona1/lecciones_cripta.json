@@ -1,0 +1,282 @@
+[
+	{
+		"id": "L131",
+		"zona": 1,
+		"sala": "z1_cripta",
+		"orden": 131,
+		"nivel": "inicial",
+		"titulo": "Bases de datos: RDBMS frente a NoSQL",
+		"resumen": "RDBMS ofrece consistencia ACID y relaciones estrictas; NoSQL prioriza flexibilidad de esquemas y escalabilidad horizontal.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Dos mundos de persistencia",
+				"texto": "• [[rdbms]] (Relacionales): tablas con filas y columnas, claves primarias y foráneas, lenguaje SQL y garantías **ACID** (Atomicidad, Consistencia, Aislamiento, Durabilidad). Ejemplos: PostgreSQL, MySQL, SQL Server.\n• [[nosql]] (No Relacionales): modelos no tabulares como documentos BSON (MongoDB), clave-valor (Redis), columnas anchas (Cassandra) o grafos (Neo4j). Priorizan esquemas dinámicos y distribución masiva."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Tablas relacionadas en SQL",
+				"lenguaje": "texto",
+				"texto": "En un RDBMS los datos se reparten en tablas enlazadas por claves. La **transacción** garantiza que el pedido y el descuento de stock ocurren juntos o no ocurren:",
+				"codigo": "CREATE TABLE pedidos (\n  id          SERIAL PRIMARY KEY,\n  usuario_id  INT NOT NULL REFERENCES usuarios(id),\n  total       NUMERIC(10,2) NOT NULL\n);\n\nBEGIN;\n  INSERT INTO pedidos (usuario_id, total) VALUES (7, 50.00);\n  UPDATE productos SET stock = stock - 2 WHERE id = 42;\nCOMMIT;"
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Documento en MongoDB",
+				"texto": "En MongoDB un producto es un **documento**: cada uno puede tener atributos distintos sin cambiar ningún esquema.",
+				"lenguaje": "js",
+				"codigo": "db.productos.insertOne({\n  nombre: \"Poncho\",\n  precio: 25,\n  atributos: { material: \"alpaca\", tallas: [\"S\", \"M\"] }\n});\ndb.productos.insertOne({\n  nombre: \"Lámpara\",\n  precio: 18,\n  atributos: { voltaje: \"220V\", potencia: \"9W\" }\n});"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Criterio de elección",
+				"texto": "En Qatu: transacciones de compras y pagos usan RDBMS por consistencia ACID; catálogo de productos con atributos variables puede usar MongoDB.",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Necesidad en Qatu",
+									"Motor",
+									"Motivo"
+								],
+								"filas": [
+									[
+										"Pedidos y pagos",
+										"PostgreSQL",
+										"transacciones ACID"
+									],
+									[
+										"Catálogo variable",
+										"MongoDB",
+										"esquema flexible"
+									],
+									[
+										"Carrito y sesiones",
+										"Redis",
+										"clave-valor en memoria"
+									],
+									[
+										"Recomendaciones",
+										"Neo4j",
+										"relaciones en grafo"
+									]
+								],
+								"resaltar": 1
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Garantía ACID",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Un pedido debe registrarse y descontar stock a la vez; si algo falla, nada debe quedar a medias. ¿Qué lo garantiza?",
+					"opciones": [
+						"El esquema flexible de los documentos",
+						"La atomicidad de una transacción ACID",
+						"El particionado en shards",
+						"El formato JSON"
+					],
+					"correcta": 1,
+					"explicacion": "La atomicidad asegura que todas las operaciones de la transacción se aplican, o ninguna."
+				}
+			}
+		]
+	},
+	{
+		"id": "L132",
+		"zona": 1,
+		"sala": "z1_cripta",
+		"orden": 132,
+		"nivel": "intermedio",
+		"titulo": "Particionado horizontal (Sharding)",
+		"resumen": "El sharding divide una base de datos grande en fragmentos independientes para distribuir la carga entre varios servidores.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Escalar horizontalmente los datos",
+				"texto": "Cuando el volumen de datos o peticiones supera la capacidad de un único servidor físico, se aplica [[sharding]]:\n\n• La base de datos se particiona en múltiples nodos (**shards**).\n• Una **clave de particionado (Shard Key)** determina a qué fragmento pertenece cada registro (ej. `region_id` o hash del `usuario_id`).\n• Un enrutador de consultas dirige la petición directamente al shard correspondiente sin escanear todo el clúster."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Arquitectura de Sharding en MongoDB",
+				"texto": "En `mongosh` se activa el sharding y se elige la clave. El clúster tiene **routers** (`mongos`) que reciben las consultas, **servidores de configuración** que saben dónde está cada rango y los **shards** con los datos:",
+				"lenguaje": "js",
+				"codigo": "sh.enableSharding(\"qatu\")\nsh.shardCollection(\"qatu.pedidos\", { usuario_id: \"hashed\" })\nsh.status()",
+				"vista": {
+					"bloques": [
+						{
+							"arbol": {
+								"nombre": "Aplicación Qatu",
+								"hijos": [
+									{
+										"nombre": "mongos (router)",
+										"hijos": [
+											{
+												"nombre": "config servers (metadatos)"
+											},
+											{
+												"nombre": "shard A · hash de usuario 0-49"
+											},
+											{
+												"nombre": "shard B · hash de usuario 50-99"
+											}
+										]
+									}
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Distribución eficiente",
+				"texto": "Con una clave hashed los pedidos se reparten entre shards. Una consulta que incluye la clave va a **un solo** shard; sin ella, el router pregunta a todos.",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"> db.pedidos.find({ usuario_id: 7 }).explain()",
+								"  winningPlan: { stage: 'SINGLE_SHARD', shards: [ 'shardA' ] }",
+								"> db.pedidos.find({ total: { $gt: 100 } }).explain()",
+								"  winningPlan: { stage: 'SHARD_MERGE', shards: [ 'shardA', 'shardB' ] }"
+							]
+						}
+					],
+					"pestana": "mongosh"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Malas claves de particionado",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "sh.shardCollection(\"qatu.pedidos\", { creado_en: 1 })",
+						"bien": "sh.shardCollection(\"qatu.pedidos\", { usuario_id: \"hashed\" })",
+						"explicacion": "Una clave que siempre crece (fecha, id autoincremental) manda **todas** las escrituras nuevas al último shard: un punto caliente."
+					},
+					{
+						"mal": "sh.shardCollection(\"qatu.usuarios\", { pais: 1 })",
+						"bien": "sh.shardCollection(\"qatu.usuarios\", { pais: 1, _id: 1 })",
+						"explicacion": "Con pocos valores posibles (baja cardinalidad) un fragmento no se puede dividir más y crece sin límite."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Función del Sharding",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "¿Por qué la fecha de creación es una mala clave de particionado para los pedidos?",
+					"opciones": [
+						"Porque las fechas no se pueden indexar",
+						"Porque todas las escrituras nuevas van al mismo shard",
+						"Porque MongoDB no acepta fechas",
+						"Porque ocupa demasiado espacio"
+					],
+					"correcta": 1,
+					"explicacion": "Una clave que siempre crece concentra las inserciones nuevas en el último rango: un punto caliente."
+				}
+			}
+		]
+	},
+	{
+		"id": "L133",
+		"zona": 1,
+		"sala": "z1_cripta",
+		"orden": 133,
+		"nivel": "intermedio",
+		"titulo": "Estrategias de Migración de Datos",
+		"resumen": "Estrategias Big Bang frente a Fases/Trickle, y procesos de integración ETL frente a ELT.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Estrategias de migración",
+				"texto": "Al transferir datos a una nueva base o esquema ([[migracion_datos]]):\n\n• **Big Bang:** corte total en una ventana de mantenimiento. Todo se migra de golpe. Es más simple conceptualmente pero riesgosa si surgen imprevistos.\n• **Por Fases / Trickle:** migración gradual con sincronización dual (escrituras en ambos sistemas) y cero tiempo de inactividad (zero downtime)."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "ETL frente a ELT",
+				"texto": "• [[etl]] (Extract, Transform, Load): extrae datos de fuentes, los transforma en un servidor intermedio y los carga limpios en el destino (enfoque tradicional).\n• **ELT** (Extract, Load, Transform): extrae y carga los datos crudos directamente en almacenes modernos en la nube (Data Lakes), aprovechando la potencia del destino para transformarlos bajo demanda.",
+				"lenguaje": "js",
+				"codigo": "// ETL: extraer, transformar en el script y cargar limpio\nconst filas = await origen.query('SELECT * FROM clientes_legacy');\nconst clientes = filas\n  .filter((f) => f.email)                         // descarta inválidos\n  .map((f) => ({\n    email: f.email.trim().toLowerCase(),\n    nombre: `${f.nombres} ${f.apellidos}`,\n  }));\nawait destino.clientes.bulkWrite(\n  clientes.map((c) => ({\n    updateOne: { filter: { email: c.email }, update: { $set: c }, upsert: true },\n  }))\n);"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Riesgos y mitigaciones",
+				"texto": "Riesgos críticos: pérdida de datos, corrupción de tipos y tiempo de inactividad prolongado. Mitigación: backups previos, scripts idempotentes y pruebas de rollback.",
+				"vista": {
+					"bloques": [
+						{
+							"tabla": {
+								"columnas": [
+									"Riesgo",
+									"Mitigación"
+								],
+								"filas": [
+									[
+										"Pérdida de datos",
+										"backup previo y conteo de filas antes y después"
+									],
+									[
+										"Datos corruptos",
+										"validación de tipos en la transformación"
+									],
+									[
+										"Downtime prolongado",
+										"migración por fases y ensayo en staging"
+									],
+									[
+										"Script fallido a medias",
+										"scripts idempotentes (upsert) y plan de rollback"
+									]
+								]
+							}
+						}
+					],
+					"sin_navegador": true
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Scripts de migración peligrosos",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "for (const c of clientes) {\n  await destino.clientes.insertOne(c);\n}",
+						"bien": "await destino.clientes.bulkWrite(clientes.map((c) => ({\n  updateOne: { filter: { email: c.email },\n    update: { $set: c }, upsert: true },\n})));",
+						"explicacion": "Si el script falla a mitad y se relanza, `insertOne` **duplica** lo ya migrado. Con `upsert` el script es idempotente."
+					},
+					{
+						"mal": "DROP TABLE clientes_legacy;  -- justo después de migrar",
+						"bien": "-- 1. comparar conteos y muestras\n-- 2. dejar el origen en solo lectura unos días\n-- 3. archivar y después eliminar",
+						"explicacion": "Borrar el origen antes de verificar elimina la única vía de rollback."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Estrategia con cero downtime",
+				"texto": "",
+				"pregunta": {
+					"enunciado": "Un script de migración falla en la fila 40 000 y hay que relanzarlo. ¿Qué propiedad evita duplicar las filas ya migradas?",
+					"opciones": [
+						"Que sea idempotente (por ejemplo, con upsert)",
+						"Que use la estrategia Big Bang",
+						"Que se ejecute de noche",
+						"Que borre el origen al terminar"
+					],
+					"correcta": 0,
+					"explicacion": "Un script idempotente produce el mismo resultado aunque se ejecute varias veces."
+				}
+			}
+		]
+	}
+]

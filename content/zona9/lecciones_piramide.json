@@ -1,0 +1,189 @@
+[
+	{
+		"id": "L182",
+		"zona": 9,
+		"sala": "z9_sala_piramide",
+		"orden": 182,
+		"nivel": "inicial",
+		"titulo": "Pruebas Unitarias y Frameworks Modernos",
+		"resumen": "Uso de Jest, Vitest, PyTest y aserciones deterministas de alta velocidad.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Aislamiento y Determinismo",
+				"texto": "Una prueba unitaria debe ser **determinista**: ante el mismo input, produce el mismo resultado el 100% de las veces, sin depender de red externa, reloj del sistema o concurrencia de hilos."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Frameworks de Ejecución Rápida",
+				"texto": "**Jest** (JavaScript), **Vitest** (proyectos con Vite), **xUnit** (.NET) y **PyTest** (Python) ejecutan miles de pruebas unitarias en segundos. Tres buenas prácticas del laboratorio:\n\n1. **Rápidas y aisladas:** sin red, disco ni base de datos reales.\n2. **Deterministas:** mismo resultado siempre (reloj, azar y orden controlados).\n3. **Un comportamiento por prueba**, con un nombre que lo describa."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Controlar el reloj",
+				"lenguaje": "js",
+				"texto": "Una prueba que depende de la fecha real falla según el día. Jest permite fijar el reloj para que el resultado sea **siempre** el mismo:",
+				"codigo": "test('la oferta de fin de semana aplica los sábados', () => {\n  jest.useFakeTimers().setSystemTime(new Date('2026-09-19T10:00:00'));\n\n  expect(precioConOferta(100)).toBe(85);\n\n  jest.useRealTimers();\n});"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Pruebas no deterministas",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "test('genera código de pedido', () => {\n  expect(generarCodigo()).toBe('QT-4821');\n}); // usa Math.random()",
+						"bien": "test('genera código con prefijo y 4 dígitos', () => {\n  expect(generarCodigo()).toMatch(/^QT-\\d{4}$/);\n});",
+						"explicacion": "Con azar sin controlar, la prueba pasa o falla según la ejecución. Se comprueba el formato, o se inyecta el generador."
+					},
+					{
+						"mal": "let carrito = new Carrito(); // compartido\ntest('agrega', () => { carrito.agregar(a); ... });\ntest('vacío', () => { expect(carrito.total()).toBe(0); });",
+						"bien": "let carrito;\nbeforeEach(() => { carrito = new Carrito(); });",
+						"explicacion": "Si las pruebas comparten estado, el resultado depende del orden de ejecución. Cada prueba prepara el suyo."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Pruebas Unitarias y Frameworks Modernos",
+				"pregunta": {
+					"enunciado": "Una prueba de «oferta de fin de semana» pasa los sábados y falla el resto de días. ¿Cuál es la solución?",
+					"opciones": [
+						"Ejecutar las pruebas solo los sábados",
+						"Controlar el reloj en la prueba (fake timers o reloj inyectado)",
+						"Añadir un sleep antes del expect",
+						"Borrar la prueba"
+					],
+					"correcta": 1,
+					"explicacion": "Una prueba unitaria debe ser determinista: la fecha se fija en la propia prueba."
+				}
+			}
+		]
+	},
+	{
+		"id": "L183",
+		"zona": 9,
+		"sala": "z9_sala_piramide",
+		"orden": 183,
+		"nivel": "intermedio",
+		"titulo": "Dobles de Prueba: Mocks, Stubs y Spies",
+		"resumen": "Aislamiento de colaboradores externos mediante la taxonomía de Gerard Meszaros.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Tipos de Dobles de Prueba",
+				"texto": "Un [[doble de prueba|doble_prueba]] sustituye a una dependencia real. La taxonomía de Gerard Meszaros distingue:\n\n• **Dummy:** se pasa como argumento pero nunca se usa.\n• **Stub:** devuelve respuestas preparadas.\n• **Spy:** registra cómo fue llamado (veces y argumentos).\n• **Mock:** viene con expectativas y la prueba verifica que se cumplieron.\n• **Fake:** implementación funcional simplificada, como un repositorio en memoria."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Inyección de Dependencias para Testabilidad",
+				"texto": "Para sustituir una pasarela de pago real por un Mock durante las pruebas, la clase debe recibir la pasarela a través del constructor (Dependency Injection) en lugar de instanciarla directamente con `new`."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Stub, spy y mock con Jest",
+				"lenguaje": "js",
+				"codigo": "test('cobra el total y guarda el pedido pagado', async () => {\n  // stub: la pasarela siempre aprueba\n  const pasarela = { cobrar: jest.fn().mockResolvedValue({ estado: 'aprobado' }) };\n  // spy sobre un repositorio en memoria (fake)\n  const repo = new PedidoRepositorioEnMemoria();\n  const guardar = jest.spyOn(repo, 'guardar');\n\n  await new Checkout(pasarela, repo).pagar({ id: 7, total: 50 });\n\n  expect(pasarela.cobrar).toHaveBeenCalledWith(50);          // mock: interacción\n  expect(guardar).toHaveBeenCalledWith(expect.objectContaining({ estado: 'pagado' }));\n});"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Mockear de más",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "jest.mock('./calcularTotal');\ncalcularTotal.mockReturnValue(50);\nexpect(checkout.total()).toBe(50);",
+						"bien": "// solo se sustituye lo externo (pasarela)\nexpect(checkout.total()).toBe(50);",
+						"explicacion": "Si se mockea la lógica que se quiere probar, la prueba solo comprueba el mock. Se sustituyen las dependencias externas, no el código bajo prueba."
+					},
+					{
+						"mal": "expect(repo.consulta).toHaveBeenCalledWith(\n  'SELECT * FROM pedidos WHERE id = $1', [7]);",
+						"bien": "expect(await servicio.obtener(7))\n  .toEqual({ id: 7, estado: 'pagado' });",
+						"explicacion": "Verificar detalles internos hace que la prueba se rompa al refactorizar aunque el comportamiento siga siendo correcto."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Dobles de Prueba: Mocks, Stubs y Spies",
+				"pregunta": {
+					"enunciado": "Quieres comprobar que Checkout llamó a pasarela.cobrar con 50. ¿Qué doble de prueba permite verificarlo?",
+					"opciones": [
+						"Un dummy",
+						"Un spy o mock que registre la llamada",
+						"Un stub que devuelve un valor fijo sin registrar nada",
+						"La pasarela real en producción"
+					],
+					"correcta": 1,
+					"explicacion": "Spies y mocks registran cómo se llamó a la dependencia; un stub solo devuelve respuestas preparadas."
+				}
+			}
+		]
+	},
+	{
+		"id": "L184",
+		"zona": 9,
+		"sala": "z9_sala_piramide",
+		"orden": 184,
+		"nivel": "intermedio",
+		"titulo": "Desarrollo Guiado por Pruebas (TDD)",
+		"resumen": "El ciclo Rojo-Verde-Refactor para diseño limpio y alta cobertura intrínseca.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El Ciclo Red-Green-Refactor",
+				"texto": "El [[TDD|tdd_test]] (Test-Driven Development) repite un ciclo corto:\n\n1. **Rojo:** escribir una prueba del comportamiento que se quiere; falla porque aún no existe.\n2. **Verde:** escribir el código **mínimo** para que pase.\n3. **Refactorizar:** mejorar el diseño con la prueba en verde como red de seguridad."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Un ciclo completo",
+				"lenguaje": "js",
+				"texto": "Regla: los envíos de más de 100 son gratis.",
+				"codigo": "// 1. Rojo: la función aún no existe\ntest('envío gratis a partir de 100', () => {\n  expect(costoEnvio(120)).toBe(0);\n});\n\n// 2. Verde: lo mínimo para pasar\nfunction costoEnvio(total) {\n  return total >= 100 ? 0 : 8;\n}\n\n// 3. Refactor: se nombran los valores, las pruebas siguen en verde\nconst UMBRAL_ENVIO_GRATIS = 100;\nconst TARIFA_ENVIO = 8;\nconst costoEnvio = (total) => (total >= UMBRAL_ENVIO_GRATIS ? 0 : TARIFA_ENVIO);"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "El ciclo en el terminal",
+				"texto": "Escribir la prueba primero obliga a diseñar código que se pueda probar: funciones pequeñas y dependencias que se pueden sustituir. El modo `--watch` repite las pruebas en cada guardado:",
+				"vista": {
+					"bloques": [
+						{
+							"consola": [
+								"$ npx jest --watch envio",
+								" FAIL  ✕ envío gratis a partir de 100   <- rojo",
+								" PASS  ✓ envío gratis a partir de 100   <- verde",
+								" PASS  ✓ envío gratis a partir de 100   <- tras refactorizar"
+							]
+						}
+					],
+					"pestana": "Terminal"
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Saltarse el ciclo",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "// se escribe la prueba después, copiando\n// lo que devuelve el código\nexpect(costoEnvio(99)).toBe(8);",
+						"bien": "// la prueba nace de la regla de negocio\nexpect(costoEnvio(99)).toBe(8);\nexpect(costoEnvio(100)).toBe(0);",
+						"explicacion": "Si la expectativa se copia de la salida, la prueba confirma el error en vez de detectarlo. En TDD la prueba expresa la regla antes del código."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Comprobación: Desarrollo Guiado por Pruebas (TDD)",
+				"pregunta": {
+					"enunciado": "¿Cuál es el orden del ciclo de TDD?",
+					"opciones": [
+						"Código, prueba, refactor",
+						"Prueba que falla, código mínimo que la pasa, refactorizar",
+						"Refactor, prueba, código",
+						"Prueba que pasa, código, prueba que falla"
+					],
+					"correcta": 1,
+					"explicacion": "Rojo, verde y refactorizar: primero la prueba expresa el comportamiento deseado."
+				}
+			}
+		]
+	}
+]

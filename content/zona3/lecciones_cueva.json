@@ -1,0 +1,270 @@
+[
+	{
+		"id": "L23",
+		"zona": 3,
+		"sala": "z3_cueva",
+		"orden": 23,
+		"nivel": "inicial",
+		"titulo": "DevTools y el panel Elements",
+		"resumen": "Las herramientas de desarrollo del navegador se abren con F12. El panel Elements muestra el DOM real y permite editarlo en vivo.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Herramientas del navegador",
+				"texto": "Todos los navegadores modernos incluyen [[herramientas de desarrollo|devtools]] (DevTools). Se abren con **F12**, con **Ctrl + Shift + I** (Cmd + Opción + I en Mac) o con clic derecho → Inspeccionar.\n\nSus paneles principales son:\n\n• **Elements**: el DOM y los estilos.\n• **Console**: mensajes, errores y ejecución de JavaScript.\n• **Sources**: archivos y depurador.\n• **Network**: peticiones al servidor (la verás en la Semana 5)."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Inspeccionar el DOM",
+				"texto": "El [[panel Elements|panel_elements]] muestra el **DOM actual**, no el archivo original: si JavaScript cambió algo, lo ves aquí. Al pasar el puntero por un nodo, el navegador resalta ese elemento en la página. Puedes hacer doble clic para editar texto o atributos y ver el resultado al instante (los cambios se pierden al recargar).",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"panel": {
+								"titulo": "Elements",
+								"pestanas": [
+									"Elements",
+									"Console",
+									"Sources",
+									"Network"
+								],
+								"lineas": [
+									"<html lang=\"es\">",
+									"  <head>…</head>",
+									"  <body>",
+									"▶   <h1>Mercado de Qatu</h1>",
+									"      <p class=\"oferta\">Poncho -20%</p>",
+									"  </body>",
+									"</html>"
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Archivo o DOM?",
+				"pregunta": {
+					"enunciado": "Un script añadió un párrafo a la página. ¿Dónde lo verás?",
+					"opciones": [
+						"Solo abriendo el archivo .html en el editor",
+						"En el panel Elements de las DevTools",
+						"En la pestaña del navegador",
+						"En ningún sitio hasta recargar"
+					],
+					"correcta": 1,
+					"explicacion": "El panel Elements muestra el DOM vivo, incluidos los cambios hechos por JavaScript. El archivo original no contiene ese párrafo."
+				}
+			}
+		]
+	},
+	{
+		"id": "L24",
+		"zona": 3,
+		"sala": "z3_cueva",
+		"orden": 24,
+		"nivel": "intermedio",
+		"titulo": "Estilos y modelo de cajas en DevTools",
+		"resumen": "La sección Styles del panel Elements muestra qué reglas CSS se aplican a un elemento, cuáles se anulan y permite probar cambios en vivo.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "¿Por qué no se aplica mi CSS?",
+				"texto": "Al seleccionar un elemento en Elements, la sección [[Styles|panel_styles]] lista todas las reglas CSS que lo afectan, con el archivo y la línea de donde vienen.\n\n• Las declaraciones **tachadas** existen pero están anuladas por otra regla más específica o posterior (esto es la [[cascada]]).\n• Las que tienen un **icono de advertencia** tienen un error de sintaxis o un valor inválido.\n• Puedes desmarcar una casilla para desactivar una declaración, o escribir valores nuevos para probar."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Lectura de Styles",
+				"texto": "Aquí `color: red` está tachado: la regla `.oferta` es más específica que `p` y gana. Debajo, el diagrama del modelo de cajas del elemento seleccionado, el mismo que viste en el Claro de Estilos.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"panel": {
+								"titulo": "Elements",
+								"pestanas": [
+									"Elements",
+									"Console",
+									"Sources"
+								],
+								"lineas": [
+									"Styles",
+									".oferta {            estilos.css:12",
+									"  color: darkgreen;",
+									"  padding: 8px;",
+									"}",
+									"p {                  estilos.css:3",
+									"  color: red;   ← tachado (anulado)",
+									"}"
+								]
+							}
+						},
+						{
+							"caja": {
+								"contenido": "Poncho -20%",
+								"ancho": 160,
+								"alto": 40,
+								"padding": 8,
+								"borde": 0,
+								"margin": 16
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Declaración tachada",
+				"pregunta": {
+					"enunciado": "En Styles ves  font-size: 12px;  tachado. ¿Qué significa?",
+					"opciones": [
+						"Que el valor tiene un error de sintaxis",
+						"Que otra regla la anula y no se está aplicando",
+						"Que se aplicará al recargar",
+						"Que la regla pertenece a otro elemento"
+					],
+					"correcta": 1,
+					"explicacion": "El tachado indica que la declaración existe pero otra regla con más prioridad la anula. Los errores de sintaxis se marcan con un icono de advertencia."
+				}
+			}
+		]
+	},
+	{
+		"id": "L25",
+		"zona": 3,
+		"sala": "z3_cueva",
+		"orden": 25,
+		"nivel": "intermedio",
+		"titulo": "La consola: errores y console.log",
+		"resumen": "La consola muestra los errores de JavaScript con su archivo y línea, y los mensajes que escribes con console.log para seguir la ejecución.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Leer un error",
+				"texto": "Cuando el código falla, la [[consola]] muestra un mensaje en rojo con tres datos:\n\n**1.** El **tipo** de error, por ejemplo `TypeError`.\n**2.** La **descripción**: qué salió mal.\n**3.** El **archivo y la línea**, como `app.js:4`. Al hacer clic, te lleva al lugar exacto.\n\nUn error detiene la ejecución del resto de ese bloque de código, por eso un solo fallo puede hacer que «nada funcione»."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Un error típico",
+				"texto": "`querySelector('#comprar')` devolvió `null` porque el botón en el HTML tiene otro id. Al intentar llamar a `addEventListener` sobre `null`, JavaScript lanza un error.",
+				"lenguaje": "js",
+				"codigo": "const boton = document.querySelector('#comprar');\nboton.addEventListener('click', anadir);",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"consola": [
+								"✖ Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')",
+								"    at app.js:2"
+							]
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Seguir el código con console.log",
+				"texto": "[[console.log|console_log]] escribe cualquier valor en la consola. Colocar varios mensajes te permite ver **hasta dónde llega** el código y **qué valores** tienen las variables.",
+				"lenguaje": "js",
+				"codigo": "const boton = document.querySelector('#comprar');\nconsole.log('boton es:', boton);\n\nboton.addEventListener('click', () => {\n  console.log('clic recibido');\n});",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"consola": [
+								"boton es: null",
+								"✖ Uncaught TypeError: Cannot read properties of null",
+								"    at app.js:4"
+							]
+						},
+						{
+							"nota": "El primer mensaje ya revela el problema: el botón no se encontró."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Interpreta el error",
+				"pregunta": {
+					"enunciado": "La consola dice: «Cannot read properties of null (reading 'textContent') at app.js:7». ¿Qué es lo más probable?",
+					"opciones": [
+						"El CSS tiene un error",
+						"La línea 7 usa un elemento que querySelector no encontró",
+						"Falta el <!DOCTYPE html>",
+						"El navegador no soporta textContent"
+					],
+					"correcta": 1,
+					"explicacion": "Leer una propiedad de `null` casi siempre significa que la búsqueda en el DOM no encontró el elemento (selector o id mal escritos)."
+				}
+			}
+		]
+	},
+	{
+		"id": "L26",
+		"zona": 3,
+		"sala": "z3_cueva",
+		"orden": 26,
+		"nivel": "intermedio",
+		"titulo": "El depurador: breakpoints paso a paso",
+		"resumen": "En el panel Sources puedes poner breakpoints para pausar el código en una línea, inspeccionar variables y avanzar instrucción por instrucción.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Pausar el código",
+				"texto": "`console.log` es útil, pero a veces necesitas **detener** el programa para mirar con calma. Para eso existe el [[depurador]], en el panel **Sources**:\n\n• Un [[breakpoint]] (punto de interrupción) se crea haciendo clic en el número de línea. La ejecución se pausa justo antes de esa línea.\n• Mientras está pausado ves el valor de todas las variables.\n• La palabra clave `debugger;` en el código tiene el mismo efecto cuando las DevTools están abiertas."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Controles del depurador",
+				"texto": "Con el código pausado, estos botones controlan la ejecución:\n\n• **Reanudar** (F8): continúa hasta el siguiente breakpoint.\n• **Paso a paso** (F10): ejecuta la línea actual y se detiene en la siguiente.\n• **Entrar** (F11): entra dentro de la función que se va a llamar.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"panel": {
+								"titulo": "Sources",
+								"pestanas": [
+									"Elements",
+									"Console",
+									"Sources"
+								],
+								"lineas": [
+									"app.js",
+									"  1  function total(precio, cantidad) {",
+									"▶ 2    const suma = precio * cantidad;   ● breakpoint",
+									"  3    return suma;",
+									"  4  }",
+									"",
+									"Scope:  precio = 40   cantidad = 3   suma = undefined"
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Un método de depuración",
+				"texto": "Cuando algo no funciona, sigue siempre este orden:\n\n**1.** Abre la **consola** y busca errores en rojo. Lee el tipo, el mensaje y la línea.\n**2.** Revisa en **Elements** que el elemento exista y tenga el id o la clase esperados.\n**3.** Revisa en **Styles** si el problema es de CSS.\n**4.** Si el problema es de lógica, pon un **breakpoint** y avanza paso a paso observando las variables."
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige la herramienta",
+				"pregunta": {
+					"enunciado": "Una función calcula mal el total y no hay ningún error en la consola. ¿Qué es lo más efectivo para descubrir en qué paso falla?",
+					"opciones": [
+						"Recargar la página varias veces",
+						"Poner un breakpoint en la función y avanzar paso a paso",
+						"Borrar el CSS",
+						"Cambiar el <title>"
+					],
+					"correcta": 1,
+					"explicacion": "Sin errores visibles, el depurador permite ver el valor de cada variable línea por línea y detectar dónde el cálculo se desvía."
+				}
+			}
+		]
+	}
+]

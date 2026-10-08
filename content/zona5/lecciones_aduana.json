@@ -1,0 +1,318 @@
+[
+	{
+		"id": "L67",
+		"zona": 5,
+		"sala": "z5_aduana",
+		"orden": 67,
+		"nivel": "intermedio",
+		"titulo": "fetch y la respuesta",
+		"resumen": "fetch(url) hace una petición y devuelve una promesa con un objeto Response. fetch solo se rechaza por errores de red: los 404 o 500 se detectan con response.ok. response.json() lee el cuerpo y también devuelve una promesa.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El reemplazo moderno de XHR",
+				"texto": "[[fetch]] es la API actual del navegador para hacer peticiones HTTP. Sustituye a XMLHttpRequest con una interfaz basada en **promesas**, así que funciona con `then` o con `await`.\n\n`fetch(url)` devuelve una promesa que se cumple con un objeto [[Response|objeto_response]] en cuanto llegan las **cabeceras** de la respuesta. El cuerpo se lee después con métodos que también devuelven promesas: `response.json()`, `response.text()`, `response.blob()`."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Una petición GET",
+				"lenguaje": "js",
+				"codigo": "async function cargarProductos() {\n  const response = await fetch('/api/productos');\n\n  if (!response.ok) {\n    throw new Error(`Error HTTP ${response.status}`);\n  }\n\n  const productos = await response.json();\n  pintarLista(productos);\n}",
+				"texto": "Hay **dos** `await`: uno para la respuesta y otro para leer el cuerpo como JSON."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Cuándo se rechaza fetch",
+				"texto": "Un detalle importante: la promesa de `fetch` **solo se rechaza** si la petición no pudo completarse (sin conexión, DNS fallido, bloqueo CORS).\n\nUna respuesta `404` o `500` **sí es una respuesta**: la promesa se cumple. Para detectarlo usa [[response.ok|response_ok]] (`true` si el estado está entre 200 y 299) o `response.status`.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"consola": [
+								"> const r = await fetch('/api/no-existe')",
+								"> r.ok",
+								"false",
+								"> r.status",
+								"404"
+							]
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores frecuentes",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "fetch('/api/productos')\n  .then((r) => r.json())\n  .then(pintarLista)\n  .catch(() => avisar('Sin conexión'));",
+						"bien": "fetch('/api/productos')\n  .then((r) => {\n    if (!r.ok) throw new Error(r.status);\n    return r.json();\n  })\n  .then(pintarLista)\n  .catch(avisar);",
+						"explicacion": "Sin comprobar `ok`, un 500 intentaría leerse como lista de productos. Lanzar un error lo lleva al `catch`."
+					},
+					{
+						"mal": "const datos = await fetch('/api/productos');\npintarLista(datos);",
+						"bien": "const response = await fetch('/api/productos');\nconst datos = await response.json();\npintarLista(datos);",
+						"explicacion": "`fetch` devuelve un `Response`, no los datos: hay que leer el cuerpo."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Un 404",
+				"pregunta": {
+					"enunciado": "El servidor responde 404 a un fetch. ¿Qué ocurre con la promesa devuelta por fetch?",
+					"opciones": [
+						"Se rechaza y va al catch",
+						"Se cumple con un Response cuyo ok es false",
+						"Queda pendiente para siempre",
+						"Lanza un error de sintaxis"
+					],
+					"correcta": 1,
+					"explicacion": "fetch solo se rechaza por fallos de red; un 404 es una respuesta válida con `ok === false` y `status === 404`."
+				}
+			}
+		]
+	},
+	{
+		"id": "L68",
+		"zona": 5,
+		"sala": "z5_aduana",
+		"orden": 68,
+		"nivel": "intermedio",
+		"titulo": "Enviar datos: method, body y headers",
+		"resumen": "El segundo parámetro de fetch configura la petición: method, headers y body. Para JSON se usa JSON.stringify y la cabecera Content-Type: application/json; con FormData el navegador pone el Content-Type.",
+		"paginas": [
+			{
+				"tipo": "sintaxis",
+				"titulo": "Opciones de fetch",
+				"texto": "`fetch(url, opciones)` acepta un objeto con, entre otras:\n\n• `method`: `'GET'` por defecto; `'POST'`, `'PUT'`, `'PATCH'`, `'DELETE'`.\n• `headers`: las [[cabeceras|header]] de la petición.\n• `body`: el cuerpo; un texto, un `FormData` u otros tipos. Las peticiones GET no llevan cuerpo.\n\nLa cabecera [[Content-Type|content_type]] le dice al servidor en qué formato va el cuerpo.",
+				"lenguaje": "js",
+				"codigo": "const response = await fetch('/api/resenas', {\n  method: 'POST',\n  headers: {\n    'Content-Type': 'application/json'\n  },\n  body: JSON.stringify({ productoId: 12, estrellas: 5 })\n});"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "La petición que se envía",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "POST",
+								"url": "/api/resenas",
+								"cabeceras": [
+									"Content-Type: application/json"
+								],
+								"cuerpo": "{\"productoId\":12,\"estrellas\":5}",
+								"estado": "201 Created",
+								"respuesta": "{ \"id\": 301, \"estrellas\": 5 }"
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Enviar un formulario sin recargar",
+				"texto": "Uniendo lo aprendido: escuchas `submit`, cancelas el envío normal y mandas un `FormData`. **No** pongas `Content-Type` a mano con FormData: el navegador lo genera con el separador correcto (`multipart/form-data`).",
+				"lenguaje": "js",
+				"codigo": "form.addEventListener('submit', async (event) => {\n  event.preventDefault();\n  const response = await fetch('/api/registro', {\n    method: 'POST',\n    body: new FormData(form)\n  });\n  mensaje.textContent = response.ok ? 'Cuenta creada' : 'Revisa los datos';\n});"
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Errores frecuentes",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "fetch('/api/resenas', {\n  method: 'POST',\n  body: { estrellas: 5 }\n});",
+						"bien": "fetch('/api/resenas', {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({ estrellas: 5 })\n});",
+						"explicacion": "Un objeto de JavaScript no se convierte solo en JSON: se enviaría el texto «[object Object]». Usa `JSON.stringify` y declara el `Content-Type`."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Completa la petición",
+				"pregunta": {
+					"enunciado": "Envías body: JSON.stringify(datos). ¿Qué cabecera debe acompañarlo para que el servidor lo interprete como JSON?",
+					"opciones": [
+						"Accept: text/html",
+						"Content-Type: application/json",
+						"Content-Type: multipart/form-data",
+						"Origin: application/json"
+					],
+					"correcta": 1,
+					"explicacion": "`Content-Type` describe el formato del cuerpo enviado; `Accept` indica qué formato se prefiere recibir."
+				}
+			}
+		]
+	},
+	{
+		"id": "L69",
+		"zona": 5,
+		"sala": "z5_aduana",
+		"orden": 69,
+		"nivel": "intermedio",
+		"titulo": "CORS: peticiones a otro origen",
+		"resumen": "Por la política del mismo origen, JavaScript no puede leer respuestas de otro origen salvo que el servidor lo permita con cabeceras CORS como Access-Control-Allow-Origin. Algunas peticiones requieren antes una petición preflight OPTIONS.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Origen y política del mismo origen",
+				"texto": "El [[origen]] de una página es la combinación de **protocolo + dominio + puerto**: `https://qatu.com` y `https://api.qatu.com` son orígenes **distintos**, igual que `http://` frente a `https://`.\n\nPor seguridad, el navegador aplica la **política del mismo origen**: el JavaScript de una página no puede leer respuestas de otro origen. Si no existiera, cualquier web podría leer tu correo o tu banco usando tus cookies."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "CORS: el servidor da permiso",
+				"texto": "[[CORS|cors]] (Cross-Origin Resource Sharing) permite al **servidor** indicar qué orígenes pueden leer sus respuestas mediante cabeceras. Si falta el permiso, la petición puede llegar al servidor, pero el navegador **bloquea** la respuesta y `fetch` se rechaza con un error.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"peticion": {
+								"metodo": "GET",
+								"url": "https://api.qatu.com/productos",
+								"cabeceras": [
+									"Origin: https://qatu.com"
+								],
+								"estado": "200 OK",
+								"respuesta_cabeceras": [
+									"Access-Control-Allow-Origin: https://qatu.com"
+								]
+							}
+						},
+						{
+							"consola": [
+								"✖ Access to fetch at 'https://otro-origen.com/api' from origin 'https://qatu.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present."
+							]
+						}
+					]
+				}
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Preflight",
+				"texto": "Las peticiones «no simples» (métodos como `PUT` o `DELETE`, `Content-Type: application/json`, cabeceras propias como `Authorization`) necesitan permiso **antes** de enviarse. El navegador envía primero una petición [[preflight]] con método `OPTIONS` preguntando qué se permite; si el servidor responde con las cabeceras adecuadas, envía la petición real.\n\n`fetch` tiene la opción `mode`: `'cors'` (por defecto), `'same-origin'` (solo mismo origen) y `'no-cors'` (envía la petición pero la respuesta no se puede leer).",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"qatu.com",
+									"api.qatu.com"
+								],
+								"pasos": [
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "OPTIONS /pedidos"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "204 · Allow-Methods: POST"
+									},
+									{
+										"de": 0,
+										"a": 1,
+										"texto": "POST /pedidos (JSON)"
+									},
+									{
+										"de": 1,
+										"a": 0,
+										"texto": "201 Created"
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Malentendidos frecuentes",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "fetch('https://otro-origen.com/api', { mode: 'no-cors' })\n  .then((r) => r.json()); // falla",
+						"bien": "// El servidor de la API debe añadir:\n// Access-Control-Allow-Origin: https://qatu.com",
+						"explicacion": "CORS se configura en el **servidor**. `no-cors` no salta la protección: devuelve una respuesta opaca que JavaScript no puede leer."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "¿Mismo origen?",
+				"pregunta": {
+					"enunciado": "Una página en https://qatu.com hace fetch a https://api.qatu.com. ¿Es el mismo origen?",
+					"opciones": [
+						"Sí, porque es el mismo dominio principal",
+						"No: el subdominio es distinto, así que necesita permiso CORS",
+						"Sí, porque ambos usan HTTPS",
+						"Solo si la petición es GET"
+					],
+					"correcta": 1,
+					"explicacion": "El origen compara protocolo, host completo y puerto. `api.qatu.com` es otro host."
+				}
+			}
+		]
+	},
+	{
+		"id": "L70",
+		"zona": 5,
+		"sala": "z5_aduana",
+		"orden": 70,
+		"nivel": "intermedio",
+		"titulo": "Credenciales y cookies SameSite",
+		"resumen": "La opción credentials de fetch decide si se envían cookies: same-origin (por defecto), include u omit. El atributo SameSite de las cookies (Strict, Lax, None) limita su envío desde otros sitios y ayuda contra CSRF.",
+		"paginas": [
+			{
+				"tipo": "sintaxis",
+				"titulo": "La opción credentials",
+				"texto": "Las cookies de sesión son **credenciales**. La opción [[credentials]] de `fetch` controla si se envían:\n\n• `'same-origin'` (por defecto): solo en peticiones al mismo origen.\n• `'include'`: también en peticiones a otros orígenes.\n• `'omit'`: nunca.\n\nCon `'include'` hacia otro origen, el servidor además debe responder `Access-Control-Allow-Credentials: true` y un `Access-Control-Allow-Origin` concreto (no vale `*`).",
+				"lenguaje": "js",
+				"codigo": "const response = await fetch('https://api.qatu.com/carrito', {\n  credentials: 'include'\n});"
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "El atributo SameSite",
+				"texto": "Al crear una cookie, el servidor puede fijar [[SameSite|samesite]] para decidir si el navegador la envía en peticiones que **se originan en otro sitio**:\n\n• `Strict`: nunca desde otro sitio (ni siquiera al seguir un enlace).\n• `Lax`: solo en navegaciones de nivel superior con métodos seguros, como hacer clic en un enlace (GET). Es el valor por defecto en los navegadores modernos.\n• `None`: siempre; exige también `Secure` (solo HTTPS).\n\nCon `Lax` o `Strict`, el formulario oculto del ataque CSRF que viste en la Compuerta ya no lleva la cookie de sesión."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Una cookie de sesión segura",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"peticion": {
+								"estado": "200 OK",
+								"respuesta_cabeceras": [
+									"Set-Cookie: sesion=a81f…; Secure; HttpOnly; SameSite=Lax; Path=/"
+								]
+							}
+						},
+						{
+							"nota": "Secure: solo por HTTPS · HttpOnly: JavaScript no puede leerla (protege frente a XSS) · SameSite=Lax: no viaja en peticiones POST iniciadas desde otros sitios."
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige el valor",
+				"pregunta": {
+					"enunciado": "Una cookie de sesión debe viajar al seguir un enlace desde otro sitio, pero no en un POST que otro sitio envíe a tu tienda. ¿Qué SameSite encaja?",
+					"opciones": [
+						"SameSite=None",
+						"SameSite=Lax",
+						"SameSite=Strict",
+						"Sin SameSite y con HttpOnly"
+					],
+					"correcta": 1,
+					"explicacion": "`Lax` envía la cookie en navegaciones GET de nivel superior (enlaces) y la bloquea en peticiones POST entre sitios."
+				}
+			}
+		]
+	}
+]

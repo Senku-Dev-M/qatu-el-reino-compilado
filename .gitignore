@@ -1,0 +1,41 @@
+# Godot cache and generated files
+.godot/
+*.tmp
+*.log
+
+# Exported builds and installers
+dist/
+build/
+export_credentials.cfg
+
+# Local editor settings
+.idea/
+.vscode/
+*.suo
+*.user
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Internal notes and AI-agent artifacts
+CLAUDE.md
+CROWD.md
+AGENTS.md
+docs/superpowers/
+**/superpowers/
+
+# Non-source working material
+capturas*/
+screenshots*/
+fix*/
+acciones*/
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+
+# Python tooling caches
+__pycache__/
+*.py[cod]

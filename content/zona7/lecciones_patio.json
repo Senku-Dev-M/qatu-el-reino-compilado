@@ -1,0 +1,311 @@
+[
+	{
+		"id": "L100",
+		"zona": 7,
+		"sala": "z7_patio",
+		"orden": 100,
+		"nivel": "intermedio",
+		"titulo": "Authorization Code: el flujo recomendado",
+		"resumen": "El navegador va al servidor de autorización, el usuario se autentica y vuelve con un código de un solo uso. El cliente cambia ese código por tokens en una llamada aparte. El parámetro state protege contra CSRF.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Por qué un código intermedio",
+				"texto": "En el flujo [[Authorization Code|authorization_code]] el token **nunca** viaja por la barra de direcciones. Lo que vuelve al cliente es un **código** de un solo uso y vida muy corta, que después se canjea por los tokens en una petición directa al servidor de autorización.\n\nAsí el token no queda en el historial del navegador, ni en los registros del servidor web, ni en la cabecera `Referer`."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Paso 1: la petición de autorización",
+				"texto": "El cliente envía al usuario a `/authorize` con su identificador, el [[redirect_uri|redirect_uri]] registrado, el alcance y un [[state|parametro_state]]: un valor aleatorio que el cliente guarda y que debe volver **idéntico**. Si no coincide, la respuesta no es de esta petición y se descarta (protege contra CSRF).",
+				"lenguaje": "texto",
+				"codigo": "GET /authorize\n  ?response_type=code\n  &client_id=tienda-web\n  &redirect_uri=https://qatu.com/callback\n  &scope=productos:leer%20pedidos:escribir\n  &state=a91f2c"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Pasos 2 y 3: vuelta y canje",
+				"texto": "El servidor redirige de vuelta con `code` y `state`. El cliente comprueba el `state` y canjea el código en `/token`.",
+				"lenguaje": "texto",
+				"codigo": "302 Location: https://qatu.com/callback?code=Xy9f…&state=a91f2c\n\nPOST /token\ngrant_type=authorization_code&code=Xy9f…\n&redirect_uri=https://qatu.com/callback&client_id=tienda-web",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"Navegador",
+									"Cliente",
+									"Servidor de autorización"
+								],
+								"ancho": 600,
+								"pasos": [
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "/authorize + state"
+									},
+									{
+										"de": 2,
+										"a": 0,
+										"texto": "login y consentimiento"
+									},
+									{
+										"de": 2,
+										"a": 1,
+										"texto": "redirect con code + state"
+									},
+									{
+										"de": 1,
+										"a": 1,
+										"texto": "comprueba el state"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "POST /token con el code"
+									},
+									{
+										"de": 2,
+										"a": 1,
+										"texto": "access token (+ refresh)"
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Para qué sirve state",
+				"pregunta": {
+					"enunciado": "¿Qué comprueba el cliente con el parámetro state al volver del servidor de autorización?",
+					"opciones": [
+						"Que el token no ha caducado",
+						"Que la respuesta corresponde a la petición que él mismo inició",
+						"Que el usuario tiene rol de administrador",
+						"Que la conexión usa HTTPS"
+					],
+					"correcta": 1,
+					"explicacion": "El `state` liga respuesta y petición; si no coincide, puede ser un intento de CSRF y se descarta."
+				}
+			}
+		]
+	},
+	{
+		"id": "L101",
+		"zona": 7,
+		"sala": "z7_patio",
+		"orden": 101,
+		"nivel": "intermedio",
+		"titulo": "Implicit y Password: flujos desaconsejados",
+		"resumen": "El flujo implícito devolvía el access token en el fragmento de la URL y hoy está desaconsejado. El de contraseña (ROPC) obliga a la aplicación a manejar las credenciales del usuario y también se desaconseja.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Implicit: el token en la URL",
+				"texto": "El flujo [[implícito|implicit_flow]] se creó para aplicaciones de navegador cuando no había CORS ni PKCE: el servidor devolvía el access token **directamente en el fragmento** de la URL de retorno (`#access_token=…`).\n\nProblemas: el token queda en el historial y puede filtrarse por el `Referer` o por extensiones; no hay forma segura de entregar un refresh token; y no se puede verificar que quien recibe el token es quien inició la petición.\n\nLas guías actuales (OAuth 2.0 Security BCP y OAuth 2.1) lo **desaconsejan**: se usa Authorization Code con PKCE. El jefe de esta zona presume justamente de ese flujo."
+			},
+			{
+				"tipo": "concepto",
+				"titulo": "Resource Owner Password Credentials",
+				"texto": "En el flujo [[ROPC|ropc]] la aplicación pide directamente el usuario y la contraseña y los envía a `/token`.\n\nInconvenientes: la aplicación **ve** la contraseña (justo lo que OAuth quería evitar), no permite MFA ni social login y acostumbra a los usuarios a escribir sus credenciales en cualquier parte. También está desaconsejado; solo se tolera en migraciones de sistemas antiguos y con clientes de máxima confianza."
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Lo que se ve en el navegador",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"nota": "Flujo implícito: el token viaja a la vista"
+						},
+						{
+							"peticion": {
+								"estado": "302 Found",
+								"respuesta_cabeceras": [
+									"Location: https://qatu.com/callback#access_token=eyJhbGciOi…&expires_in=3600"
+								]
+							}
+						},
+						{
+							"error": "Queda en el historial y a la vista de cualquier script de la página."
+						},
+						{
+							"nota": "Authorization Code: solo viaja un código de un solo uso"
+						},
+						{
+							"peticion": {
+								"estado": "302 Found",
+								"respuesta_cabeceras": [
+									"Location: https://qatu.com/callback?code=Xy9f…&state=a91f2c"
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Qué usar hoy",
+				"pregunta": {
+					"enunciado": "Una SPA necesita autenticar usuarios contra un servidor OAuth 2.0. ¿Qué flujo corresponde hoy?",
+					"opciones": [
+						"Implicit, porque es para navegadores",
+						"Authorization Code con PKCE",
+						"ROPC, pidiendo la contraseña en un formulario propio",
+						"Client Credentials"
+					],
+					"correcta": 1,
+					"explicacion": "Authorization Code con PKCE es el recomendado para clientes públicos como las SPA y las apps móviles."
+				}
+			}
+		]
+	},
+	{
+		"id": "L102",
+		"zona": 7,
+		"sala": "z7_patio",
+		"orden": 102,
+		"nivel": "intermedio",
+		"titulo": "Client Credentials: máquina a máquina",
+		"resumen": "Cuando no hay usuario, el cliente se autentica con su client_id y client_secret y obtiene un token propio. Solo para clientes confidenciales, como un backend o un proceso programado.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "Sin persona detrás",
+				"texto": "A veces quien llama a la API no es un usuario, sino **otro servicio**: un proceso nocturno que sincroniza el catálogo, un servicio de facturación.\n\nEn el flujo [[Client Credentials|client_credentials]] el cliente presenta sus propias credenciales (`client_id` y `client_secret`) y recibe un access token que representa **a la aplicación**, no a una persona. No hay pantalla de login ni consentimiento, y **no** hay refresh token: cuando caduca, se pide otro igual."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "La petición",
+				"lenguaje": "texto",
+				"codigo": "POST /token\nAuthorization: Basic base64(client_id:client_secret)\nContent-Type: application/x-www-form-urlencoded\n\ngrant_type=client_credentials&scope=catalogo:sincronizar",
+				"texto": "Solo pueden usarlo los clientes **confidenciales**, capaces de guardar el secreto fuera del alcance del usuario: un backend, no una SPA ni una app móvil."
+			},
+			{
+				"tipo": "errores",
+				"titulo": "Error frecuente",
+				"lenguaje": "js",
+				"errores": [
+					{
+						"mal": "// En el JavaScript de la SPA\nconst r = await fetch('/token', {\n  method: 'POST',\n  body: 'grant_type=client_credentials&client_secret=SUPERSECRETO'\n});",
+						"bien": "// El secreto vive en el backend; la SPA usa Authorization Code con PKCE",
+						"explicacion": "Todo lo que llega al navegador es visible: un `client_secret` en una SPA deja de ser secreto."
+					}
+				]
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "Elige el flujo",
+				"pregunta": {
+					"enunciado": "Un servicio de informes se ejecuta cada noche y lee pedidos de la API. No hay usuario conectado. ¿Qué flujo usa?",
+					"opciones": [
+						"Authorization Code",
+						"Client Credentials",
+						"Implicit",
+						"ROPC"
+					],
+					"correcta": 1,
+					"explicacion": "Sin usuario y con un cliente confidencial, el token se obtiene con las credenciales del propio cliente."
+				}
+			}
+		]
+	},
+	{
+		"id": "L103",
+		"zona": 7,
+		"sala": "z7_patio",
+		"orden": 103,
+		"nivel": "intermedio",
+		"titulo": "PKCE: proteger el código de autorización",
+		"resumen": "PKCE añade al flujo de código un secreto de un solo uso: el cliente genera un code_verifier, envía su hash (code_challenge con S256) al pedir autorización y presenta el verifier al canjear el código. Quien intercepte el código no podrá usarlo.",
+		"paginas": [
+			{
+				"tipo": "concepto",
+				"titulo": "El problema de los clientes públicos",
+				"texto": "Una SPA o una app móvil no pueden guardar un `client_secret`. Si alguien **intercepta** el código de autorización (por ejemplo, una app maliciosa que registra el mismo esquema de redirección), podría canjearlo por tokens.\n\n[[PKCE|pkce]] (Proof Key for Code Exchange, RFC 7636) lo evita: el cliente demuestra en el canje que es **el mismo** que inició la petición."
+			},
+			{
+				"tipo": "sintaxis",
+				"titulo": "Verifier y challenge",
+				"texto": "1. El cliente genera un [[code_verifier|code_verifier]]: una cadena aleatoria de 43 a 128 caracteres.\n2. Calcula el [[code_challenge|code_challenge]] = BASE64URL(SHA-256(verifier)) y lo envía con `code_challenge_method=S256`.\n3. Al canjear el código, envía el **verifier** original. El servidor vuelve a calcular el hash y comprueba que coincide.\n\nEl método `plain` (enviar el verifier tal cual) existe por compatibilidad, pero **no protege**: siempre S256.",
+				"lenguaje": "texto",
+				"codigo": "GET /authorize?response_type=code&client_id=tienda-app\n  &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM\n  &code_challenge_method=S256&state=a91f2c\n\nPOST /token\ngrant_type=authorization_code&code=Xy9f…\n&code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"
+			},
+			{
+				"tipo": "resultado",
+				"titulo": "Qué gana el atacante: nada",
+				"texto": "El atacante puede llegar a ver el `code` (viaja en la URL de retorno) y el `code_challenge`, pero **no** el verifier, que nunca sale del cliente. Sin él, el canje falla.",
+				"vista": {
+					"sin_navegador": true,
+					"bloques": [
+						{
+							"secuencia": {
+								"actores": [
+									"App",
+									"Atacante",
+									"Servidor de autorización"
+								],
+								"ancho": 620,
+								"pasos": [
+									{
+										"de": 0,
+										"a": 2,
+										"texto": "authorize + code_challenge"
+									},
+									{
+										"de": 2,
+										"a": 0,
+										"texto": "code"
+									},
+									{
+										"de": 1,
+										"a": 1,
+										"texto": "intercepta el code"
+									},
+									{
+										"de": 1,
+										"a": 2,
+										"texto": "canjea sin verifier",
+										"error": true
+									},
+									{
+										"de": 2,
+										"a": 1,
+										"texto": "400 invalid_grant",
+										"error": true
+									},
+									{
+										"de": 0,
+										"a": 2,
+										"texto": "canjea con code_verifier"
+									},
+									{
+										"de": 2,
+										"a": 0,
+										"texto": "access token"
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"tipo": "comprueba",
+				"titulo": "El orden correcto",
+				"pregunta": {
+					"enunciado": "¿Qué envía el cliente en la petición a /authorize?",
+					"opciones": [
+						"El code_verifier en claro",
+						"El code_challenge, que es el hash S256 del verifier",
+						"El client_secret",
+						"El access token anterior"
+					],
+					"correcta": 1,
+					"explicacion": "En `/authorize` viaja el challenge (el hash); el verifier solo se revela al canjear el código en `/token`."
+				}
+			}
+		]
+	}
+]
